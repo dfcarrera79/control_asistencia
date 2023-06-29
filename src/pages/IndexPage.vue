@@ -1,48 +1,34 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <div>{{ api_url }}</div>
-    <example-component
-      title="Example component"
-      active
-      :todos="todos"
-      :meta="meta"
-    ></example-component>
+  <q-page class="column justify-center content-center">
+    <div
+      id="mensaje"
+      class="text-body1 text-weight-medium"
+      style="text-align: center"
+    >
+      <q-img src="../assets/loxasoluciones.png" alt="loxasoluciones" />
+      <p>
+        Producto desarrollado por Loxasoluciones bajo la dirección de Diego
+        Fernando Carrera
+      </p>
+
+      <p>
+        <a href="https://wa.me/593986704083" target="_blank">0986704083</a> -
+        <a href="mailto:dfcarrera@outlook.com">dfcarrera@outlook.com</a>
+      </p>
+
+      <p>
+        <a href="https://www.loxasoluciones.com/" target="_blank"
+          >Loxasoluciones</a
+        >, Loja - Ecuador
+      </p>
+    </div>
   </q-page>
 </template>
 
-<script setup lang="ts">
-import { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/ExampleComponent.vue';
-import { ref, computed } from 'vue';
+<script setup lang="ts"></script>
 
-// Define a computed property
-const api_url = computed(() => {
-  return process.env.API_URL;
-});
-
-const todos = ref<Todo[]>([
-  {
-    id: 1,
-    content: 'ct1',
-  },
-  {
-    id: 2,
-    content: 'ct2',
-  },
-  {
-    id: 3,
-    content: 'ct3',
-  },
-  {
-    id: 4,
-    content: 'ct4',
-  },
-  {
-    id: 5,
-    content: 'ct5',
-  },
-]);
-const meta = ref<Meta>({
-  totalCount: 1200,
-});
-</script>
+<style lang="scss">
+#mensaje {
+  color: $blue-grey-10;
+}
+</style>

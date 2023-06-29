@@ -1,6 +1,16 @@
 <template>
   <div class="update-password">
-    <h3 class="text-primary text-uppercase">Actualizar constraseña</h3>
+    <h4
+      class="row text-uppercase text-primary justify-center content-center"
+      style="font-family: 'Bebas Neue'"
+    >
+      <q-img
+        src="../assets/loxasoluciones.png"
+        alt="loxasoluciones"
+        width="70%"
+      />
+      Actualizar constraseña
+    </h4>
     <form @submit="changePassword(ruc)">
       <div class="form-group">
         <label for="newPassword">Nueva contraseña</label>
