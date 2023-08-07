@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts"></script>
-
 <style lang="scss">
 .my-menu-link {
   color: white;

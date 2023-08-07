@@ -21,7 +21,7 @@
         <div>{{ expires }}</div>
 
         <div class="row items-center content-center q-mr-md">
-          <q-btn flat @click="cerrarSesion">
+          <q-btn flat dense @click="cerrarSesion">
             <div class="q-mr-sm" v-if="!($q.screen.lt.md || $q.screen.lt.sm)">
               Salir
             </div>

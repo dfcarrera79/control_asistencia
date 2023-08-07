@@ -1,20 +1,15 @@
 <template>
-  <q-page class="flex flex-center bg-blue-grey-1">
+  <q-page class="flex flex-center bg-image">
     <q-dialog v-model="mostrarVentana" persistent>
       <q-card>
-        <div class="row bg-blue-grey-8 justify-center q-pa-xs">
-          <span class="text-subtitle2 text-center text-white"
+        <div class="row bg-blue-8 justify-center q-pa-xs">
+          <span
+            class="text-h6 text-center text-white"
+            style="font-family: 'Bebas Neue'"
             >Cambiar clave de acceso</span
           >
         </div>
         <q-card-section>
-          <!-- <q-input
-            v-model="ruc"
-            debounce="750"
-            label="RUC | CI | Pasaporte"
-            dense
-            :rules="rucRule"
-          /> -->
           <q-input
             v-model="ruc"
             debounce="750"
@@ -38,14 +33,21 @@
             label="Enviar"
             @click="enviarCorreoRecuperacion()"
           />
-          <q-btn flat label="Cerrar" @click="mostrarVentana = false" />
+          <q-btn
+            flat
+            class="text-blue-grey"
+            label="Cerrar"
+            @click="mostrarVentana = false"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
 
     <q-card class="shadow-8 bg-white" style="width: 300px; height: 260px">
-      <div class="row bg-blue-grey-8 justify-center q-pa-xs">
-        <span class="text-subtitle2 text-center text-white"
+      <div class="row bg-blue-8 justify-center q-pa-xs">
+        <span
+          class="text-h6 text-center text-white"
+          style="font-family: 'Bebas Neue'"
           >PORTAL DE CONTROL DE ASISTENCIA V0.1</span
         >
       </div>
@@ -86,7 +88,7 @@
       <div class="row">
         <div class="column col-xs-12 q-pa-sm">
           <a
-            class="full-width text-secondary q-link"
+            class="full-width q-link"
             style="
               display: block;
               height: 40px;
@@ -95,7 +97,7 @@
             "
             @click="recuperarContraseña()"
           >
-            <span class="hover-primary text-bold"
+            <span class="hover-primary text-bold text-blue-grey"
               >¿OLVIDASTE TU CONTRASEÑA?</span
             >
           </a>
@@ -246,8 +248,13 @@ const enviarCorreoRecuperacion = async () => {
 // };
 </script>
 
-<style>
+<style scoped>
 .hover-primary:hover {
   color: #1976d2;
+}
+.bg-image {
+  background-image: url('../assets/background.jpg');
+  background-repeat: repeat;
+  background-size: cover;
 }
 </style>
