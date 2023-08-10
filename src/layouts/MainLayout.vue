@@ -18,8 +18,6 @@
           Control de asistencia
         </q-toolbar-title>
 
-        <div>{{ expires }}</div>
-
         <div class="row items-center content-center q-mr-md">
           <q-btn flat dense @click="cerrarSesion">
             <div class="q-mr-sm" v-if="!($q.screen.lt.md || $q.screen.lt.sm)">
@@ -31,16 +29,200 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      :width="320"
+      :mini="miniState"
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
+    >
+      <q-img
+        fit="fill"
+        class="absolute-top q-pa-sm"
+        src="../assets/loxasoluciones.png"
+        style="height: 150px"
+        v-show="!miniState"
+      />
+      <q-scroll-area
+        style="
+          height: calc(100% - 150px);
+          margin-top: 150px;
+          border-right: 1px solid #ddd;
+        "
+      >
+        <q-list padding>
+          <q-item class="column" v-show="!miniState">
+            <q-separator inset />
+            <div
+              style="
+                color: #636466;
+                width: 300px;
+                white-space: wrap;
+                overflow: hidden;
+              "
+            >
+              <div style="color: #636466" class="text-center">
+                Bienvenido(a)
+              </div>
+              <div class="text-weight-bold text-center" style="color: #636466">
+                {{ authStore.usuario }}
+              </div>
+            </div>
+            <q-separator inset />
+          </q-item>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+          <q-item clickable v-ripple to="/" active-class="my-menu-link">
+            <q-item-section avatar>
+              <q-icon name="home" color="grey-9" />
+            </q-item-section>
+
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                PÁGINA DE INICIO
+              </span>
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+
+          <q-item
+            clickable
+            v-ripple
+            to="/configuracion_horarios"
+            active-class="my-menu-link"
+          >
+            <q-item-section avatar>
+              <q-icon name="schedule" color="grey-9" />
+            </q-item-section>
+
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                CONFIGURACIÓN DE HORARIOS
+              </span>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/gestion_usuarios"
+            active-class="my-menu-link"
+          >
+            <q-item-section avatar>
+              <q-icon name="people_alt" color="grey-9" />
+            </q-item-section>
+
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                GESTIÓN DE USUARIOS
+              </span>
+            </q-item-section>
+          </q-item>
+
+          <!-- <q-expansion-item expand-separator :header-inset-level="0">
+            <template v-slot:header>
+              <q-item-section avatar>
+                <q-avatar>
+                  <q-icon name="people_alt" color="grey-9" size="sm" />
+                </q-avatar>
+              </q-item-section>
+
+              <q-item-section>
+                <span
+                  class="text-grey-9 text-h6"
+                  style="font-family: 'Bebas Neue'"
+                >
+                  GESTIÓN DE USUARIOS
+                </span>
+              </q-item-section>
+            </template>
+
+            <q-item clickable v-ripple :inset-level="1" to="/gestion_usuarios">
+              <q-item-section>
+                <span
+                  class="text-grey-9 text-subtitle1"
+                  style="font-family: 'Oswald'"
+                >
+                  Creación de Perfiles de Usuarios
+                </span>
+              </q-item-section>
+            </q-item>
+
+            <q-item v-ripple clickable :inset-level="1" to="/gestion_usuarios">
+              <q-item-section>
+                <span
+                  class="text-grey-9 text-subtitle1"
+                  style="font-family: 'Oswald'"
+                >
+                  Roles y Permisos
+                </span>
+              </q-item-section>
+            </q-item>
+
+            <q-item v-ripple clickable :inset-level="1" to="/gestion_usuarios">
+              <q-item-section>
+                <span
+                  class="text-grey-9 text-subtitle1"
+                  style="font-family: 'Oswald'"
+                >
+                  Asignación a Grupos
+                </span>
+              </q-item-section>
+            </q-item>
+          </q-expansion-item> -->
+
+          <q-item
+            clickable
+            v-ripple
+            to="/gestion_exepciones"
+            active-class="my-menu-link"
+          >
+            <q-item-section avatar>
+              <q-icon name="ballot" color="grey-9" />
+            </q-item-section>
+
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                GESTIÓN DE EXEPCIONES
+              </span>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/registro_asistencias"
+            active-class="my-menu-link"
+          >
+            <q-item-section avatar>
+              <q-icon name="how_to_reg" color="grey-9" />
+            </q-item-section>
+
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                REGISTRO DE ASISTENCIAS
+              </span>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -51,25 +233,28 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
-import { LocalStorage } from 'quasar';
-import { useAuthStore } from '../stores/auth';
 import jwtDecode from 'jwt-decode';
+import { LocalStorage } from 'quasar';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
+import { TokenDecoded } from '../components/models';
 
-const win: Window = window;
-const authStore = useAuthStore();
+// Data
+// const win: Window = window;
 const expires = ref('');
+const router = useRouter();
+const miniState = ref(true);
+const authStore = useAuthStore();
 
 const cerrarSesion = () => {
-  win.location = 'https://www.loxasoluciones.com/';
+  // win.location = 'https://www.loxasoluciones.com/';
+  router.push('/login');
   LocalStorage.clear();
 };
 
 const checkTokenExpiration = () => {
   const token = authStore.token;
-  const decodedToken = jwtDecode(token);
+  const decodedToken: TokenDecoded = jwtDecode(token);
   const expirationTimestamp = decodedToken.exp;
   const currentTime = Math.floor(Date.now() / 1000); // Current timestamp in seconds
   const tokenExpirationTime = expirationTimestamp - currentTime;
@@ -89,58 +274,15 @@ const checkTokenExpiration = () => {
 };
 
 // Check token expiration every 5 minutes (300,000 milliseconds)
-const tokenExpirationCheckInterval = setInterval(checkTokenExpiration, 300000);
+// const tokenExpirationCheckInterval = setInterval(checkTokenExpiration, 300000);
 
 checkTokenExpiration();
 
-const essentialLinks: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-];
-
 const leftDrawerOpen = ref(false);
 
-function toggleLeftDrawer() {
+const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+};
 </script>
+
+<style lang="sccs" scoped></style>

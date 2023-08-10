@@ -1,5 +1,6 @@
-export function deducirMensajeError(o_error) {
-  console.log(JSON.stringify(o_error));
+import { ObjectError } from '../components/models';
+
+export function deducirMensajeError(o_error: ObjectError) {
   let mensaje = '';
   let hubo = false;
   if (o_error.message) {

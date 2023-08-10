@@ -174,7 +174,7 @@ const logearse = async () => {
     mostrarMensaje('Error', respuesta.mensaje);
     return;
   }
-  authStore.iniciarSesion(respuesta.token);
+  authStore.iniciarSesion(respuesta.token, respuesta.objetos[0].usu_nomape);
   router.push('/');
 };
 
@@ -182,7 +182,7 @@ const recuperarContraseña = () => {
   mostrarVentana.value = true;
 };
 
-async function fetchEmail() {
+const fetchEmail = async () => {
   try {
     const respuesta = await get('/obtener_usuario', {
       id: ruc.value,
@@ -190,12 +190,10 @@ async function fetchEmail() {
 
     // Assuming the response data has a property 'email' containing the email address
     correoElectronico.value = respuesta.objetos;
-    console.log('Is running');
   } catch (error) {
     console.error('Error fetching email:', error);
-    console.log('Is not running');
   }
-}
+};
 
 watch(ruc, fetchEmail);
 
@@ -218,34 +216,6 @@ const enviarCorreoRecuperacion = async () => {
     console.error('Error sending email:', error);
   }
 };
-
-// const enviarCorreoRecuperacion = async () => {
-//   const respuesta = await get('/obtener_cliente', {
-//     ruc_cliente: ruc.value,
-//   });
-//   console.log(JSON.stringify(respuesta.objetos));
-
-//   if (respuesta.objetos.length !== 0) {
-//     const respuesta2 = await post(
-//       '/resetear_clave_acceso',
-//       {},
-//       {
-//         correo: correoElectronico.value,
-//         ruc: ruc.value,
-//       }
-//     );
-
-//     if (respuesta2.error === 'S') {
-//       mostrarMensaje('Error', respuesta2.mensaje);
-//       return;
-//     }
-//     mostrarMensaje('Éxito', respuesta2.mensaje);
-//   } else {
-//     mostrarMensaje('Error', 'No existe un cliente con ese RUC');
-//   }
-
-//   mostrarVentana.value = false;
-// };
 </script>
 
 <style scoped>

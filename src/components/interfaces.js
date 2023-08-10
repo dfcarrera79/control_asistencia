@@ -1,24 +1,3 @@
-export interface Todo {
-  id: number;
-  content: string;
-}
-
-export interface Meta {
-  totalCount: number;
-}
-
-export interface Session {
-  estaLogeado: boolean;
-  currentURL: string;
-  token: string | null;
-}
-
-export interface TokenDecoded {
-  sub: string;
-  password: string;
-  exp: number;
-}
-
 export interface ObjectError {
   message: string;
   name: string;
@@ -57,12 +36,12 @@ interface Headers {
   token: string;
 }
 
-export interface GroupObject {
+interface RootObject {
   codigo: number;
   descripcion: string;
 }
 
-export interface FilasEmpleados {
+interface RootObject {
   cedula_ruc: string;
   nombre_completo: string;
   direccion: string;

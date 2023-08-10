@@ -35,6 +35,54 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/configuracion_horarios',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Horarios/HorariosPage.vue'),
+        beforeEnter: multiguard([estaLogeado]),
+      },
+    ],
+  },
+
+  {
+    path: '/gestion_usuarios',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Usuarios/UsuariosPage.vue'),
+        beforeEnter: multiguard([estaLogeado]),
+      },
+    ],
+  },
+
+  {
+    path: '/gestion_exepciones',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Exepciones/ExepcionesPage.vue'),
+        beforeEnter: multiguard([estaLogeado]),
+      },
+    ],
+  },
+
+  {
+    path: '/registro_asistencias',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Asistencias/AsistenciasPage.vue'),
+        beforeEnter: multiguard([estaLogeado]),
+      },
+    ],
+  },
+
+  {
     path: '/cambiar_clave/:ruc',
     component: () => import('layouts/LoginLayout.vue'),
     children: [

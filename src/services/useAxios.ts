@@ -2,7 +2,7 @@ import { axios } from '../boot/axios';
 import { deducirMensajeError } from '../utils/AppUtils';
 import { useAuthStore } from '../stores/auth';
 
-export function useAxios() {
+export const useAxios = () => {
   const authStore = useAuthStore();
 
   const get = async (url: string, params: object) => {
@@ -72,4 +72,4 @@ export function useAxios() {
     post,
     put,
   };
-}
+};
