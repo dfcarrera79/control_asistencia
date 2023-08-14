@@ -37,21 +37,19 @@ interface Headers {
 }
 
 interface RootObject {
-  codigo: number;
-  descripcion: string;
+  alm_codigo: number;
+  alm_nomcom: string;
+  alm_calles: string;
+  alm_pais: string;
+  alm_ciud: string;
+  alm_tlf1: string;
+  alm_tlf2: string;
 }
 
-interface RootObject {
-  cedula_ruc: string;
-  nombre_completo: string;
-  direccion: string;
-  cargo: string;
-  sueldo_basico: number;
-  fecha_ingreso: string;
-  no_telefono: string;
-  no_celular: string;
-  email: string;
-  departamento: string;
-  genero: string;
-  civil: string;
+interface Lugares {
+  alm_nomcom: string;
+  alm_calles: string;
+  alm_ciud: string;
+  lat: number;
+  long: number;
 }

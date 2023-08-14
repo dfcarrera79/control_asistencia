@@ -68,6 +68,13 @@
                 class="cursor-pointer"
                 @click="isPwd = !isPwd"
               />
+              <q-tooltip
+                class="bg-grey-6 text-caption"
+                anchor="bottom middle"
+                self="center middle"
+              >
+                {{ isPwd ? 'Mostrar clave' : 'Ocultar clave' }}
+              </q-tooltip>
             </template>
           </q-input>
         </div>
@@ -115,18 +122,18 @@ import { useAxios } from '../services/useAxios';
 import { useMensajes } from '../services/useMensajes';
 import { LocalStorage, Loading, QSpinnerFacebook } from 'quasar';
 
-const router = useRouter();
-const authStore = useAuthStore();
 const { get, put } = useAxios();
+const authStore = useAuthStore();
 const { mostrarMensaje } = useMensajes();
-const url = ref(authStore.url);
-const newUrl = ref(url.value.slice(url.value.indexOf('#') + 1));
-const mostrarVentana = ref(false);
-const correoElectronico = ref('');
-const ruc = ref('');
 const id = ref('');
+const ruc = ref('');
 const clave = ref('');
 const isPwd = ref(true);
+const router = useRouter();
+const url = ref(authStore.url);
+const mostrarVentana = ref(false);
+const correoElectronico = ref('');
+const newUrl = ref(url.value.slice(url.value.indexOf('#') + 1));
 
 const rucRule: ((v: string) => string | boolean)[] = [
   (v: string) => !!v || 'El RUC es obligatorio',

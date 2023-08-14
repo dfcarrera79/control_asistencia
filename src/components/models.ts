@@ -76,3 +76,22 @@ export interface FilasEmpleados {
   genero: string;
   civil: string;
 }
+
+export interface FilasAlmacenes {
+  alm_codigo: number;
+  alm_nomcom: string;
+  alm_calles: string;
+  alm_pais: string;
+  alm_ciud: string;
+  alm_tlf1: string;
+  alm_tlf2: string;
+}
+
+export interface Lugares {
+  alm_codigo: number;
+  alm_nomcom: string;
+  alm_calles: string;
+  alm_ciud: string;
+  lat: number;
+  long: number;
+}
