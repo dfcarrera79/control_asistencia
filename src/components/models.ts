@@ -95,3 +95,10 @@ export interface Lugares {
   lat: number;
   long: number;
 }
+
+export interface FilasAsignados {
+  cedula_ruc: string;
+  nombre_completo: string;
+  alm_nomcom: string;
+  direccion: string;
+}

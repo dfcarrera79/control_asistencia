@@ -53,3 +53,10 @@ interface Lugares {
   lat: number;
   long: number;
 }
+
+interface Asignados {
+  cedula_ruc: string;
+  nombre_completo: string;
+  alm_nomcom: string;
+  direccion: string;
+}
