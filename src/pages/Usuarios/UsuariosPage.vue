@@ -5,7 +5,7 @@
         class="row text-uppercase text-grey-8 justify-center content-center"
         style="font-family: 'Bebas Neue'"
       >
-        <div class="q-pt-sm">GESTIÓN DE USUARIOS</div>
+        <div class="q-pt-sm">GESTIÓN DE EMPLEADOS</div>
       </h4>
     </div>
 
@@ -49,151 +49,106 @@
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="perfiles">
             <div class="q-pa-md">
-              <q-scroll-area style="height: 550px">
-                <q-table
-                  square
-                  flat
-                  bordered
-                  hide-bottom
-                  :rows="filas"
-                  :filter="filter"
-                  :columns="columnas"
-                  row-key="codigo"
-                  class="text-h6 text-grey-8"
-                  :rows-per-page-options="[0]"
-                  v-model:pagination="pagination"
-                  :visible-columns="columnasVisibles"
+              <div class="column">
+                <p
+                  class="text-h6 text-grey-8 q-pl-md"
+                  style="font-family: 'Bebas Neue'"
                 >
-                  <template v-slot:top>
-                    <div class="column">
-                      <p
-                        class="text-h6 text-grey-8"
-                        style="font-family: 'Bebas Neue'"
-                      >
-                        EMPLEADOS
-                      </p>
+                  EMPLEADOS
+                </p>
 
-                      <div class="row justify-left">
-                        <q-select
-                          outlined
-                          dense
-                          v-model="model"
-                          :options="grupos"
-                          label="Departamentos"
-                          style="width: 200px"
-                        >
-                          <template v-if="model" v-slot:append>
-                            <q-icon
-                              name="cancel"
-                              @click.stop.prevent="model = ''"
-                              class="cursor-pointer"
-                            />
-                          </template>
-                        </q-select>
+                <div class="row justify-left">
+                  <q-input
+                    outlined
+                    class="q-pl-md"
+                    input-class="text-right"
+                    clearable
+                    clear-icon="close"
+                    dense
+                    debounce="350"
+                    borderless
+                    color="primary"
+                    v-model="filter"
+                    placeholder="Buscar..."
+                  >
+                    <template v-slot:append>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
 
-                        <q-input
-                          input-class="text-right"
-                          clearable
-                          clear-icon="close"
-                          dense
-                          debounce="350"
-                          borderless
-                          color="primary"
-                          v-model="filter"
-                          placeholder="Buscar..."
-                        >
-                          <template v-slot:append>
-                            <q-icon name="search" />
-                          </template>
-                        </q-input>
-                      </div>
+                  <q-select
+                    class="q-px-md"
+                    outlined
+                    dense
+                    v-model="model"
+                    :options="grupos"
+                    label="Departamentos"
+                    style="width: 200px"
+                  >
+                    <template v-if="model" v-slot:append>
+                      <q-icon
+                        name="cancel"
+                        @click.stop.prevent="model = ''"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-select>
+
+                  <q-separator vertical />
+
+                  <div class="q-pl-md column">
+                    <div style="width: 250px">
+                      <q-select
+                        dense
+                        clearable
+                        filled
+                        color="primary"
+                        v-model="lugar"
+                        :options="lugares.map((lugar) => lugar.alm_nomcom)"
+                        label="Lugares"
+                      />
                     </div>
-                  </template>
+                  </div>
 
-                  <template v-slot:header="props">
-                    <q-tr :props="props">
-                      <q-th auto-width />
-                      <q-th
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                      >
-                        {{ col.label }}
-                      </q-th>
-                    </q-tr>
-                  </template>
-
-                  <template v-slot:body="props">
-                    <q-tr :props="props">
-                      <q-td auto-width>
-                        <q-btn
-                          size="sm"
-                          color="primary"
-                          round
-                          dense
-                          @click="
-                            props.expand = !props.expand;
-                            obtenerLugares();
-                            obtenerEmpleadoAsignado(props.row.codigo);
-                          "
-                          :icon="props.expand ? 'remove' : 'add'"
-                        />
-                      </q-td>
-                      <q-td
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                      >
-                        {{ col.value }}
-                      </q-td>
-                    </q-tr>
-                    <q-tr v-show="props.expand" :props="props">
-                      <q-td colspan="100%">
-                        <div class="text-left">
-                          <q-toggle
-                            v-model="checked2"
-                            v-if="toogle2"
-                            label="Editar asignación de lugar de trabajo"
-                          />
-                          <div class="column justify-start" v-if="checked2">
-                            <strong>Dirección: </strong>
-                            {{ direccion }}
-                            <div
-                              class="q-gutter-y-md column"
-                              style="max-width: 300px"
-                            >
-                              <q-select
-                                dense
-                                clearable
-                                filled
-                                color="primary"
-                                v-model="lugar"
-                                :options="
-                                  lugares.map((lugar) => lugar.alm_nomcom)
-                                "
-                                label="Lugares"
-                              />
-
-                              <q-btn
-                                dense
-                                @click="
-                                  designar_lugar_empleado(
-                                    id_direccion,
-                                    props.row.codigo
-                                  )
-                                "
-                                label="Asignar lugar de trabajo"
-                                outline
-                                color="primary"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </q-td>
-                    </q-tr>
-                  </template>
-                </q-table>
+                  <div class="q-pl-md">
+                    <q-btn
+                      color="primary"
+                      label="Asignar lugar de trabajo"
+                      @click="handleButtonClicked(id_direccion, selected)"
+                      icon="business"
+                      :disable="selected.length === 0 || id_direccion === 0"
+                    />
+                  </div>
+                </div>
+                <div class="column justify-left q-pl-md q-pt-md">
+                  <strong class="text-weight-medium text-grey-8"
+                    >Dirección: {{ direccion }}
+                  </strong>
+                </div>
+              </div>
+              <q-scroll-area style="height: 550px">
+                <div class="q-pa-md">
+                  <q-table
+                    square
+                    flat
+                    bordered
+                    hide-bottom
+                    :rows="filas"
+                    :columns="columnas"
+                    :filter="filter"
+                    row-key="codigo"
+                    :selected-rows-label="getSelectedString"
+                    selection="multiple"
+                    v-model:selected="selected"
+                    :rows-per-page-options="[0]"
+                    v-model:pagination="pagination"
+                    :visible-columns="columnasVisibles"
+                  />
+                </div>
               </q-scroll-area>
+              <div class="q-mt-md">
+                Selected: {{ JSON.stringify(selected) }}
+              </div>
             </div>
           </q-tab-panel>
 
@@ -377,6 +332,51 @@
           </q-tab-panel>
           <q-tab-panel name="lugares">
             <div class="q-pa-md">
+              <div class="column q-pb-md">
+                <p
+                  class="text-h6 text-grey-8"
+                  style="font-family: 'Bebas Neue'"
+                >
+                  EMPLEADOS ASIGNADOS A LUGARES DE TRABAJO
+                </p>
+                <div class="row justify-left">
+                  <q-input
+                    outlined
+                    input-class="text-right"
+                    clearable
+                    clear-icon="close"
+                    dense
+                    debounce="350"
+                    borderless
+                    color="primary"
+                    v-model="filter"
+                    placeholder="Buscar..."
+                  >
+                    <template v-slot:append>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                  <div class="q-pl-md">
+                    <q-select
+                      outlined
+                      dense
+                      v-model="modelo"
+                      :options="groups"
+                      label="Lugares de trabajo"
+                      style="width: 200px"
+                    >
+                      <template v-if="modelo" v-slot:append>
+                        <q-icon
+                          name="cancel"
+                          @click.stop.prevent="modelo = ''"
+                          class="cursor-pointer"
+                        />
+                      </template>
+                    </q-select>
+                  </div>
+                </div>
+              </div>
+
               <q-scroll-area style="height: 550px">
                 <q-table
                   square
@@ -391,68 +391,6 @@
                   :rows-per-page-options="[0]"
                   v-model:pagination="pagination"
                 >
-                  <template v-slot:top>
-                    <div class="column">
-                      <p
-                        class="text-h6 text-grey-8"
-                        style="font-family: 'Bebas Neue'"
-                      >
-                        EMPLEADOS ASIGNADOS A LUGARES DE TRABAJO
-                      </p>
-                      <div class="row justify-left">
-                        <q-select
-                          outlined
-                          dense
-                          v-model="modelo"
-                          :options="groups"
-                          label="Lugares de trabajo"
-                          style="width: 200px"
-                        >
-                          <template v-if="modelo" v-slot:append>
-                            <q-icon
-                              name="cancel"
-                              @click.stop.prevent="modelo = ''"
-                              class="cursor-pointer"
-                            />
-                          </template>
-                        </q-select>
-
-                        <q-input
-                          input-class="text-right"
-                          clearable
-                          clear-icon="close"
-                          dense
-                          debounce="350"
-                          borderless
-                          color="primary"
-                          v-model="filter"
-                          placeholder="Buscar..."
-                        >
-                          <template v-slot:append>
-                            <q-icon name="search" />
-                          </template>
-                        </q-input>
-                      </div>
-                    </div>
-
-                    <!-- <q-space />
-
-                    <q-input
-                      input-class="text-right"
-                      clearable
-                      clear-icon="close"
-                      dense
-                      debounce="350"
-                      borderless
-                      color="primary"
-                      v-model="filter"
-                      placeholder="Buscar..."
-                    >
-                      <template v-slot:append>
-                        <q-icon name="search" />
-                      </template>
-                    </q-input> -->
-                  </template>
                 </q-table>
               </q-scroll-area>
             </div>
@@ -464,7 +402,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
 import {
@@ -473,6 +411,7 @@ import {
   FilasAlmacenes,
   Lugares,
   FilasAsignados,
+  Empleados,
 } from '../../components/models';
 
 // Data
@@ -496,6 +435,8 @@ const lugar = ref('');
 const lugares = ref<Lugares[]>([]);
 const checked = ref(false);
 const toogle = ref(false);
+
+const selected = ref([]);
 
 const checked2 = ref(false);
 const toogle2 = ref(false);
@@ -634,6 +575,14 @@ const columnas: QTableProps['columns'] = [
 ];
 
 // Methods
+const getSelectedString = () => {
+  return selected.value.length === 0
+    ? ''
+    : `${selected.value.length} record${
+        selected.value.length > 1 ? 's' : ''
+      } selected of ${filas.value.length}`;
+};
+
 const obtenerGrupos = async () => {
   const respuesta = await get('/obtener_grupos', {});
   if (respuesta.error === 'S') {
@@ -680,6 +629,12 @@ const obtenerEmpleadoAsignado = async (id: number) => {
   if (respuesta.objetos.length !== 0) {
     checked2.value = false;
     toogle2.value = true;
+  }
+};
+
+const handleButtonClicked = async (id: number, selected: Empleados[]) => {
+  for (const item of selected) {
+    await designar_lugar_empleado(id, item.codigo);
   }
 };
 
@@ -753,6 +708,10 @@ const obtenerLugares = async () => {
     lugares.value = respuesta.objetos;
   }
 };
+
+onMounted(() => {
+  obtenerLugares(); // Call the function when the component is mounted
+});
 
 const registrarCoordenadas = async (
   targetId: number,
@@ -864,7 +823,7 @@ const getCalles = (lugar: string) => {
   } else {
     const calles = lugares.value.find((l) => l.alm_nomcom === lugar);
     direccion.value = calles.alm_calles;
-    id_direccion.value = calles.alm_codigo;
+    id_direccion.value = calles.codigo;
   }
 };
 

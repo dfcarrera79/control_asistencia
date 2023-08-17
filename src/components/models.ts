@@ -77,6 +77,10 @@ export interface FilasEmpleados {
   civil: string;
 }
 
+export interface Empleados extends FilasEmpleados {
+  codigo: number;
+}
+
 export interface FilasAlmacenes {
   alm_codigo: number;
   alm_nomcom: string;

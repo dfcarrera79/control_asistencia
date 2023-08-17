@@ -60,3 +60,34 @@ interface Asignados {
   alm_nomcom: string;
   direccion: string;
 }
+
+interface RootObject {
+  codigo: number;
+  cedula_ruc: string;
+  nombre_completo: string;
+  direccion: string;
+  cargo: string;
+  sueldo_basico: number;
+  fecha_ingreso: string;
+  no_telefono: string;
+  no_celular: string;
+  email: string;
+  departamento: string;
+  genero: string;
+  civil: string;
+}
+
+interface FilasEmpleados {
+  cedula_ruc: string;
+  nombre_completo: string;
+  direccion: string;
+  cargo: string;
+  sueldo_basico: number;
+  fecha_ingreso: string;
+  no_telefono: string;
+  no_celular: string;
+  email: string;
+  departamento: string;
+  genero: string;
+  civil: string;
+}
