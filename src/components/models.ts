@@ -92,7 +92,7 @@ export interface FilasAlmacenes {
 }
 
 export interface Lugares {
-  alm_codigo: number;
+  codigo: number;
   alm_nomcom: string;
   alm_calles: string;
   alm_ciud: string;
@@ -105,4 +105,18 @@ export interface FilasAsignados {
   nombre_completo: string;
   alm_nomcom: string;
   direccion: string;
+}
+
+export interface RespuestaEmpleados {
+  error: string;
+  mensaje: string;
+  objetos: Objeto[];
+}
+
+interface Objeto {
+  usuario_codigo: number;
+}
+
+export interface Lugar {
+  lugares: string;
 }

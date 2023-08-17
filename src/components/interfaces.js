@@ -91,3 +91,13 @@ interface FilasEmpleados {
   genero: string;
   civil: string;
 }
+
+interface RootObject {
+  error: string;
+  mensaje: string;
+  objetos: Objeto[];
+}
+
+interface Objeto {
+  usuario_codigo: number;
+}
