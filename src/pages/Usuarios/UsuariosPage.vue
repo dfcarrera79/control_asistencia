@@ -749,11 +749,9 @@ const handleButtonClicked = async (id: number, selected: Empleados[]) => {
 };
 
 const obtenerEmpleadosAsignados = async (modelo: string) => {
-  console.log('[AQUI]');
   const respuesta = await get('/obtener_empleados_asignados', {
     lugar: modelo,
   });
-  console.log('[EMPLEADOS ASIGNADOS]: ', respuesta);
   if (respuesta.error === 'S') {
     zeile.value = [];
     return;
@@ -946,9 +944,6 @@ watch(lugar, () => {
 });
 
 watch(modelo, () => {
-  console.log('[MODELO]: ', modelo.value);
-  console.log('[MODELO type]: ', typeof modelo.value);
-  console.log('[MODELO JSON]: ', JSON.stringify(modelo.value));
   obtenerEmpleadosAsignados(modelo.value);
 });
 </script>
