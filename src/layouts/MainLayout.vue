@@ -125,7 +125,7 @@
                 class="text-grey-9 text-h6"
                 style="font-family: 'Bebas Neue'"
               >
-                GESTIÓN DE USUARIOS
+                GESTIÓN DE EMPLEADOS
               </span>
             </q-item-section>
           </q-item>

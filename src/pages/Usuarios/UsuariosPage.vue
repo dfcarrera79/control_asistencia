@@ -35,7 +35,7 @@
             name="lugares"
             label="Lista de empleados asignados"
             @click="
-              obtenerEmpleadosAsignados(model);
+              obtenerEmpleadosAsignados(modelo);
               obtenerLugaresTrabajo();
             "
           />
@@ -124,14 +124,33 @@
                   <div class="q-pl-md q-py-sm row">
                     <div style="width: 250px">
                       <q-select
-                        dense
-                        clearable
                         filled
-                        color="primary"
+                        dense
                         v-model="lugar"
-                        :options="lugares.map((lugar) => lugar.alm_nomcom)"
-                        label="Lugares"
-                      />
+                        use-input
+                        hide-selected
+                        fill-input
+                        input-debounce="300"
+                        label="Lugares de trabajo"
+                        :options="options"
+                        @filter="filterFn"
+                        style="width: 250px"
+                      >
+                        <template v-if="lugar" v-slot:append>
+                          <q-icon
+                            name="cancel"
+                            @click.stop.prevent="lugar = ''"
+                            class="cursor-pointer"
+                          />
+                        </template>
+                        <template v-slot:no-option>
+                          <q-item>
+                            <q-item-section class="text-grey">
+                              No hay resultados
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-select>
                     </div>
                     <div class="q-pl-md">
                       <q-btn
@@ -397,12 +416,17 @@
                   </q-input>
                   <div class="q-pl-md">
                     <q-select
-                      outlined
                       dense
+                      filled
                       v-model="modelo"
-                      :options="groups"
-                      label="Lugares de trabajo"
-                      style="width: 200px"
+                      use-input
+                      hide-selected
+                      fill-input
+                      input-debounce="300"
+                      label="Lugares asignados"
+                      :options="opciones"
+                      @filter="filtroFn"
+                      style="width: 250px"
                     >
                       <template v-if="modelo" v-slot:append>
                         <q-icon
@@ -410,6 +434,13 @@
                           @click.stop.prevent="modelo = ''"
                           class="cursor-pointer"
                         />
+                      </template>
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            No hay resultados
+                          </q-item-section>
+                        </q-item>
                       </template>
                     </q-select>
                   </div>
@@ -453,6 +484,7 @@ import {
   Empleados,
   FilasAsignados,
   RespuestaEmpleados,
+  RespuestaLugares,
 } from '../../components/models';
 
 // Data
@@ -460,7 +492,7 @@ const $q = useQuasar();
 const tab = ref('');
 const { get, post, put } = useAxios();
 const grupos = ref([]);
-const groups = ref([]);
+const groups = ref<string[]>([]);
 const model = ref('');
 const modelo = ref('');
 const text = ref('');
@@ -473,13 +505,13 @@ const pagination = {
   rowsPerPage: 0, // 0 means all rows
 };
 const lugar = ref('');
-const lugares = ref<Lugares[]>([]);
+const lugares = ref<string[]>([]);
 const checked = ref(false);
 const toogle = ref(false);
 const selected = ref([]);
 const direccion = ref('');
 const id_direccion = ref(0);
-
+const direcciones = ref<Lugares[]>([]);
 const columnasVisibles = ref([
   'id',
   'nombre',
@@ -610,7 +642,43 @@ const columnas: QTableProps['columns'] = [
   },
 ];
 
+const options = ref(lugares.value);
+
 // Methods
+const filterFn = (val: string, update: (callback: () => void) => void) => {
+  if (val === '') {
+    update(() => {
+      options.value = lugares.value;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    options.value = lugares.value.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+const opciones = ref(groups.value);
+
+const filtroFn = (val: string, update: (callback: () => void) => void) => {
+  if (val === '') {
+    update(() => {
+      opciones.value = groups.value;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    opciones.value = groups.value.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
 const getSelectedString = () => {
   return selected.value.length === 0
     ? ''
@@ -681,9 +749,11 @@ const handleButtonClicked = async (id: number, selected: Empleados[]) => {
 };
 
 const obtenerEmpleadosAsignados = async (modelo: string) => {
+  console.log('[AQUI]');
   const respuesta = await get('/obtener_empleados_asignados', {
     lugar: modelo,
   });
+  console.log('[EMPLEADOS ASIGNADOS]: ', respuesta);
   if (respuesta.error === 'S') {
     zeile.value = [];
     return;
@@ -739,14 +809,15 @@ const obtenerCoordenadas = async (id: number) => {
 };
 
 const obtenerLugares = async () => {
-  const respuesta = await get('/obtener_lugares', {});
+  const respuesta: RespuestaLugares = await get('/obtener_lugares', {});
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
   }
 
   // Check if the response contains data
   if (respuesta.objetos.length !== 0) {
-    lugares.value = respuesta.objetos;
+    lugares.value = respuesta.objetos.map((lugar) => lugar.alm_nomcom);
+    direcciones.value = respuesta.objetos;
   }
 };
 
@@ -862,7 +933,9 @@ const getCalles = (lugar: string) => {
     direccion.value = '';
     id_direccion.value = 0;
   } else {
-    const calles = lugares.value.find((l) => l.alm_nomcom === lugar);
+    const calles: Lugares | undefined = direcciones.value.find(
+      (l) => l.alm_nomcom === lugar
+    );
     direccion.value = calles.alm_calles;
     id_direccion.value = calles.codigo;
   }
@@ -870,5 +943,12 @@ const getCalles = (lugar: string) => {
 
 watch(lugar, () => {
   getCalles(lugar.value);
+});
+
+watch(modelo, () => {
+  console.log('[MODELO]: ', modelo.value);
+  console.log('[MODELO type]: ', typeof modelo.value);
+  console.log('[MODELO JSON]: ', JSON.stringify(modelo.value));
+  obtenerEmpleadosAsignados(modelo.value);
 });
 </script>

@@ -101,3 +101,18 @@ interface RootObject {
 interface Objeto {
   usuario_codigo: number;
 }
+
+interface RootObject {
+  error: string;
+  mensaje: string;
+  objetos: Objeto[];
+}
+
+interface Objeto {
+  codigo: number;
+  alm_nomcom: string;
+  alm_calles: string;
+  alm_ciud: string;
+  lat: number;
+  long: number;
+}

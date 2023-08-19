@@ -91,6 +91,12 @@ export interface FilasAlmacenes {
   alm_tlf2: string;
 }
 
+export interface RespuestaLugares {
+  error: string;
+  mensaje: string;
+  objetos: Lugares[];
+}
+
 export interface Lugares {
   codigo: number;
   alm_nomcom: string;
