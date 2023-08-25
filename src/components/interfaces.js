@@ -116,3 +116,35 @@ interface Objeto {
   lat: number;
   long: number;
 }
+
+interface RootObject {
+  error: string;
+  mensaje: string;
+  objetos: Objeto[];
+}
+
+interface Objeto {
+  codigo: number;
+  lat: number;
+  long: number;
+}
+
+interface Horarios {
+  codigo: number;
+  nombre: string;
+  dias_trabajados: Diastrabajados;
+  inicio1: string;
+  fin1: string;
+  inicio2: string;
+  fin2: string;
+}
+
+interface Diastrabajados {
+  lunes: string;
+  jueves: string;
+  martes: string;
+  miercoles': string;
+  viernes: string;
+  sabado': string;
+  domingo: string;
+}

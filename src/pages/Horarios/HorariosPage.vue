@@ -22,7 +22,6 @@
       >
         <q-tab name="horarios" label="Creación de Horarios" />
         <q-tab name="asignacion" label="Asignación de Horarios a Grupos" />
-        <q-tab name="reglas" label="Definición de Reglas de Asistencia" />
         <q-tab name="visualizacion" label="Visualización de Horarios" />
       </q-tabs>
 
@@ -30,22 +29,12 @@
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="horarios">
-          <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-            Horarios
-          </div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <HorariosComponent />
         </q-tab-panel>
 
         <q-tab-panel name="asignacion">
           <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
             Asignación de Horarios
-          </div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </q-tab-panel>
-
-        <q-tab-panel name="reglas">
-          <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-            Reglas de Asistencia
           </div>
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </q-tab-panel>
@@ -63,6 +52,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import HorariosComponent from './HorariosComponent.vue';
 
 // Data
 const tab = ref('');

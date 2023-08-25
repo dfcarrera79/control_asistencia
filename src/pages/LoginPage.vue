@@ -116,6 +116,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+import { Session } from '../components/models';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useAxios } from '../services/useAxios';
@@ -134,6 +135,8 @@ const url = ref(authStore.url);
 const mostrarVentana = ref(false);
 const correoElectronico = ref('');
 const newUrl = ref(url.value.slice(url.value.indexOf('#') + 1));
+const token = ref('');
+const usuario = ref('');
 
 const rucRule: ((v: string) => string | boolean)[] = [
   (v: string) => !!v || 'El RUC es obligatorio',
@@ -148,10 +151,12 @@ const emailRule: ((v: string) => string | boolean)[] = [
 ];
 
 onMounted(() => {
-  const session = LocalStorage.getItem('session');
+  const session: Session | null = LocalStorage.getItem('session');
+  token.value = session?.token || '';
+  usuario.value = session?.usuario || '';
 
   if (session) {
-    authStore.iniciarSesion(session.token);
+    authStore.iniciarSesion(token.value, usuario.value);
     router.push(newUrl.value);
   }
 });
@@ -181,6 +186,7 @@ const logearse = async () => {
     mostrarMensaje('Error', respuesta.mensaje);
     return;
   }
+  authStore.actualizarUsuario(respuesta.objetos[0].usu_nomape);
   authStore.iniciarSesion(respuesta.token, respuesta.objetos[0].usu_nomape);
   router.push('/');
 };

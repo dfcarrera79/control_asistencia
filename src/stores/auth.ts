@@ -20,6 +20,9 @@ export const useAuthStore = defineStore('counter', {
         token: state.token,
       };
     },
+    getUsuario(state) {
+      return state.usuario;
+    },
   },
 
   actions: {
@@ -31,7 +34,11 @@ export const useAuthStore = defineStore('counter', {
         estaLogeado: this.estaLogeado,
         currentURL: this.url,
         token: this.token,
+        usuario: this.usuario,
       });
+    },
+    actualizarUsuario(newUsuario: string) {
+      this.usuario = newUsuario;
     },
   },
 });

@@ -67,7 +67,7 @@
                 Bienvenido(a)
               </div>
               <div class="text-weight-bold text-center" style="color: #636466">
-                {{ authStore.usuario }}
+                {{ sessionData.usuario }}
               </div>
             </div>
             <q-separator inset />
@@ -246,6 +246,9 @@ const router = useRouter();
 const miniState = ref(true);
 const authStore = useAuthStore();
 
+const sessionData = LocalStorage.getItem('session');
+
+// Methods
 const cerrarSesion = () => {
   // win.location = 'https://www.loxasoluciones.com/';
   router.push('/login');

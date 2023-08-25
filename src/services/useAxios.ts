@@ -67,9 +67,33 @@ export const useAxios = () => {
     }
   };
 
+  const deletes = async (url: string, params: object, jsonData: object) => {
+    try {
+      const response = await axios({
+        method: 'DELETE',
+        url: `${authStore.getURLApi}${url}`,
+        params,
+        data: jsonData,
+        headers: {
+          ...authStore.getHttpHeaders,
+          'Content-Type': 'application/json', // Set the Content-Type header to specify JSON data
+        },
+      });
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      return {
+        error: 'S',
+        mensaje: deducirMensajeError(error),
+        objetos: [],
+      };
+    }
+  };
+
   return {
     get,
     post,
     put,
+    deletes,
   };
 };

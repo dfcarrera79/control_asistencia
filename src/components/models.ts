@@ -11,6 +11,7 @@ export interface Session {
   estaLogeado: boolean;
   currentURL: string;
   token: string | null;
+  usuario: string;
 }
 
 export interface TokenDecoded {
@@ -97,6 +98,32 @@ export interface RespuestaLugares {
   objetos: Lugares[];
 }
 
+export interface RespuestaHorarios {
+  error: string;
+  mensaje: string;
+  objetos: FilasHorarios[];
+}
+
+export interface FilasHorarios {
+  codigo: number;
+  nombre: string;
+  dias_trabajados: Diastrabajados;
+  inicio1: string;
+  fin1: string;
+  inicio2: string;
+  fin2: string;
+}
+
+interface Diastrabajados {
+  lunes: string;
+  martes: string;
+  miercoles: string;
+  jueves: string;
+  viernes: string;
+  sabado: string;
+  domingo: string;
+}
+
 export interface Lugares {
   codigo: number;
   alm_nomcom: string;
@@ -125,4 +152,14 @@ interface Objeto {
 
 export interface Lugar {
   lugares: string;
+}
+
+export interface DiasSemana {
+  lunes: boolean;
+  martes: boolean;
+  miercoles: boolean;
+  jueves: boolean;
+  viernes: boolean;
+  sabado: boolean;
+  domingo: boolean;
 }
