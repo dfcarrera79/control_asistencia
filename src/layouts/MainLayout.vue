@@ -93,26 +93,6 @@
           <q-item
             clickable
             v-ripple
-            to="/configuracion_horarios"
-            active-class="my-menu-link"
-          >
-            <q-item-section avatar>
-              <q-icon name="schedule" color="grey-9" />
-            </q-item-section>
-
-            <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
-                CONFIGURACIÓN DE HORARIOS
-              </span>
-            </q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            v-ripple
             to="/gestion_usuarios"
             active-class="my-menu-link"
           >
@@ -130,57 +110,25 @@
             </q-item-section>
           </q-item>
 
-          <!-- <q-expansion-item expand-separator :header-inset-level="0">
-            <template v-slot:header>
-              <q-item-section avatar>
-                <q-avatar>
-                  <q-icon name="people_alt" color="grey-9" size="sm" />
-                </q-avatar>
-              </q-item-section>
+          <q-item
+            clickable
+            v-ripple
+            to="/configuracion_horarios"
+            active-class="my-menu-link"
+          >
+            <q-item-section avatar>
+              <q-icon name="schedule" color="grey-9" />
+            </q-item-section>
 
-              <q-item-section>
-                <span
-                  class="text-grey-9 text-h6"
-                  style="font-family: 'Bebas Neue'"
-                >
-                  GESTIÓN DE USUARIOS
-                </span>
-              </q-item-section>
-            </template>
-
-            <q-item clickable v-ripple :inset-level="1" to="/gestion_usuarios">
-              <q-item-section>
-                <span
-                  class="text-grey-9 text-subtitle1"
-                  style="font-family: 'Oswald'"
-                >
-                  Creación de Perfiles de Usuarios
-                </span>
-              </q-item-section>
-            </q-item>
-
-            <q-item v-ripple clickable :inset-level="1" to="/gestion_usuarios">
-              <q-item-section>
-                <span
-                  class="text-grey-9 text-subtitle1"
-                  style="font-family: 'Oswald'"
-                >
-                  Roles y Permisos
-                </span>
-              </q-item-section>
-            </q-item>
-
-            <q-item v-ripple clickable :inset-level="1" to="/gestion_usuarios">
-              <q-item-section>
-                <span
-                  class="text-grey-9 text-subtitle1"
-                  style="font-family: 'Oswald'"
-                >
-                  Asignación a Grupos
-                </span>
-              </q-item-section>
-            </q-item>
-          </q-expansion-item> -->
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                CONFIGURACIÓN DE HORARIOS
+              </span>
+            </q-item-section>
+          </q-item>
 
           <q-item
             clickable
@@ -277,7 +225,7 @@ const checkTokenExpiration = () => {
 };
 
 // Check token expiration every 5 minutes (300,000 milliseconds)
-// const tokenExpirationCheckInterval = setInterval(checkTokenExpiration, 300000);
+const tokenExpirationCheckInterval = setInterval(checkTokenExpiration, 300000);
 
 checkTokenExpiration();
 

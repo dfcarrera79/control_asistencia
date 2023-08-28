@@ -20,23 +20,27 @@
         align="justify"
         narrow-indicator
       >
-        <q-tab name="horarios" label="Creación de Horarios" />
+        <q-tab
+          name="horarios"
+          label="Creación de Horarios"
+          @click="obtenerHorarios()"
+        />
         <q-tab name="asignacion" label="Asignación de Horarios a Grupos" />
-        <q-tab name="visualizacion" label="Visualización de Horarios" />
+        <q-tab
+          name="visualizacion"
+          label="Visualización de Horarios Asignados"
+        />
       </q-tabs>
 
       <q-separator />
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="horarios">
-          <HorariosComponent />
+          <HorariosComponent :rows="rows" @updateRows="updateRows()" />
         </q-tab-panel>
 
         <q-tab-panel name="asignacion">
-          <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-            Asignación de Horarios
-          </div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <AsignacionComponent />
         </q-tab-panel>
 
         <q-tab-panel name="visualizacion">
@@ -52,10 +56,36 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useAxios } from '../../services/useAxios';
 import HorariosComponent from './HorariosComponent.vue';
+import AsignacionComponent from './AsignacionComponent.vue';
+import { FilasHorarios } from '../../components/models';
 
 // Data
 const tab = ref('');
+const rows = ref<FilasHorarios[]>([]);
+
+const { get } = useAxios();
+
+// Methods
+const obtenerHorarios = async () => {
+  const respuesta = await get('/obtener_turnos', {});
+  if (respuesta.error === 'S') {
+    rows.value = [];
+    return;
+  }
+
+  // Check if the response contains data
+  if (respuesta.objetos.length === 0) {
+    rows.value = [];
+  } else {
+    rows.value = respuesta.objetos;
+  }
+};
+
+const updateRows = (): void => {
+  obtenerHorarios();
+};
 </script>
 
 <style lang="scss" scoped></style>

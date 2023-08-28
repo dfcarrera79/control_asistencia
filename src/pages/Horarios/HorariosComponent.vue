@@ -32,8 +32,8 @@
   </div>
 
   <div class="q-pa-md">
-    <div class="q-pa-md">
-      <div class="column q-pb-md">
+    <div class="q-px-md">
+      <div class="column">
         <div class="row">
           <div>
             <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
@@ -47,7 +47,7 @@
               color="primary"
               icon="update"
               dense
-              @click="obtenerHorarios()"
+              @click="actualizarFilas()"
             >
               <q-tooltip
                 anchor="center right"
@@ -67,7 +67,7 @@
           flat
           bordered
           grid
-          :rows="rows"
+          :rows="props.rows"
           :columns="columns"
           :visible-columns="visibleColumns"
           row-key="name"
@@ -105,13 +105,30 @@
                     color="primary"
                     icon="delete"
                     label="Eliminar"
-                    @click="eliminarHorario(props.row.codigo)"
+                    @click="openDialog(props.row.codigo)"
                   />
                   <q-btn
                     flat
                     color="primary"
-                    icon="update"
-                    label="Actualizar"
+                    icon="edit"
+                    label="Editar"
+                    @click="
+                      props.row.inicio2 == null && props.row.fin2 == null
+                        ? abrirDialogoUno(
+                            props.row.codigo,
+                            props.row.nombre,
+                            props.row.inicio1,
+                            props.row.fin1
+                          )
+                        : abrirDialogoDos(
+                            props.row.codigo,
+                            props.row.nombre,
+                            props.row.inicio1,
+                            props.row.fin1,
+                            props.row.inicio2,
+                            props.row.fin2
+                          )
+                    "
                   />
                 </q-card-actions>
               </q-card>
@@ -291,6 +308,7 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn
+            v-if="codigoHorario === 0"
             flat
             label="Crear Horario"
             @click="
@@ -303,7 +321,7 @@
                 '00:00',
                 '00:00'
               );
-              obtenerHorarios();
+              actualizarFilas();
             "
             :disable="
               nombre === '' ||
@@ -316,7 +334,43 @@
                 !domingo)
             "
           />
-          <q-btn flat label="Cerrar" v-close-popup @click="cerrarDialogo()" />
+          <q-btn
+            v-if="codigoHorario !== 0"
+            flat
+            label="Actualizar Horario"
+            @click="
+              generarDias();
+              actualizarHorario(
+                codigoHorario,
+                nombre,
+                entrada_uno,
+                salida_uno,
+                '00:00',
+                '00:00',
+                jsonString
+              );
+              actualizarFilas();
+            "
+            :disable="
+              nombre === '' ||
+              (!lunes &&
+                !martes &&
+                !miercoles &&
+                !jueves &&
+                !viernes &&
+                !sabado &&
+                !domingo)
+            "
+          />
+          <q-btn
+            flat
+            label="Cerrar"
+            v-close-popup
+            @click="
+              cerrarDialogo();
+              actualizarFilas();
+            "
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -588,6 +642,7 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn
+            v-if="codigoHorario === 0"
             flat
             label="Crear Horario"
             @click="
@@ -600,6 +655,7 @@
                 entrada_dos,
                 salida_dos
               );
+              actualizarFilas();
             "
             :disable="
               nombre === '' ||
@@ -612,7 +668,62 @@
                 !domingo)
             "
           />
-          <q-btn flat label="Cerrar" v-close-popup @click="cerrarDialogo()" />
+          <q-btn
+            v-if="codigoHorario !== 0"
+            flat
+            label="Actualizar Horario"
+            @click="
+              generarDias();
+              actualizarHorario(
+                codigoHorario,
+                nombre,
+                entrada_uno,
+                salida_uno,
+                entrada_dos,
+                salida_dos,
+                jsonString
+              );
+              actualizarFilas();
+            "
+            :disable="
+              nombre === '' ||
+              (!lunes &&
+                !martes &&
+                !miercoles &&
+                !jueves &&
+                !viernes &&
+                !sabado &&
+                !domingo)
+            "
+          />
+          <q-btn
+            flat
+            label="Cerrar"
+            v-close-popup
+            @click="
+              cerrarDialogo();
+              actualizarFilas();
+            "
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="dialogVisible" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="warning" color="primary" text-color="white" />
+          <span class="q-ml-sm">¿Está seguro/a de eliminar el horario?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Eliminar horario"
+            color="primary"
+            v-close-popup
+            @click="executeFunctionInsideDialog(codigo)"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -620,17 +731,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
-import { FilasHorarios } from '../../components/models';
+import { FilasHorarios, Horarios } from '../../components/models';
+
+/* Defined Props */
+const props = defineProps<{
+  rows: FilasHorarios[];
+}>();
+
+/* defined emits*/
+const emit = defineEmits(['updateRows']);
 
 // Data
+const codigo = ref(0);
+const codigoHorario = ref(0);
+const dialogVisible = ref(false);
 const $q = useQuasar();
 const nombre = ref('');
 const dialogoUno = ref(false);
 const dialogoDos = ref(false);
-const { get, post, put, deletes } = useAxios();
+const { post, put, deletes } = useAxios();
 
 const lunes = ref(false);
 const martes = ref(false);
@@ -647,9 +769,6 @@ const salida_dos = ref('00:00');
 
 const jsonString = ref('');
 
-// const filter = ref('');
-
-const rows = ref<FilasHorarios[]>([]);
 const columns: QTableProps['columns'] = [
   { name: 'id', align: 'left', label: 'ID', field: 'codigo' },
   {
@@ -703,13 +822,90 @@ const columns: QTableProps['columns'] = [
   },
 ];
 
-onMounted(() => {
-  obtenerHorarios(); // Call the function when the component is mounted
-});
-
 const visibleColumns = ref(['dias', 'horario1', 'horario2']);
 
 // Methods
+const actualizarFilas = () => {
+  emit('updateRows');
+};
+
+const openDialog = (param: number) => {
+  codigo.value = param;
+  dialogVisible.value = true;
+};
+
+const actualizarHorario = async (
+  codigo: number,
+  nombre: string,
+  inicio1: string,
+  fin1: string,
+  inicio2: string,
+  fin2: string,
+  dias_trabajados: string
+) => {
+  try {
+    const response = await put(
+      '/actualizar_turno',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          codigo: codigo,
+          nombre: nombre,
+          inicio1: inicio1,
+          fin1: fin1,
+          inicio2: inicio2,
+          fin2: fin2,
+          dias_trabajados: dias_trabajados,
+        })
+      )
+    );
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+
+    if (response.error === 'N') {
+      // check.value = true;
+    }
+  } catch (error) {
+    console.error('Error actualizando el horario: ', error);
+  }
+};
+
+const abrirDialogoUno = (
+  code: number,
+  name: string,
+  start1: string,
+  end1: string
+) => {
+  codigoHorario.value = code;
+  nombre.value = name;
+  entrada_uno.value = start1;
+  salida_uno.value = end1;
+  dialogoUno.value = true;
+};
+
+const abrirDialogoDos = (
+  code: number,
+  name: string,
+  start1: string,
+  end1: string,
+  start2: string,
+  end2: string
+) => {
+  codigoHorario.value = code;
+  nombre.value = name;
+  entrada_uno.value = start1;
+  salida_uno.value = end1;
+  entrada_dos.value = start2;
+  salida_dos.value = end2;
+  dialogoDos.value = true;
+};
+
 const getSortedWorkDays = (row) => {
   const days = Object.keys(row.dias_trabajados)
     .filter((day) => row.dias_trabajados[day] === 'true')
@@ -717,10 +913,10 @@ const getSortedWorkDays = (row) => {
       const order = [
         'lunes',
         'martes',
-        'miércoles',
+        'miercoles', // Corregir la clave con acento
         'jueves',
         'viernes',
-        'sábado',
+        'sabado', // Corregir la clave con acento
         'domingo',
       ];
       return order.indexOf(a) - order.indexOf(b);
@@ -759,6 +955,7 @@ const cerrarDialogo = () => {
   salida_dos.value = '00:00';
 
   nombre.value = '';
+  codigoHorario.value = 0;
 };
 
 const registrarHorario = async (
@@ -801,21 +998,6 @@ const registrarHorario = async (
   }
 };
 
-const obtenerHorarios = async () => {
-  const respuesta = await get('/obtener_turnos', {});
-  if (respuesta.error === 'S') {
-    rows.value = [];
-    return;
-  }
-
-  // Check if the response contains data
-  if (respuesta.objetos.length === 0) {
-    rows.value = [];
-  } else {
-    rows.value = respuesta.objetos;
-  }
-};
-
 const eliminarHorario = async (codigo: number) => {
   try {
     const response = await deletes(
@@ -828,10 +1010,15 @@ const eliminarHorario = async (codigo: number) => {
     );
 
     if (response.error === 'N') {
-      obtenerHorarios();
+      actualizarFilas();
     }
   } catch (error) {
     console.error('Error eliminando el horario:', error);
   }
+};
+
+const executeFunctionInsideDialog = (param: number) => {
+  eliminarHorario(param);
+  dialogVisible.value = false;
 };
 </script>

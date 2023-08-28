@@ -140,6 +140,14 @@ export interface FilasAsignados {
   direccion: string;
 }
 
+export interface FilasAsignadas {
+  codigo: number;
+  cedula_ruc: string;
+  nombre_completo: string;
+  alm_nomcom: string;
+  direccion: string;
+}
+
 export interface RespuestaEmpleados {
   error: string;
   mensaje: string;
@@ -154,6 +162,14 @@ export interface Lugar {
   lugares: string;
 }
 
+export interface Horario {
+  codigo: number;
+  nombre: string;
+  inicio1: string;
+  fin1: string;
+  inicio2: string;
+  fin2: string;
+}
 export interface DiasSemana {
   lunes: boolean;
   martes: boolean;
@@ -162,4 +178,24 @@ export interface DiasSemana {
   viernes: boolean;
   sabado: boolean;
   domingo: boolean;
+}
+
+export interface Horarios {
+  codigo: number;
+  nombre: string;
+  dias_trabajados: Diastrabajados;
+  inicio1: string;
+  fin1: string;
+  inicio2: string;
+  fin2: string;
+}
+
+interface Diastrabajados {
+  lunes: string;
+  jueves: string;
+  martes: string;
+  miercoles: string;
+  viernes: string;
+  sabado: string;
+  domingo: string;
 }

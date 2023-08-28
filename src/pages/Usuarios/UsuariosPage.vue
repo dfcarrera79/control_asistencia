@@ -740,6 +740,7 @@ const reloadTable = (model: string) => {
   obtenerGrupos();
   obtenerEmpleado(model);
   obtenerEmpleadoAsignado();
+  obtenerLugares();
 };
 
 const handleButtonClicked = async (id: number, selected: Empleados[]) => {

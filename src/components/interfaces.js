@@ -143,8 +143,28 @@ interface Diastrabajados {
   lunes: string;
   jueves: string;
   martes: string;
-  miercoles': string;
+  miercoles: string;
   viernes: string;
-  sabado': string;
+  sabado: string;
   domingo: string;
+}
+
+interface RootObject {
+  codigo: number;
+  nombre: string;
+  dias_trabajados: Diastrabajados;
+  inicio1: string;
+  fin1: string;
+  inicio2?: any;
+  fin2?: any;
+}
+
+interface Diastrabajados {
+  lunes: string;
+  jueves: string;
+  martes: string;
+  sabado: string;
+  domingo: string;
+  viernes: string;
+  miercoles: string;
 }
