@@ -98,6 +98,21 @@ export interface RespuestaLugares {
   objetos: Lugares[];
 }
 
+export interface RespuestaHorariosAsignados {
+  error: string;
+  mensaje: string;
+  objetos: HorariosAsignados[];
+}
+
+export interface HorariosAsignados {
+  codigo: number;
+  nombre_completo: string;
+  alm_nomcom: string;
+  direccion: string;
+  horario_1: string;
+  horario_2: string;
+}
+
 export interface RespuestaHorarios {
   error: string;
   mensaje: string;

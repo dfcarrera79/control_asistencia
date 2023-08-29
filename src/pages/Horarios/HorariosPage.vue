@@ -29,6 +29,10 @@
         <q-tab
           name="visualizacion"
           label="Visualización de Horarios Asignados"
+          @click="
+            obtenerHorariosAsignados(modelo);
+            obtenerLugaresTrabajo();
+          "
         />
       </q-tabs>
 
@@ -44,10 +48,11 @@
         </q-tab-panel>
 
         <q-tab-panel name="visualizacion">
-          <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-            Visualización de Horarios
-          </div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <AsignadosComponent
+            :filas="filas"
+            :groups="groups"
+            @updateRows="actualizarFilas($event)"
+          />
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -59,12 +64,19 @@ import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
 import HorariosComponent from './HorariosComponent.vue';
 import AsignacionComponent from './AsignacionComponent.vue';
-import { FilasHorarios } from '../../components/models';
+import AsignadosComponent from './AsignadosComponent.vue';
+import {
+  FilasHorarios,
+  HorariosAsignados,
+  Lugar,
+} from '../../components/models';
 
 // Data
 const tab = ref('');
+const modelo = ref('');
+const groups = ref<string[]>([]);
 const rows = ref<FilasHorarios[]>([]);
-
+const filas = ref<HorariosAsignados[]>([]);
 const { get } = useAxios();
 
 // Methods
@@ -85,6 +97,37 @@ const obtenerHorarios = async () => {
 
 const updateRows = (): void => {
   obtenerHorarios();
+};
+
+const obtenerHorariosAsignados = async (modelo: string) => {
+  const respuesta = await get('/obtener_horarios_asignados', {
+    lugar: modelo,
+  });
+  if (respuesta.error === 'S') {
+    filas.value = [];
+    return;
+  }
+
+  // Check if the response contains data
+  if (respuesta.objetos.length === 0) {
+    filas.value = [];
+  } else {
+    filas.value = respuesta.objetos;
+  }
+};
+
+const actualizarFilas = (event: string): void => {
+  obtenerHorariosAsignados(event);
+};
+
+const obtenerLugaresTrabajo = async () => {
+  const respuesta = await get('/obtener_lugar_horario', {});
+  if (respuesta.error === 'S') {
+    console.error(respuesta.mensaje);
+    return;
+  }
+  const data: Lugar[] = respuesta.objetos;
+  groups.value = [...new Set(data.map((item) => item.lugares))];
 };
 </script>
 

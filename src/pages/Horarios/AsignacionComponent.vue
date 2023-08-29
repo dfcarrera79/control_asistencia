@@ -11,7 +11,14 @@
           </p>
         </div>
         <div class="q-pl-md">
-          <q-btn flat rounded color="primary" icon="update" dense>
+          <q-btn
+            flat
+            rounded
+            color="primary"
+            icon="update"
+            dense
+            @click="obtenerHorariosAsignados()"
+          >
             <q-tooltip
               anchor="center right"
               self="center left"
@@ -123,7 +130,14 @@
         >
           <template v-slot:body-cell-nombre="props">
             <q-td :props="props">
-              <q-icon name="done" size="1.5em" color="green" />
+              <q-icon
+                name="done"
+                size="1.5em"
+                color="green"
+                v-if="
+                  empleadosAsignados.includes(props.row.codigo) ? true : false
+                "
+              />
               {{ props.row.nombre_completo }}
             </q-td>
           </template>
@@ -137,7 +151,12 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
-import { FilasAsignadas, Lugar, Horario } from '../../components/models';
+import {
+  FilasAsignadas,
+  Lugar,
+  Horario,
+  RespuestaEmpleados,
+} from '../../components/models';
 
 // Data
 const $q = useQuasar();
@@ -152,8 +171,7 @@ const selected = ref([]);
 const lugar = ref('');
 const lugares = ref<string[]>([]);
 const opcionesLugares = ref(lugares.value);
-const horarios = ref<string[]>([]);
-
+const empleadosAsignados = ref<number[]>([]);
 const options = ref<Horario[]>([]);
 const opcionesHorarios = ref({
   codigo: 0,
@@ -249,8 +267,6 @@ const obtenerHorarios = async () => {
   }
   const data: Horario[] = respuesta.objetos;
   options.value = data;
-  console.log('[HORARIO data]: ', data);
-  horarios.value = [...new Set(data.map((item) => item.nombre))];
 };
 
 const obtenerEmpleadosAsignados = async (modelo: string) => {
@@ -267,6 +283,19 @@ const obtenerEmpleadosAsignados = async (modelo: string) => {
     filas.value = [];
   } else {
     filas.value = respuesta.objetos;
+  }
+};
+
+const obtenerHorariosAsignados = async () => {
+  const respuesta: RespuestaEmpleados = await get(
+    '/obtener_empleados_horarios',
+    {}
+  );
+  if (respuesta.error === 'N') {
+    empleadosAsignados.value = respuesta.objetos.map((el) => el.usuario_codigo);
+  }
+  if (respuesta.error === 'S') {
+    empleadosAsignados.value = [];
   }
 };
 
@@ -310,6 +339,7 @@ const handleButtonClicked = async (id: number, selected: FilasAsignadas[]) => {
 onMounted(() => {
   obtenerHorarios();
   obtenerLugaresTrabajo();
+  obtenerHorariosAsignados();
   obtenerEmpleadosAsignados(lugar.value);
 });
 

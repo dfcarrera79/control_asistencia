@@ -734,7 +734,7 @@
 import { ref } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
-import { FilasHorarios, Horarios } from '../../components/models';
+import { FilasHorarios } from '../../components/models';
 
 /* Defined Props */
 const props = defineProps<{
