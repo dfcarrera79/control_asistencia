@@ -109,6 +109,7 @@ export interface HorariosAsignados {
   nombre_completo: string;
   alm_nomcom: string;
   direccion: string;
+  dias_trabajados: string;
   horario_1: string;
   horario_2: string;
 }

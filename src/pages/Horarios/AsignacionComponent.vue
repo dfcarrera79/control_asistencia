@@ -127,6 +127,7 @@
           v-model:selected="selected"
           :rows-per-page-options="[0]"
           v-model:pagination="pagination"
+          :visible-columns="['nombre', 'lugar', 'direccion']"
         >
           <template v-slot:body-cell-nombre="props">
             <q-td :props="props">

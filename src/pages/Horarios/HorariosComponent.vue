@@ -40,24 +40,6 @@
               HORARIOS REGISTRADOS
             </p>
           </div>
-          <!-- <div class="q-pl-md">
-            <q-btn
-              flat
-              rounded
-              color="primary"
-              icon="update"
-              dense
-              @click="actualizarFilas()"
-            >
-              <q-tooltip
-                anchor="center right"
-                self="center left"
-                :offset="[10, 10]"
-              >
-                <strong class="text-caption">Actualizar tabla</strong>
-              </q-tooltip>
-            </q-btn>
-          </div> -->
         </div>
       </div>
     </div>
@@ -734,6 +716,7 @@
 import { ref } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
+import { getSortedWorkDays } from '../../services/useWorkDays';
 import { FilasHorarios } from '../../components/models';
 
 /* Defined Props */
@@ -906,24 +889,24 @@ const abrirDialogoDos = (
   dialogoDos.value = true;
 };
 
-const getSortedWorkDays = (row) => {
-  const days = Object.keys(row.dias_trabajados)
-    .filter((day) => row.dias_trabajados[day] === 'true')
-    .sort((a, b) => {
-      const order = [
-        'lunes',
-        'martes',
-        'miercoles', // Corregir la clave con acento
-        'jueves',
-        'viernes',
-        'sabado', // Corregir la clave con acento
-        'domingo',
-      ];
-      return order.indexOf(a) - order.indexOf(b);
-    });
+// const getSortedWorkDays = (row) => {
+//   const days = Object.keys(row.dias_trabajados)
+//     .filter((day) => row.dias_trabajados[day] === 'true')
+//     .sort((a, b) => {
+//       const order = [
+//         'lunes',
+//         'martes',
+//         'miercoles',
+//         'jueves',
+//         'viernes',
+//         'sabado',
+//         'domingo',
+//       ];
+//       return order.indexOf(a) - order.indexOf(b);
+//     });
 
-  return days.join(', ');
-};
+//   return days.join(', ');
+// };
 
 const generarDias = () => {
   const dias = {

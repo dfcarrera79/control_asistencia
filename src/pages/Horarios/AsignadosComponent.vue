@@ -69,6 +69,29 @@
         v-model:pagination="pagination"
         :visible-columns="visibleColumns"
       >
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="nombre_completo" :props="props">
+              {{ props.row.nombre_completo }}
+            </q-td>
+            <q-td key="alm_nomcom" :props="props">
+              {{ props.row.alm_nomcom }}
+            </q-td>
+            <q-td key="direccion" :props="props">
+              {{ props.row.direccion }}
+            </q-td>
+            <q-td key="dias" :props="props">
+              {{ getSortedWorkDays(props.row) }}
+            </q-td>
+            <q-td key="horario_1" :props="props">
+              {{
+                `${formatTimeRange(props.row.horario_1)} ${formatTimeRange(
+                  props.row.horario_2
+                )}`
+              }}
+            </q-td>
+          </q-tr>
+        </template>
       </q-table>
     </q-scroll-area>
   </div>
@@ -77,7 +100,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { QTableProps } from 'quasar';
-// import { useAxios } from '../../services/useAxios';
+import { getSortedWorkDays } from '../../services/useWorkDays';
 import { HorariosAsignados } from '../../components/models';
 
 /* Defined Props */
@@ -98,16 +121,16 @@ const pagination = {
   rowsPerPage: 0, // 0 means all rows
 };
 const columns: QTableProps['columns'] = [
-  { name: 'id', align: 'left', label: 'ID', field: 'codigo' },
+  { name: 'codigo', align: 'left', label: 'ID', field: 'codigo' },
   {
-    name: 'nombre',
+    name: 'nombre_completo',
     align: 'left',
     label: 'Nombre',
     field: 'nombre_completo',
     sortable: true,
   },
   {
-    name: 'lugar',
+    name: 'alm_nomcom',
     align: 'left',
     label: 'Lugar de trabajo asignado',
     field: 'alm_nomcom',
@@ -119,27 +142,43 @@ const columns: QTableProps['columns'] = [
     field: 'direccion',
   },
   {
-    name: 'horario1',
+    name: 'dias',
     align: 'left',
-    label: 'Horario 1',
+    label: 'Dias de trabajo',
+    field: 'dias_trabajados',
+  },
+  {
+    name: 'horario_1',
+    align: 'left',
+    label: 'Horario',
     field: 'horario_1',
   },
   {
-    name: 'horario2',
+    name: 'horario_2',
     align: 'left',
     label: 'Horario 2',
     field: 'horario_2',
   },
 ];
 const visibleColumns = ref([
-  'nombre',
-  'lugar',
+  'nombre_completo',
+  'alm_nomcom',
   'direccion',
-  'horario1',
-  'horario2',
+  'dias',
+  'horario_1',
 ]);
 
 // Methods
+const formatTimeRange = (timeRangeString: string) => {
+  if (timeRangeString === null) {
+    return '';
+  }
+  const [startTime, endTime] = timeRangeString.split(' ');
+  const formattedStartTime = startTime.replace(':', ':');
+  const formattedEndTime = endTime.replace(':', ':');
+  return `(${formattedStartTime} - ${formattedEndTime})`;
+};
+
 const filtroFn = (val: string, update: (callback: () => void) => void) => {
   if (val === '') {
     update(() => {
