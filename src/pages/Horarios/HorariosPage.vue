@@ -63,12 +63,12 @@
 import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
 import HorariosComponent from './HorariosComponent.vue';
-import AsignacionComponent from './AsignacionComponent.vue';
 import AsignadosComponent from './AsignadosComponent.vue';
+import AsignacionComponent from './AsignacionComponent.vue';
 import {
   FilasHorarios,
   HorariosAsignados,
-  Lugar,
+  LugarTrabajo,
 } from '../../components/models';
 
 // Data
@@ -122,12 +122,13 @@ const actualizarFilas = (event: string): void => {
 
 const obtenerLugaresTrabajo = async () => {
   const respuesta = await get('/obtener_lugar_horario', {});
+  console.log('[RESPUESTA]: ', respuesta);
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
     return;
   }
-  const data: Lugar[] = respuesta.objetos;
-  groups.value = [...new Set(data.map((item) => item.lugares))];
+  const data: LugarTrabajo[] = respuesta.objetos;
+  groups.value = [...new Set(data.map((item) => item.alm_nomcom))];
 };
 </script>
 

@@ -21,7 +21,7 @@
             <q-icon name="search" />
           </template>
         </q-input>
-        <div class="q-pl-md">
+        <div class="q-px-md">
           <q-select
             dense
             filled
@@ -51,6 +51,22 @@
             </template>
           </q-select>
         </div>
+        <q-separator vertical />
+
+        <div class="q-pl-md">
+          <q-btn
+            color="red-6"
+            :label="
+              selected.length == 1 ? 'Eliminar Horario' : 'Eliminar Horarios'
+            "
+            icon="delete"
+            @click="
+              handleButtonClicked(selected);
+              enviarLugar(modelo);
+            "
+            :disable="selected.length == 0"
+          />
+        </div>
       </div>
     </div>
 
@@ -63,35 +79,15 @@
         :rows="props.filas"
         :columns="columns"
         :filter="filter"
-        row-key="cedula_ruc"
+        row-key="codigo"
         class="text-h6 text-grey-8"
         :rows-per-page-options="[0]"
         v-model:pagination="pagination"
         :visible-columns="visibleColumns"
+        :selected-rows-label="getSelectedString"
+        selection="multiple"
+        v-model:selected="selected"
       >
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="nombre_completo" :props="props">
-              {{ props.row.nombre_completo }}
-            </q-td>
-            <q-td key="alm_nomcom" :props="props">
-              {{ props.row.alm_nomcom }}
-            </q-td>
-            <q-td key="direccion" :props="props">
-              {{ props.row.direccion }}
-            </q-td>
-            <q-td key="dias" :props="props">
-              {{ getSortedWorkDays(props.row) }}
-            </q-td>
-            <q-td key="horario_1" :props="props">
-              {{
-                `${formatTimeRange(props.row.horario_1)} ${formatTimeRange(
-                  props.row.horario_2
-                )}`
-              }}
-            </q-td>
-          </q-tr>
-        </template>
       </q-table>
     </q-scroll-area>
   </div>
@@ -99,9 +95,10 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { QTableProps } from 'quasar';
-import { getSortedWorkDays } from '../../services/useWorkDays';
+import { QTableProps, useQuasar } from 'quasar';
+import { useAxios } from '../../services/useAxios';
 import { HorariosAsignados } from '../../components/models';
+import { getSortedWorkDays, getTimeFormated } from '../../services/useWorkDays';
 
 /* Defined Props */
 const props = defineProps<{
@@ -113,6 +110,7 @@ const props = defineProps<{
 const emit = defineEmits(['updateRows']);
 
 // Data
+const $q = useQuasar();
 const filter = ref('');
 const modelo = ref('');
 const opcions = ref(props.groups);
@@ -120,6 +118,7 @@ const pagination = {
   page: 1,
   rowsPerPage: 0, // 0 means all rows
 };
+const { deletes } = useAxios();
 const columns: QTableProps['columns'] = [
   { name: 'codigo', align: 'left', label: 'ID', field: 'codigo' },
   {
@@ -145,13 +144,13 @@ const columns: QTableProps['columns'] = [
     name: 'dias',
     align: 'left',
     label: 'Dias de trabajo',
-    field: 'dias_trabajados',
+    field: (row) => getSortedWorkDays(row),
   },
   {
     name: 'horario_1',
     align: 'left',
     label: 'Horario',
-    field: 'horario_1',
+    field: (row) => getTimeFormated(row),
   },
   {
     name: 'horario_2',
@@ -167,16 +166,15 @@ const visibleColumns = ref([
   'dias',
   'horario_1',
 ]);
+const selected = ref([]);
 
 // Methods
-const formatTimeRange = (timeRangeString: string) => {
-  if (timeRangeString === null) {
-    return '';
-  }
-  const [startTime, endTime] = timeRangeString.split(' ');
-  const formattedStartTime = startTime.replace(':', ':');
-  const formattedEndTime = endTime.replace(':', ':');
-  return `(${formattedStartTime} - ${formattedEndTime})`;
+const getSelectedString = () => {
+  return selected.value.length === 0
+    ? ''
+    : `${selected.value.length} record${
+        selected.value.length > 1 ? 's' : ''
+      } selected of ${props.filas.length}`;
 };
 
 const filtroFn = (val: string, update: (callback: () => void) => void) => {
@@ -197,6 +195,39 @@ const filtroFn = (val: string, update: (callback: () => void) => void) => {
 
 const enviarLugar = (event: string) => {
   emit('updateRows', event);
+};
+
+const eliminar_horario_asignado = async (codigo: number) => {
+  try {
+    const response = await deletes(
+      '/eliminar_horario_asignado',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          usuario_codigo: codigo,
+        })
+      )
+    );
+
+    if (response.error === 'N') {
+      console.log('[RESPONSE]: ', response);
+    }
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error eliminando el horario asignado:', error);
+  }
+};
+
+const handleButtonClicked = async (selected: HorariosAsignados[]) => {
+  for (const item of selected) {
+    await eliminar_horario_asignado(item.codigo);
+  }
 };
 
 watch(modelo, (newValue) => {

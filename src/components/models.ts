@@ -174,6 +174,10 @@ interface Objeto {
   usuario_codigo: number;
 }
 
+export interface LugarTrabajo {
+  alm_nomcom: string;
+}
+
 export interface Lugar {
   lugares: string;
 }
@@ -196,17 +200,7 @@ export interface DiasSemana {
   domingo: boolean;
 }
 
-export interface Horarios {
-  codigo: number;
-  nombre: string;
-  dias_trabajados: Diastrabajados;
-  inicio1: string;
-  fin1: string;
-  inicio2: string;
-  fin2: string;
-}
-
-interface Diastrabajados {
+export interface DiasTrabajados {
   lunes: string;
   jueves: string;
   martes: string;
@@ -214,4 +208,24 @@ interface Diastrabajados {
   viernes: string;
   sabado: string;
   domingo: string;
+}
+
+export interface HorariosAsignados {
+  codigo: number;
+  nombre_completo: string;
+  alm_nomcom: string;
+  dias_trabajados: DiasTrabajados;
+  direccion: string;
+  horario_1: string;
+  horario_2: string;
+}
+
+export interface Horarios {
+  codigo: number;
+  nombre: string;
+  dias_trabajados: DiasTrabajados;
+  inicio1: string;
+  fin1: string;
+  inicio2: string;
+  fin2: string;
 }

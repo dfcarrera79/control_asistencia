@@ -162,7 +162,7 @@ import {
 // Data
 const $q = useQuasar();
 const filter = ref('');
-const { get, put } = useAxios();
+const { get, post } = useAxios();
 const filas = ref<FilasAsignadas[]>([]);
 const pagination = {
   page: 1,
@@ -300,12 +300,12 @@ const obtenerHorariosAsignados = async () => {
   }
 };
 
-const designar_horario_empleado = async (
+const asignar_horario_empleado = async (
   turno_codigo: number,
   usuario_codigo: number
 ) => {
   try {
-    const response = await put(
+    const response = await post(
       '/asignar_horario',
       {},
       JSON.parse(
@@ -333,7 +333,7 @@ const designar_horario_empleado = async (
 
 const handleButtonClicked = async (id: number, selected: FilasAsignadas[]) => {
   for (const item of selected) {
-    await designar_horario_empleado(id, item.codigo);
+    await asignar_horario_empleado(id, item.codigo);
   }
 };
 
