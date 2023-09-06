@@ -192,7 +192,6 @@ const pagination = {
   rowsPerPage: 0, // 0 means all rows
 };
 const options = ref(props.lugares);
-
 const columnasVisibles = ref([
   'id',
   'nombre',
@@ -202,7 +201,6 @@ const columnasVisibles = ref([
   'email',
   'departamento',
 ]);
-
 const columnas: QTableProps['columns'] = [
   { name: 'codigo', align: 'left', label: 'Codigo', field: 'codigo' },
   { name: 'id', align: 'left', label: 'Cedula', field: 'cedula_ruc' },

@@ -24,7 +24,10 @@
           <q-tab
             name="grupos"
             label="Lugares de Trabajo"
-            @click="obtenerAlmacenes()"
+            @click="
+              obtenerAlmacenes();
+              obtenerLugaresAsignados();
+            "
           />
           <q-tab
             name="perfiles"
@@ -45,7 +48,11 @@
 
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="grupos">
-            <LugaresTrabajoComponent :rows="rows" />
+            <LugaresTrabajoComponent
+              :rows="rows"
+              :lugaresAsignados="lugaresAsignados"
+              @actualizarLugares="actualizarLugares()"
+            />
           </q-tab-panel>
 
           <q-tab-panel name="perfiles">
@@ -73,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
 import LugaresTrabajoComponent from './LugaresTrabajoComponent.vue';
 import EmpleadosAsignadosComponent from './EmpleadosAsignadosComponent.vue';
@@ -152,6 +159,24 @@ const obtenerEmpleadoAsignado = async () => {
   }
 };
 
+const lugaresAsignados = ref<number[]>([]);
+
+const obtenerLugaresAsignados = async () => {
+  const respuesta: RespuestaLugares = await get('/obtener_lugares_asignados', {
+    usuario_codigo: 1,
+  });
+  if (respuesta.error === 'N') {
+    lugaresAsignados.value = respuesta.objetos.map((el) => el.alm_codigo);
+  }
+  if (respuesta.error === 'S') {
+    lugaresAsignados.value = [];
+  }
+};
+
+const actualizarLugares = () => {
+  obtenerLugaresAsignados();
+};
+
 const actualizarFilas = (event: string) => {
   obtenerGrupos();
   obtenerLugares();
@@ -190,11 +215,6 @@ const obtenerAlmacenes = async () => {
     rows.value = respuesta.objetos;
   }
 };
-
-// watch(model, (newValue) => {
-//   // Call the obtenerEmpleado function with the new value of 'model'
-//   obtenerEmpleado(newValue);
-// });
 
 const obtenerLugares = async () => {
   const respuesta: RespuestaLugares = await get('/obtener_lugares', {});

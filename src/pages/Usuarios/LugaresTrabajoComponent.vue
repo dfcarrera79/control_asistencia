@@ -2,9 +2,34 @@
   <div>
     <div class="q-pa-md">
       <div class="column q-pb-md">
-        <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-          LUGARES DE TRABAJO
-        </p>
+        <div class="row">
+          <div>
+            <p
+              class="text-h6 text-grey-8 q-pl-md"
+              style="font-family: 'Bebas Neue'"
+            >
+              LUGARES DE TRABAJO
+            </p>
+          </div>
+          <div class="q-pl-md">
+            <q-btn
+              flat
+              rounded
+              color="primary"
+              icon="update"
+              dense
+              @click="updateRows()"
+            >
+              <q-tooltip
+                anchor="center right"
+                self="center left"
+                :offset="[10, 10]"
+              >
+                <strong class="text-caption">Actualizar tabla</strong>
+              </q-tooltip>
+            </q-btn>
+          </div>
+        </div>
         <div class="row justify-left">
           <q-input
             outlined
@@ -66,6 +91,12 @@
                 />
               </q-td>
               <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                <q-icon
+                  name="done"
+                  size="1.5em"
+                  color="green"
+                  v-if="showDoneIcon(props.row.alm_codigo, col.name)"
+                />
                 {{ col.value }}
               </q-td>
             </q-tr>
@@ -172,7 +203,11 @@ import { FilasAlmacenes } from '../../components/models';
 /* Defined Props */
 const props = defineProps<{
   rows: FilasAlmacenes[];
+  lugaresAsignados: number[];
 }>();
+
+/* defined emits*/
+const emit = defineEmits(['actualizarLugares']);
 
 // Data
 const text = ref('');
@@ -211,6 +246,14 @@ const columns: QTableProps['columns'] = [
 ];
 
 // Methods
+const showDoneIcon = (codigo: number, nombre: string) => {
+  return props.lugaresAsignados.includes(codigo) && nombre === 'nomcom';
+};
+
+const updateRows = () => {
+  emit('actualizarLugares');
+};
+
 const openGoogleMaps = (address: string) => {
   const encodedAddress = encodeURIComponent(address);
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
