@@ -12,6 +12,7 @@ export interface Session {
   currentURL: string;
   token: string | null;
   usuario: string;
+  codigo: number;
 }
 
 export interface TokenDecoded {
@@ -218,6 +219,25 @@ export interface HorariosAsignados {
   direccion: string;
   horario_1: string;
   horario_2: string;
+}
+
+export interface EmpleadosAsignados {
+  usuario_codigo: number;
+  nombre_completo: string;
+  alm_nomcom: string;
+}
+
+export interface Excepciones extends EmpleadosAsignados {
+  excepcion: string;
+  dias: string[];
+}
+
+export interface Autorizados {
+  id: number;
+  nombre_completo: string;
+  excepcion: string;
+  dias: string[];
+  autorizado_por: string;
 }
 
 export interface Horarios {

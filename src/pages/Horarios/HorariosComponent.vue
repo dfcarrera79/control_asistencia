@@ -40,6 +40,24 @@
               HORARIOS REGISTRADOS
             </p>
           </div>
+          <div class="q-pl-md">
+            <q-btn
+              flat
+              rounded
+              color="primary"
+              icon="update"
+              dense
+              @click="actualizarFilas()"
+            >
+              <q-tooltip
+                anchor="center right"
+                self="center left"
+                :offset="[10, 10]"
+              >
+                <strong class="text-caption">Actualizar tabla</strong>
+              </q-tooltip>
+            </q-btn>
+          </div>
         </div>
       </div>
     </div>
@@ -55,6 +73,8 @@
           row-key="name"
           hide-header
           hide-bottom
+          :rows-per-page-options="[0]"
+          v-model:pagination="pagination"
         >
           <template v-slot:item="props">
             <div class="q-pa-xs" style="width: 350px">
@@ -84,7 +104,7 @@
                 <q-card-actions>
                   <q-btn
                     flat
-                    color="primary"
+                    color="red"
                     icon="delete"
                     label="Eliminar"
                     @click="openDialog(props.row.codigo)"
@@ -125,8 +145,13 @@
     <q-dialog v-model="dialogoUno">
       <q-card>
         <q-card-section>
-          <div class="text-h6 text-grey-9" style="font-family: 'Bebas Neue'">
-            UNA SOLA JORNADA
+          <div class="row items-center">
+            <div class="text-h6 text-grey-9" style="font-family: 'Bebas Neue'">
+              UNA SOLA JORNADA
+            </div>
+            <div>
+              <q-toggle v-model="rotativo" label="Horario rotativo" />
+            </div>
           </div>
         </q-card-section>
 
@@ -237,51 +262,59 @@
                   </p>
                 </div>
 
-                <div class="q-gutter-sm">
-                  <q-checkbox
-                    dense
-                    v-model="lunes"
-                    label="Lunes"
-                    color="primary"
-                  />
-                  <q-checkbox
-                    dense
-                    v-model="martes"
-                    label="Martes"
-                    color="primary"
-                  />
-                  <q-checkbox
-                    dense
-                    v-model="miercoles"
-                    label="Miércoles"
-                    color="primary"
-                  />
-                  <q-checkbox
-                    dense
-                    v-model="jueves"
-                    label="Jueves"
-                    color="primary"
-                  />
-                  <q-checkbox
-                    dense
-                    v-model="viernes"
-                    label="Viernes"
-                    color="primary"
-                  />
+                <div class="q-pa-none" v-if="rotativo === true">
+                  <div class="q-pb-sm">Model: {{ days }}</div>
+
+                  <q-date v-model="days" range multiple minimal />
                 </div>
-                <div class="q-gutter-sm q-pt-sm">
-                  <q-checkbox
-                    dense
-                    v-model="sabado"
-                    label="Sábado"
-                    color="primary"
-                  />
-                  <q-checkbox
-                    dense
-                    v-model="domingo"
-                    label="Domingo"
-                    color="primary"
-                  />
+
+                <div v-if="rotativo === false">
+                  <div class="q-gutter-sm">
+                    <q-checkbox
+                      dense
+                      v-model="lunes"
+                      label="Lunes"
+                      color="primary"
+                    />
+                    <q-checkbox
+                      dense
+                      v-model="martes"
+                      label="Martes"
+                      color="primary"
+                    />
+                    <q-checkbox
+                      dense
+                      v-model="miercoles"
+                      label="Miércoles"
+                      color="primary"
+                    />
+                    <q-checkbox
+                      dense
+                      v-model="jueves"
+                      label="Jueves"
+                      color="primary"
+                    />
+                    <q-checkbox
+                      dense
+                      v-model="viernes"
+                      label="Viernes"
+                      color="primary"
+                    />
+                  </div>
+                  <div class="q-gutter-sm q-pt-sm">
+                    <q-checkbox
+                      dense
+                      v-model="sabado"
+                      label="Sábado"
+                      color="primary"
+                    />
+                    <q-checkbox
+                      dense
+                      v-model="domingo"
+                      label="Domingo"
+                      color="primary"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -290,11 +323,20 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn
+            flat
+            label="Cerrar"
+            v-close-popup
+            @click="
+              cerrarDialogo();
+              actualizarFilas();
+            "
+          />
+          <q-btn
             v-if="codigoHorario === 0"
             flat
             label="Crear Horario"
             @click="
-              generarDias();
+              generarDias(rotativo);
               registrarHorario(
                 nombre,
                 jsonString,
@@ -313,15 +355,17 @@
                 !jueves &&
                 !viernes &&
                 !sabado &&
-                !domingo)
+                !domingo &&
+                days.length == 0)
             "
           />
+
           <q-btn
             v-if="codigoHorario !== 0"
             flat
             label="Actualizar Horario"
             @click="
-              generarDias();
+              generarDias(rotativo);
               actualizarHorario(
                 codigoHorario,
                 nombre,
@@ -341,16 +385,8 @@
                 !jueves &&
                 !viernes &&
                 !sabado &&
-                !domingo)
-            "
-          />
-          <q-btn
-            flat
-            label="Cerrar"
-            v-close-popup
-            @click="
-              cerrarDialogo();
-              actualizarFilas();
+                !domingo &&
+                days.length == 0)
             "
           />
         </q-card-actions>
@@ -360,8 +396,13 @@
     <q-dialog v-model="dialogoDos">
       <q-card>
         <q-card-section>
-          <div class="text-h6 text-grey-9" style="font-family: 'Bebas Neue'">
-            DOBLE JORNADA
+          <div class="row items-center">
+            <div class="text-h6 text-grey-9" style="font-family: 'Bebas Neue'">
+              DOBLE JORNADA
+            </div>
+            <div>
+              <q-toggle v-model="rotativo" label="Horario rotativo" />
+            </div>
           </div>
         </q-card-section>
 
@@ -572,51 +613,59 @@
                 </p>
               </div>
 
-              <div class="q-gutter-sm">
-                <q-checkbox
-                  dense
-                  v-model="lunes"
-                  label="Lunes"
-                  color="primary"
-                />
-                <q-checkbox
-                  dense
-                  v-model="martes"
-                  label="Martes"
-                  color="primary"
-                />
-                <q-checkbox
-                  dense
-                  v-model="miercoles"
-                  label="Miércoles"
-                  color="primary"
-                />
-                <q-checkbox
-                  dense
-                  v-model="jueves"
-                  label="Jueves"
-                  color="primary"
-                />
-                <q-checkbox
-                  dense
-                  v-model="viernes"
-                  label="Viernes"
-                  color="primary"
-                />
+              <div class="q-pa-none" v-if="rotativo === true">
+                <div class="q-pb-sm">Model: {{ days }}</div>
+
+                <q-date v-model="days" range multiple minimal />
               </div>
-              <div class="q-gutter-sm q-pt-sm">
-                <q-checkbox
-                  dense
-                  v-model="sabado"
-                  label="Sábado"
-                  color="primary"
-                />
-                <q-checkbox
-                  dense
-                  v-model="domingo"
-                  label="Domingo"
-                  color="primary"
-                />
+
+              <div v-if="rotativo === false">
+                <div class="q-gutter-sm">
+                  <q-checkbox
+                    dense
+                    v-model="lunes"
+                    label="Lunes"
+                    color="primary"
+                  />
+                  <q-checkbox
+                    dense
+                    v-model="martes"
+                    label="Martes"
+                    color="primary"
+                  />
+                  <q-checkbox
+                    dense
+                    v-model="miercoles"
+                    label="Miércoles"
+                    color="primary"
+                  />
+                  <q-checkbox
+                    dense
+                    v-model="jueves"
+                    label="Jueves"
+                    color="primary"
+                  />
+                  <q-checkbox
+                    dense
+                    v-model="viernes"
+                    label="Viernes"
+                    color="primary"
+                  />
+                </div>
+                <div class="q-gutter-sm q-pt-sm">
+                  <q-checkbox
+                    dense
+                    v-model="sabado"
+                    label="Sábado"
+                    color="primary"
+                  />
+                  <q-checkbox
+                    dense
+                    v-model="domingo"
+                    label="Domingo"
+                    color="primary"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -624,38 +673,11 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn
-            v-if="codigoHorario === 0"
-            flat
-            label="Crear Horario"
-            @click="
-              generarDias();
-              registrarHorario(
-                nombre,
-                jsonString,
-                entrada_uno,
-                salida_uno,
-                entrada_dos,
-                salida_dos
-              );
-              actualizarFilas();
-            "
-            :disable="
-              nombre === '' ||
-              (!lunes &&
-                !martes &&
-                !miercoles &&
-                !jueves &&
-                !viernes &&
-                !sabado &&
-                !domingo)
-            "
-          />
-          <q-btn
             v-if="codigoHorario !== 0"
             flat
             label="Actualizar Horario"
             @click="
-              generarDias();
+              generarDias(rotativo);
               actualizarHorario(
                 codigoHorario,
                 nombre,
@@ -675,7 +697,8 @@
                 !jueves &&
                 !viernes &&
                 !sabado &&
-                !domingo)
+                !domingo &&
+                days.length == 0)
             "
           />
           <q-btn
@@ -685,6 +708,34 @@
             @click="
               cerrarDialogo();
               actualizarFilas();
+            "
+          />
+          <q-btn
+            v-if="codigoHorario === 0"
+            flat
+            label="Crear Horario"
+            @click="
+              generarDias(rotativo);
+              registrarHorario(
+                nombre,
+                jsonString,
+                entrada_uno,
+                salida_uno,
+                entrada_dos,
+                salida_dos
+              );
+              actualizarFilas();
+            "
+            :disable="
+              nombre === '' ||
+              (!lunes &&
+                !martes &&
+                !miercoles &&
+                !jueves &&
+                !viernes &&
+                !sabado &&
+                !domingo &&
+                days.length == 0)
             "
           />
         </q-card-actions>
@@ -713,7 +764,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
 import { getSortedWorkDays } from '../../services/useWorkDays';
@@ -729,13 +780,20 @@ const emit = defineEmits(['updateRows']);
 
 // Data
 const codigo = ref(0);
-const codigoHorario = ref(0);
-const dialogVisible = ref(false);
 const $q = useQuasar();
 const nombre = ref('');
+const codigoHorario = ref(0);
 const dialogoUno = ref(false);
 const dialogoDos = ref(false);
+const dialogVisible = ref(false);
 const { post, put, deletes } = useAxios();
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+
+const rotativo = ref(false);
+const days = ref([]);
 
 const lunes = ref(false);
 const martes = ref(false);
@@ -808,6 +866,22 @@ const columns: QTableProps['columns'] = [
 const visibleColumns = ref(['dias', 'horario1', 'horario2']);
 
 // Methods
+watch(rotativo, (newValue) => {
+  if (!newValue) {
+    days.value = [];
+  }
+
+  if (newValue) {
+    lunes.value = false;
+    martes.value = false;
+    miercoles.value = false;
+    jueves.value = false;
+    viernes.value = false;
+    sabado.value = false;
+    domingo.value = false;
+  }
+});
+
 const actualizarFilas = () => {
   emit('updateRows');
 };
@@ -889,18 +963,26 @@ const abrirDialogoDos = (
   dialogoDos.value = true;
 };
 
-const generarDias = () => {
-  const dias = {
-    lunes: lunes.value ? 'true' : 'false',
-    martes: martes.value ? 'true' : 'false',
-    miercoles: miercoles.value ? 'true' : 'false',
-    jueves: jueves.value ? 'true' : 'false',
-    viernes: viernes.value ? 'true' : 'false',
-    sabado: sabado.value ? 'true' : 'false',
-    domingo: domingo.value ? 'true' : 'false',
-  };
+const generarDias = (esRotativo: boolean) => {
+  if (!esRotativo) {
+    const dias = {
+      lunes: lunes.value ? 'true' : 'false',
+      martes: martes.value ? 'true' : 'false',
+      miercoles: miercoles.value ? 'true' : 'false',
+      jueves: jueves.value ? 'true' : 'false',
+      viernes: viernes.value ? 'true' : 'false',
+      sabado: sabado.value ? 'true' : 'false',
+      domingo: domingo.value ? 'true' : 'false',
+    };
 
-  jsonString.value = JSON.stringify(dias);
+    jsonString.value = JSON.stringify(dias);
+  } else {
+    const dias = {
+      dias: days.value,
+    };
+
+    jsonString.value = JSON.stringify(dias);
+  }
 };
 
 const cerrarDialogo = () => {
@@ -920,6 +1002,8 @@ const cerrarDialogo = () => {
 
   nombre.value = '';
   codigoHorario.value = 0;
+  rotativo.value = false;
+  days.value = [];
 };
 
 const registrarHorario = async (

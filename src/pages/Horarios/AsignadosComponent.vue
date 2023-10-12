@@ -1,9 +1,30 @@
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
-      <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-        EMPLEADOS ASIGNADOS A HORARIOS
-      </p>
+      <div class="row">
+        <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
+          EMPLEADOS ASIGNADOS A HORARIOS
+        </p>
+        <div class="q-pl-md">
+          <q-btn
+            flat
+            rounded
+            color="primary"
+            icon="update"
+            dense
+            @click="enviarLugar(modelo)"
+          >
+            <q-tooltip
+              anchor="center right"
+              self="center left"
+              :offset="[10, 10]"
+            >
+              <strong class="text-caption">Actualizar tabla</strong>
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </div>
+
       <div class="row justify-left">
         <q-input
           outlined
@@ -51,11 +72,12 @@
             </template>
           </q-select>
         </div>
+
         <q-separator vertical />
 
         <div class="q-pl-md">
           <q-btn
-            color="red-6"
+            color="red"
             :label="
               selected.length == 1 ? 'Eliminar Horario' : 'Eliminar Horarios'
             "
@@ -64,7 +86,7 @@
               handleButtonClicked(selected);
               enviarLugar(modelo);
             "
-            :disable="selected.length == 0"
+            :disable="selected.length === 0"
           />
         </div>
       </div>

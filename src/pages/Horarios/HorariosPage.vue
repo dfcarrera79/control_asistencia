@@ -122,7 +122,6 @@ const actualizarFilas = (event: string): void => {
 
 const obtenerLugaresTrabajo = async () => {
   const respuesta = await get('/obtener_lugar_horario', {});
-  console.log('[RESPUESTA]: ', respuesta);
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
     return;

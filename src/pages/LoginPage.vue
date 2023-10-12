@@ -138,6 +138,7 @@ const correoElectronico = ref('');
 const newUrl = ref(url.value.slice(url.value.indexOf('#') + 1));
 const token = ref('');
 const usuario = ref('');
+const codigo = ref(0);
 
 const rucRule: ((v: string) => string | boolean)[] = [
   (v: string) => !!v || 'El RUC es obligatorio',
@@ -155,9 +156,10 @@ onMounted(() => {
   const session: Session | null = LocalStorage.getItem('session');
   token.value = session?.token || '';
   usuario.value = session?.usuario || '';
+  codigo.value = session?.codigo || 0;
 
   if (session) {
-    authStore.iniciarSesion(token.value, usuario.value);
+    authStore.iniciarSesion(token.value, usuario.value, codigo.value);
     router.push(newUrl.value);
   }
 });
@@ -187,8 +189,15 @@ const logearse = async () => {
     mostrarMensaje('Error', respuesta.mensaje);
     return;
   }
-  authStore.actualizarUsuario(respuesta.objetos[0].usu_nomape);
-  authStore.iniciarSesion(respuesta.token, respuesta.objetos[0].usu_nomape);
+  authStore.actualizarUsuario(
+    respuesta.objetos[0].usu_nomape,
+    respuesta.objetos[0].codigo
+  );
+  authStore.iniciarSesion(
+    respuesta.token,
+    respuesta.objetos[0].usu_nomape,
+    respuesta.objetos[0].codigo
+  );
   router.push('/');
 };
 

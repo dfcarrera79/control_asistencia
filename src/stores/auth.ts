@@ -8,6 +8,7 @@ export const useAuthStore = defineStore('counter', {
     url: window.location.href,
     token: '',
     usuario: '',
+    codigo: 0,
   }),
 
   getters: {
@@ -23,22 +24,28 @@ export const useAuthStore = defineStore('counter', {
     getUsuario(state) {
       return state.usuario;
     },
+    getCodigo(state) {
+      return state.codigo;
+    },
   },
 
   actions: {
-    iniciarSesion(token: string, usuario: string) {
+    iniciarSesion(token: string, usuario: string, codigo: number) {
       this.estaLogeado = true;
       this.token = token;
       this.usuario = usuario;
+      this.codigo = codigo;
       LocalStorage.set('session', {
         estaLogeado: this.estaLogeado,
         currentURL: this.url,
         token: this.token,
         usuario: this.usuario,
+        codigo: this.codigo,
       });
     },
-    actualizarUsuario(newUsuario: string) {
+    actualizarUsuario(newUsuario: string, newCodigo: number) {
       this.usuario = newUsuario;
+      this.codigo = newCodigo;
     },
   },
 });

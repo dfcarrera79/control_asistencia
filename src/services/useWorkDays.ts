@@ -3,24 +3,37 @@ import {
   Horarios,
   HorariosAsignados,
 } from '../components/models';
+import moment from 'moment';
 
 export const getSortedWorkDays = (row: Horarios) => {
-  const days = (Object.keys(row.dias_trabajados) as Array<keyof DiasTrabajados>)
-    .filter((day) => row.dias_trabajados[day] === 'true')
-    .sort((a, b) => {
-      const order = [
-        'lunes',
-        'martes',
-        'miercoles',
-        'jueves',
-        'viernes',
-        'sabado',
-        'domingo',
-      ];
-      return order.indexOf(a) - order.indexOf(b);
-    });
+  const newVar = row.dias_trabajados;
 
-  return days.join(', ');
+  if (Array.isArray(newVar)) {
+    // Verificar si todos los elementos son strings
+    const cadenas = newVar.map(
+      (objeto) => `Desde: ${objeto.from} Hasta: ${objeto.to}`
+    );
+    return cadenas.join('; ');
+  } else {
+    const days = (
+      Object.keys(row.dias_trabajados) as Array<keyof DiasTrabajados>
+    )
+      .filter((day) => row.dias_trabajados[day] === 'true')
+      .sort((a, b) => {
+        const order = [
+          'lunes',
+          'martes',
+          'miercoles',
+          'jueves',
+          'viernes',
+          'sabado',
+          'domingo',
+        ];
+        return order.indexOf(a) - order.indexOf(b);
+      });
+
+    return days.join(', ');
+  }
 };
 
 const formatTimeRange = (timeRangeString: string) => {
@@ -39,3 +52,43 @@ export const getTimeFormated = (row: HorariosAsignados) => {
 
   return `${formatTimeRange(horario_1)} ${formatTimeRange(horario_2)}`;
 };
+
+export function formatearFechas(fechas: string[]) {
+  if (fechas.length === 0) {
+    return '';
+  }
+
+  const fechasFormateadas = [];
+  let fechaInicial = moment(fechas[0]);
+  let fechaFinal = fechaInicial;
+
+  for (let i = 1; i < fechas.length; i++) {
+    const fecha = moment(fechas[i]);
+
+    if (
+      fecha.diff(fechaFinal, 'days') === 1 &&
+      fecha.month() === fechaFinal.month()
+    ) {
+      fechaFinal = fecha;
+    } else {
+      fechasFormateadas.push(formatoFechas(fechaInicial, fechaFinal));
+      fechaInicial = fecha;
+      fechaFinal = fecha;
+    }
+  }
+
+  fechasFormateadas.push(formatoFechas(fechaInicial, fechaFinal));
+
+  return fechasFormateadas.join(', ');
+}
+
+function formatoFechas(
+  fechaInicial: moment.Moment,
+  fechaFinal: moment.Moment
+): string {
+  if (fechaInicial.isSame(fechaFinal, 'day')) {
+    return fechaInicial.format('DD/MM/YY');
+  } else {
+    return `${fechaInicial.format('DD')} - ${fechaFinal.format('DD/MM/YY')}`;
+  }
+}

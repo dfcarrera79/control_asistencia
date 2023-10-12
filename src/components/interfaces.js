@@ -208,3 +208,8 @@ interface Diastrabajados {
   viernes: string;
   miercoles: string;
 }
+
+interface RootObject {
+  id_exepcion: number;
+  nombre_exepcion: string;
+}

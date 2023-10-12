@@ -20,33 +20,41 @@
         align="justify"
         narrow-indicator
       >
-        <q-tab name="registro" label="Registro de Excepciones" />
-        <q-tab name="autorizacion" label="Autorización de Excepciones" />
-        <q-tab name="historial" label="Historial de Excepciones" />
+        <q-tab
+          name="registro"
+          label="Registro de Excepciones"
+          @click="obtenerEmpleadosAsignados()"
+        />
+        <q-tab
+          name="autorizacion"
+          label="Autorización de Excepciones"
+          @click="obtenerExcepciones()"
+        />
+        <q-tab
+          name="historial"
+          label="Historial de Excepciones"
+          @click="
+            obtenerExcepcionesAutorizadas($event.eventDesde, $event.eventHasta)
+          "
+        />
       </q-tabs>
 
       <q-separator />
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="registro">
-          <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-            Registro
-          </div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <RegistroComponent :filas="filas" />
         </q-tab-panel>
 
         <q-tab-panel name="autorizacion">
-          <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-            Autorización
-          </div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <AutorizacionComponent :rows="rows" @updateRows="updateRows()" />
         </q-tab-panel>
 
         <q-tab-panel name="historial">
-          <div class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-            Historial
-          </div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <AutorizadosComponent
+            :zeilen="zeilen"
+            @updateRows="actualizarFilas($event.eventDesde, $event.eventHasta)"
+          />
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -55,7 +63,77 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useAxios } from '../../services/useAxios';
+import RegistroComponent from './RegistroComponent.vue';
+import AutorizacionComponent from './AutorizacionComponent.vue';
+import AutorizadosComponent from './AutorizadosComponent.vue';
+import {
+  EmpleadosAsignados,
+  Excepciones,
+  Autorizados,
+} from '../../components/models';
 
 // Data
 const tab = ref('');
+const filas = ref<EmpleadosAsignados[]>([]);
+const rows = ref<Excepciones[]>([]);
+const zeilen = ref<Autorizados[]>([]);
+const { get } = useAxios();
+
+// Methods
+const obtenerEmpleadosAsignados = async () => {
+  const respuesta = await get('/obtener_empleados_lugares', {});
+  if (respuesta.error === 'S') {
+    filas.value = [];
+    return;
+  }
+
+  // Check if the response contains data
+  if (respuesta.objetos.length === 0) {
+    filas.value = [];
+  } else {
+    filas.value = respuesta.objetos;
+  }
+};
+
+const obtenerExcepciones = async () => {
+  const respuesta = await get('/obtener_excepciones', {});
+  if (respuesta.error === 'S') {
+    rows.value = [];
+    return;
+  }
+
+  // Check if the response contains data
+  if (respuesta.objetos.length === 0) {
+    rows.value = [];
+  } else {
+    rows.value = respuesta.objetos;
+  }
+};
+
+const obtenerExcepcionesAutorizadas = async (desde: string, hasta: string) => {
+  const respuesta = await get('/obtener_excepciones_autorizadas', {
+    desde: desde,
+    hasta: hasta,
+  });
+  if (respuesta.error === 'S') {
+    zeilen.value = [];
+    return;
+  }
+
+  // Check if the response contains data
+  if (respuesta.objetos.length === 0) {
+    zeilen.value = [];
+  } else {
+    zeilen.value = respuesta.objetos;
+  }
+};
+
+const updateRows = (): void => {
+  obtenerExcepciones();
+};
+
+const actualizarFilas = (eventDesde: string, eventHasta: string): void => {
+  obtenerExcepcionesAutorizadas(eventDesde, eventHasta);
+};
 </script>
