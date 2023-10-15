@@ -86,7 +86,7 @@
                 <q-list dense>
                   <q-item
                     v-for="col in props.cols.filter(
-                      (col) => col.name !== 'desc'
+                      (col: any) => col.name !== 'desc'
                     )"
                     :key="col.name"
                   >
@@ -767,8 +767,8 @@
 import { ref, watch } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
-import { getSortedWorkDays } from '../../services/useWorkDays';
 import { FilasHorarios } from '../../components/models';
+import { getSortedWorkDays } from '../../services/useWorkDays';
 
 /* Defined Props */
 const props = defineProps<{
@@ -977,11 +977,7 @@ const generarDias = (esRotativo: boolean) => {
 
     jsonString.value = JSON.stringify(dias);
   } else {
-    const dias = {
-      dias: days.value,
-    };
-
-    jsonString.value = JSON.stringify(dias);
+    jsonString.value = JSON.stringify(days.value);
   }
 };
 

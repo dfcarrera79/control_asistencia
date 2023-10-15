@@ -11,7 +11,7 @@
       />
       Actualizar constraseña
     </h4>
-    <form @submit="changePassword(ruc)">
+    <form @submit="changePassword(ruc as string)">
       <div class="form-group">
         <label for="newPassword">Nueva contraseña</label>
         <input

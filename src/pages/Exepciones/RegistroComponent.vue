@@ -53,7 +53,7 @@
               header-class="text-grey-8"
             >
               <div class="q-pa-md">
-                <q-date v-model="dias" multiple />
+                <q-date v-model="dias" multiple minimal />
               </div>
             </q-expansion-item>
           </q-list>

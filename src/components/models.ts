@@ -165,6 +165,12 @@ export interface FilasAsignadas {
   direccion: string;
 }
 
+export interface RespuestaAsignados {
+  error: string;
+  mensaje: string;
+  objetos: FilasAsignadas[];
+}
+
 export interface RespuestaEmpleados {
   error: string;
   mensaje: string;
@@ -248,4 +254,24 @@ export interface Horarios {
   fin1: string;
   inicio2: string;
   fin2: string;
+}
+
+export interface Asistencias {
+  codigo: number;
+  nombre_completo: string;
+  lugar_asignado: string;
+  entrada: string;
+  salida: string;
+}
+
+export interface RespuestaAsistencias {
+  error: string;
+  mensaje: string;
+  objetos: Asistencias[];
+}
+
+export interface RespuestaNumero {
+  error: string;
+  mensaje: string;
+  objetos: number;
 }
