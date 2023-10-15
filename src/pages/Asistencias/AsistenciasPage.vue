@@ -27,7 +27,9 @@
       <q-separator />
 
       <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="horas"> </q-tab-panel>
+        <q-tab-panel name="horas">
+          <AsistenciasCalculadasComponent />
+        </q-tab-panel>
         <q-tab-panel name="registros">
           <AsistenciasComponent />
         </q-tab-panel>
@@ -40,6 +42,7 @@
 import { ref } from 'vue';
 
 import AsistenciasComponent from './AsistenciasComponent.vue';
+import AsistenciasCalculadasComponent from './AsistenciasCalculadasComponent.vue';
 
 // Data
 const tab = ref('');

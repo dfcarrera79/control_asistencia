@@ -275,3 +275,17 @@ export interface RespuestaNumero {
   mensaje: string;
   objetos: number;
 }
+
+export interface AsistenciasAtrasos {
+  codigo: number;
+  nombre_completo: string;
+  alm_nomcom: string;
+  horas_trabajadas: number;
+  atrasos: number;
+}
+
+export interface RespuestaCalculo {
+  error: string;
+  mensaje: string;
+  objetos: AsistenciasAtrasos[];
+}
