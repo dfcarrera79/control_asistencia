@@ -169,32 +169,11 @@
         :columns="columnas"
         row-key="codigo"
         hide-bottom
+        :rows-per-page-options="[0]"
         v-model:pagination="pagination"
-        hide-pagination
         :visible-columns="['nombre', 'lugar', 'entrada', 'salida']"
       >
       </q-table>
-      <div class="row justify-center q-mt-md">
-        <q-pagination
-          v-if="pagesNumber > 1"
-          size="12px"
-          v-model="page"
-          :max="pagesNumber"
-          direction-links
-          boundary-links
-          icon-first="skip_previous"
-          icon-last="skip_next"
-          icon-prev="fast_rewind"
-          icon-next="fast_forward"
-          text-color="grey"
-          color="primary"
-          unelevated
-          flat
-          active-design="flat"
-          active-color="white"
-          active-text-color="primary"
-        />
-      </div>
     </div>
   </div>
 </template>
@@ -202,7 +181,7 @@
 <script setup lang="ts">
 import moment from 'moment';
 import { QTableProps } from 'quasar';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useAxios } from '../../services/useAxios';
 import {
   Lugar,
@@ -332,14 +311,12 @@ const obtenerNumeroPaginas = async () => {
   numFilas.value = respuesta.objetos;
 };
 
-const obtenerAsistencias = async () => {
+const obtenerAtrasos = async () => {
   const codigo = obtenerCodigo(empleado.value);
-  const respuesta = await get('/obtener_asistencias', {
+  const respuesta = await get('/obtener_atrasos', {
     usuario_codigo: codigo,
     fecha_desde: desde.value,
     fecha_hasta: hasta.value,
-    numero_de_pagina: page.value,
-    registros_por_pagina: pagination.value.rowsPerPage,
   });
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
@@ -350,7 +327,7 @@ const obtenerAsistencias = async () => {
 
 const handleButtonClicked = () => {
   obtenerNumeroPaginas();
-  obtenerAsistencias();
+  obtenerAtrasos();
 };
 
 const obtenerLugaresTrabajo = async () => {
@@ -398,12 +375,7 @@ watch(lugar, () => {
   obtenerEmpleadosAsignados(lugar.value);
 });
 
-// Computed
-const pagesNumber = computed(() => {
-  return Math.ceil(numFilas.value / pagination.value.rowsPerPage);
-});
-
 watch(page, () => {
-  obtenerAsistencias();
+  obtenerAtrasos();
 });
 </script>

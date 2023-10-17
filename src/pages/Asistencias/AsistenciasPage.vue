@@ -22,6 +22,7 @@
       >
         <q-tab name="horas" label="Horas trabajadas y atrasos" />
         <q-tab name="registros" label="Asistencias por Usuario" />
+        <q-tab name="atrasos" label="Atrasos por Usuario" />
       </q-tabs>
 
       <q-separator />
@@ -33,6 +34,9 @@
         <q-tab-panel name="registros">
           <AsistenciasComponent />
         </q-tab-panel>
+        <q-tab-panel name="atrasos">
+          <AtrasosComponent />
+        </q-tab-panel>
       </q-tab-panels>
     </q-card>
   </div>
@@ -42,6 +46,7 @@
 import { ref } from 'vue';
 
 import AsistenciasComponent from './AsistenciasComponent.vue';
+import AtrasosComponent from './AtrasosComponent.vue';
 import AsistenciasCalculadasComponent from './AsistenciasCalculadasComponent.vue';
 
 // Data

@@ -36,7 +36,7 @@
             </template>
           </q-input>
         </div>
-        <div class="q-mx-sm" style="width: 250px">
+        <div class="q-ma-sm" style="width: 250px">
           <q-select
             dense
             filled
@@ -66,7 +66,7 @@
             </template>
           </q-select>
         </div>
-        <div class="q-mx-sm" style="max-width: 200px">
+        <div class="q-ma-sm" style="max-width: 200px">
           <q-input
             debounce="350"
             v-model="desde"
@@ -99,7 +99,7 @@
           </q-input>
         </div>
 
-        <div class="q-mx-sm" style="max-width: 200px">
+        <div class="q-ma-sm" style="max-width: 200px">
           <q-input
             debounce="350"
             v-model="hasta"
@@ -132,7 +132,7 @@
           </q-input>
         </div>
 
-        <div class="q-pl-md">
+        <div class="q-pl-md q-py-sm">
           <q-btn
             color="primary"
             icon="search"
