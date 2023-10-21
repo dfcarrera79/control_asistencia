@@ -786,7 +786,7 @@ const codigoHorario = ref(0);
 const dialogoUno = ref(false);
 const dialogoDos = ref(false);
 const dialogVisible = ref(false);
-const { post, put, deletes } = useAxios();
+const { get, post, put, deletes } = useAxios();
 const pagination = {
   page: 1,
   rowsPerPage: 0, // 0 means all rows
@@ -886,9 +886,26 @@ const actualizarFilas = () => {
   emit('updateRows');
 };
 
-const openDialog = (param: number) => {
+const openDialog = async (param: number) => {
   codigo.value = param;
-  dialogVisible.value = true;
+  const respuesta = await get('/verificar_horarios_asignados', {
+    codigo: codigo.value,
+  });
+
+  if (respuesta.objetos === true) {
+    dialogVisible.value = false;
+    $q.notify({
+      color: 'red-5',
+      textColor: 'white',
+      icon: 'warning',
+      message:
+        'Existen asistencias asociadas a este horario, no se puede eliminar',
+    });
+  }
+
+  if (respuesta.objetos === false) {
+    dialogVisible.value = true;
+  }
 };
 
 const actualizarHorario = async (
@@ -933,20 +950,37 @@ const actualizarHorario = async (
   }
 };
 
-const abrirDialogoUno = (
+const abrirDialogoUno = async (
   code: number,
   name: string,
   start1: string,
   end1: string
 ) => {
   codigoHorario.value = code;
-  nombre.value = name;
-  entrada_uno.value = start1;
-  salida_uno.value = end1;
-  dialogoUno.value = true;
+  const respuesta = await get('/verificar_horarios_asignados', {
+    codigo: codigoHorario.value,
+  });
+
+  if (respuesta.objetos === true) {
+    dialogVisible.value = false;
+    $q.notify({
+      color: 'red-5',
+      textColor: 'white',
+      icon: 'warning',
+      message:
+        'Existen asistencias asociadas a este horario, no se puede editar',
+    });
+  }
+
+  if (respuesta.objetos === false) {
+    nombre.value = name;
+    entrada_uno.value = start1;
+    salida_uno.value = end1;
+    dialogoUno.value = true;
+  }
 };
 
-const abrirDialogoDos = (
+const abrirDialogoDos = async (
   code: number,
   name: string,
   start1: string,
@@ -955,12 +989,29 @@ const abrirDialogoDos = (
   end2: string
 ) => {
   codigoHorario.value = code;
-  nombre.value = name;
-  entrada_uno.value = start1;
-  salida_uno.value = end1;
-  entrada_dos.value = start2;
-  salida_dos.value = end2;
-  dialogoDos.value = true;
+  const respuesta = await get('/verificar_horarios_asignados', {
+    codigo: codigoHorario.value,
+  });
+
+  if (respuesta.objetos === true) {
+    dialogVisible.value = false;
+    $q.notify({
+      color: 'red-5',
+      textColor: 'white',
+      icon: 'warning',
+      message:
+        'Existen asistencias asociadas a este horario, no se puede editar',
+    });
+  }
+
+  if (respuesta.objetos === false) {
+    nombre.value = name;
+    entrada_uno.value = start1;
+    salida_uno.value = end1;
+    entrada_dos.value = start2;
+    salida_dos.value = end2;
+    dialogoDos.value = true;
+  }
 };
 
 const generarDias = (esRotativo: boolean) => {

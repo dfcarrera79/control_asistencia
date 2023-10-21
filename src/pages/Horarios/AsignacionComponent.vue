@@ -3,6 +3,9 @@
     <div class="column">
       <div class="row">
         <div>
+          {{ opcionesHorarios }}
+          <br />
+          {{ codigoHorario }}
           <p
             class="text-h6 text-grey-8 q-pl-md"
             style="font-family: 'Bebas Neue'"
@@ -182,6 +185,7 @@ const opcionesHorarios = ref({
   inicio2: '',
   fin2: '',
 });
+const codigoHorario = ref(0);
 
 const columnas: QTableProps['columns'] = [
   { name: 'id', align: 'left', label: 'Cedula/Ruc', field: 'cedula_ruc' },
@@ -262,11 +266,13 @@ const obtenerLugaresTrabajo = async () => {
 
 const obtenerHorarios = async () => {
   const respuesta = await get('/obtener_horarios', {});
+  console.log('[RESPUESTA]: ', respuesta);
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
     return;
   }
   const data: Horario[] = respuesta.objetos;
+  console.log('[TURNOS]: ', JSON.stringify(data));
   options.value = data;
 };
 
@@ -285,6 +291,19 @@ const obtenerEmpleadosAsignados = async (modelo: string) => {
   } else {
     filas.value = respuesta.objetos;
   }
+};
+
+const copiarAHorarios = async () => {
+  const respuesta = await post(
+    '/copiar_a_horarios',
+    {},
+    JSON.parse(JSON.stringify(opcionesHorarios.value))
+  );
+  if (respuesta.error === 'S') {
+    console.error(respuesta.mensaje);
+    return;
+  }
+  codigoHorario.value = respuesta.objetos[0].codigo;
 };
 
 const obtenerHorariosAsignados = async () => {
@@ -332,6 +351,7 @@ const asignar_horario_empleado = async (
 };
 
 const handleButtonClicked = async (id: number, selected: FilasAsignadas[]) => {
+  copiarAHorarios();
   for (const item of selected) {
     await asignar_horario_empleado(id, item.codigo);
   }
