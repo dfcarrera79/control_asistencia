@@ -4,7 +4,7 @@
       class="row text-uppercase text-grey-8 justify-center content-center"
       style="font-family: 'Bebas Neue'"
     >
-      <div class="q-pt-md">REGISTRO DE ASISTENCIAS</div>
+      <div class="q-pt-sm">Horas suplementarias</div>
     </h4>
   </div>
 
@@ -20,22 +20,19 @@
         align="justify"
         narrow-indicator
       >
-        <q-tab name="registros" label="Asistencias y atrasos por Usuario" />
-        <q-tab name="horas" label="Registros de horas trabajadas" />
-        <q-tab name="atrasos" label="Consolidación por mes" />
+        <q-tab name="horas" label="Registro de horas suplementarias" />
+        <q-tab name="registros" label="Visualización de registros" />
       </q-tabs>
 
       <q-separator />
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="horas">
-          <AsistenciasCalculadasComponent />
+          <HoraSuplementariaComponent />
         </q-tab-panel>
+
         <q-tab-panel name="registros">
-          <AsistenciasComponent />
-        </q-tab-panel>
-        <q-tab-panel name="atrasos">
-          <ConsolidarMesComponent />
+          <RegistrosComponent />
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -44,11 +41,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import HoraSuplementariaComponent from './HoraSuplementariaComponent.vue';
+import RegistrosComponent from './RegistrosComponent.vue';
 
-import AsistenciasComponent from './AsistenciasComponent.vue';
-import ConsolidarMesComponent from './ConsolidarMesComponent.vue';
-import AsistenciasCalculadasComponent from './AsistenciasCalculadasComponent.vue';
-
-// Data
+// Datos
 const tab = ref('');
 </script>

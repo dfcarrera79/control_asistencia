@@ -79,6 +79,15 @@ export interface FilasEmpleados {
   civil: string;
 }
 
+export interface FilasSuplementarias {
+  codigo: number;
+  nombre_completo_usuario: string;
+  departamento: string;
+  fecha: string;
+  horas: number;
+  asignado_por: string;
+}
+
 export interface Empleados extends FilasEmpleados {
   codigo: number;
 }
@@ -281,6 +290,7 @@ export interface AsistenciasAtrasos {
   nombre_completo: string;
   alm_nomcom: string;
   horas_trabajadas: number;
+  horas_suplementarias: number;
   atrasos: number;
 }
 

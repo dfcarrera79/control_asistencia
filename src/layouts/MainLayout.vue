@@ -153,6 +153,26 @@
           <q-item
             clickable
             v-ripple
+            to="/horas_suplementarias"
+            active-class="my-menu-link"
+          >
+            <q-item-section avatar>
+              <q-icon name="more_time" color="grey-9" />
+            </q-item-section>
+
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                Registro de horas suplementarias
+              </span>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/registro_asistencias"
             active-class="my-menu-link"
           >

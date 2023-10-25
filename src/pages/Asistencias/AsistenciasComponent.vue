@@ -151,9 +151,17 @@
         <div class="q-pl-sm q-py-sm row items-center">
           <q-btn
             color="primary"
-            icon="table_rows"
-            label="Buscar registros"
-            @click="handleButtonClicked"
+            label="Buscar asistencias"
+            @click="handleAsistenciasClicked"
+            :disable="empleado == '' || desde == '' || hasta == ''"
+          />
+        </div>
+
+        <div class="q-pl-sm q-py-sm row items-center">
+          <q-btn
+            color="primary"
+            label="Buscar atrasos"
+            @click="handleAtrasosClicked"
             :disable="empleado == '' || desde == '' || hasta == ''"
           />
         </div>
@@ -332,6 +340,23 @@ const obtenerNumeroPaginas = async () => {
   numFilas.value = respuesta.objetos;
 };
 
+const obtenerNumeroPaginasAtrasos = async () => {
+  const codigo = obtenerCodigo(empleado.value);
+  const respuesta: RespuestaNumero = await get(
+    '/obtener_numero_paginas_atrasos',
+    {
+      usuario_codigo: codigo,
+      fecha_desde: desde.value,
+      fecha_hasta: hasta.value,
+    }
+  );
+  if (respuesta.error === 'S') {
+    console.error(respuesta.mensaje);
+    return;
+  }
+  numFilas.value = respuesta.objetos;
+};
+
 const obtenerAsistencias = async () => {
   const codigo = obtenerCodigo(empleado.value);
   const respuesta = await get('/obtener_asistencias', {
@@ -348,9 +373,28 @@ const obtenerAsistencias = async () => {
   filas.value = respuesta.objetos;
 };
 
-const handleButtonClicked = () => {
+const obtenerAtrasos = async () => {
+  const codigo = obtenerCodigo(empleado.value);
+  const respuesta = await get('/obtener_atrasos', {
+    usuario_codigo: codigo,
+    fecha_desde: desde.value,
+    fecha_hasta: hasta.value,
+  });
+  if (respuesta.error === 'S') {
+    console.error(respuesta.mensaje);
+    return;
+  }
+  filas.value = respuesta.objetos;
+};
+
+const handleAsistenciasClicked = () => {
   obtenerNumeroPaginas();
   obtenerAsistencias();
+};
+
+const handleAtrasosClicked = () => {
+  obtenerNumeroPaginasAtrasos();
+  obtenerAtrasos();
 };
 
 const obtenerLugaresTrabajo = async () => {

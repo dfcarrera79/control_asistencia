@@ -3,9 +3,6 @@
     <div class="column">
       <div class="row">
         <div>
-          {{ opcionesHorarios }}
-          <br />
-          {{ codigoHorario }}
           <p
             class="text-h6 text-grey-8 q-pl-md"
             style="font-family: 'Bebas Neue'"
@@ -266,13 +263,11 @@ const obtenerLugaresTrabajo = async () => {
 
 const obtenerHorarios = async () => {
   const respuesta = await get('/obtener_horarios', {});
-  console.log('[RESPUESTA]: ', respuesta);
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
     return;
   }
   const data: Horario[] = respuesta.objetos;
-  console.log('[TURNOS]: ', JSON.stringify(data));
   options.value = data;
 };
 

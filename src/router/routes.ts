@@ -71,6 +71,18 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/horas_suplementarias',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Suplementarias/SuplementariasPage.vue'),
+        beforeEnter: multiguard([estaLogeado]),
+      },
+    ],
+  },
+
+  {
     path: '/registro_asistencias',
     component: () => import('layouts/MainLayout.vue'),
     children: [
