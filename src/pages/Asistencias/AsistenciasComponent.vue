@@ -375,11 +375,13 @@ const obtenerAsistencias = async () => {
 
 const obtenerAtrasos = async () => {
   const codigo = obtenerCodigo(empleado.value);
+
   const respuesta = await get('/obtener_atrasos', {
     usuario_codigo: codigo,
     fecha_desde: desde.value,
     fecha_hasta: hasta.value,
   });
+
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
     return;
@@ -451,3 +453,7 @@ watch(page, () => {
   obtenerAsistencias();
 });
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

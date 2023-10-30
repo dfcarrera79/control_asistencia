@@ -51,145 +51,139 @@
       </div>
     </div>
     <div class="q-pa-md">
-      <q-scroll-area style="height: 550px">
-        <q-table
-          square
-          flat
-          bordered
-          hide-bottom
-          :rows="props.rows"
-          :columns="columns"
-          :filter="filter"
-          row-key="alm_codigo"
-          class="text-h6 text-grey-8"
-          :rows-per-page-options="[0]"
-          v-model:pagination="pagination"
-          :visible-columns="visibleColumns"
-        >
-          <template v-slot:header="props">
-            <q-tr :props="props">
-              <q-th auto-width />
-              <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                {{ col.label }}
-              </q-th>
-            </q-tr>
-          </template>
+      <q-table
+        square
+        flat
+        bordered
+        hide-bottom
+        :rows="props.rows"
+        :columns="columns"
+        :filter="filter"
+        row-key="alm_codigo"
+        class="my-sticky-header-table text-h6 text-grey-8"
+        :rows-per-page-options="[0]"
+        v-model:pagination="pagination"
+        :visible-columns="visibleColumns"
+      >
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th auto-width />
+            <q-th v-for="col in props.cols" :key="col.name" :props="props">
+              {{ col.label }}
+            </q-th>
+          </q-tr>
+        </template>
 
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td auto-width>
-                <q-btn
-                  size="sm"
-                  color="primary"
-                  round
-                  dense
-                  @click="
-                    props.expand = !props.expand;
-                    obtenerCoordenadas(props.row.alm_codigo);
-                  "
-                  :icon="props.expand ? 'remove' : 'add'"
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td auto-width>
+              <q-btn
+                size="sm"
+                color="primary"
+                round
+                dense
+                @click="
+                  props.expand = !props.expand;
+                  obtenerCoordenadas(props.row.alm_codigo);
+                "
+                :icon="props.expand ? 'remove' : 'add'"
+              />
+            </q-td>
+            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+              <q-icon
+                name="done"
+                size="1.5em"
+                color="green"
+                v-if="showDoneIcon(props.row.alm_codigo, col.name)"
+              />
+              {{ col.value }}
+            </q-td>
+          </q-tr>
+          <q-tr v-show="props.expand" :props="props">
+            <q-td colspan="100%">
+              <div class="text-left">
+                <q-toggle
+                  v-if="toogle"
+                  v-model="checked"
+                  label="Editar coordenadas"
                 />
-              </q-td>
-              <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                <q-icon
-                  name="done"
-                  size="1.5em"
-                  color="green"
-                  v-if="showDoneIcon(props.row.alm_codigo, col.name)"
-                />
-                {{ col.value }}
-              </q-td>
-            </q-tr>
-            <q-tr v-show="props.expand" :props="props">
-              <q-td colspan="100%">
-                <div class="text-left">
-                  <q-toggle
-                    v-if="toogle"
-                    v-model="checked"
-                    label="Editar coordenadas"
-                  />
-                  <div class="column justify-start" v-if="checked">
-                    <q-btn
+                <div class="column justify-start" v-if="checked">
+                  <q-btn
+                    dense
+                    outline
+                    color="primary"
+                    @click="
+                      openGoogleMaps(
+                        `${props.row.alm_calles}, ${props.row.alm_ciud}, ${props.row.alm_pais}`
+                      )
+                    "
+                    style="margin-left: 9px; width: 343px"
+                  >
+                    Buscar dirección en Google Maps
+                  </q-btn>
+
+                  <div class="row justify-start">
+                    <q-input
                       dense
-                      outline
                       color="primary"
-                      @click="
-                        openGoogleMaps(
-                          `${props.row.alm_calles}, ${props.row.alm_ciud}, ${props.row.alm_pais}`
-                        )
-                      "
-                      style="margin-left: 9px; width: 343px"
+                      outlined
+                      v-model="text"
+                      label="Ingresar coordenadas"
+                      :rules="[
+                        (val) =>
+                          (val && val.length > 0) ||
+                          'Por favor ingrese las coordenadas',
+                      ]"
+                      class="q-pa-sm"
+                      style="width: 360px"
                     >
-                      Buscar dirección en Google Maps
-                    </q-btn>
+                      <template v-slot:append>
+                        <q-icon
+                          name="close"
+                          @click="text = ''"
+                          class="cursor-pointer"
+                        />
+                      </template>
+                    </q-input>
 
-                    <div class="row justify-start">
-                      <q-input
-                        dense
-                        color="primary"
-                        outlined
-                        v-model="text"
-                        label="Ingresar coordenadas"
-                        :rules="[
-                          (val) =>
-                            (val && val.length > 0) ||
-                            'Por favor ingrese las coordenadas',
-                        ]"
-                        class="q-pa-sm"
-                        style="width: 360px"
-                      >
-                        <template v-slot:append>
-                          <q-icon
-                            name="close"
-                            @click="text = ''"
-                            class="cursor-pointer"
-                          />
-                        </template>
-                      </q-input>
+                    <q-btn
+                      v-if="!toogle"
+                      dense
+                      label="Guardar"
+                      color="primary"
+                      icon="save"
+                      :ripple="{ center: true }"
+                      :disable="text.length === 0"
+                      style="
+                        max-width: 150px;
+                        max-height: 39px;
+                        margin-top: 9px;
+                      "
+                      @click="registrarCoordenadas(props.row.alm_codigo, text)"
+                    />
 
-                      <q-btn
-                        v-if="!toogle"
-                        dense
-                        label="Guardar"
-                        color="primary"
-                        icon="save"
-                        :ripple="{ center: true }"
-                        :disable="text.length === 0"
-                        style="
-                          max-width: 150px;
-                          max-height: 39px;
-                          margin-top: 9px;
-                        "
-                        @click="
-                          registrarCoordenadas(props.row.alm_codigo, text)
-                        "
-                      />
-
-                      <q-btn
-                        v-if="toogle"
-                        dense
-                        label="Actualizar"
-                        color="primary"
-                        icon="update"
-                        :ripple="{ center: true }"
-                        :disable="text.length === 0"
-                        style="
-                          max-width: 150px;
-                          max-height: 39px;
-                          margin-top: 9px;
-                        "
-                        @click="
-                          actualizarCoordenadas(props.row.alm_codigo, text)
-                        "
-                      />
-                    </div>
+                    <q-btn
+                      v-if="toogle"
+                      dense
+                      label="Actualizar"
+                      color="primary"
+                      icon="update"
+                      :ripple="{ center: true }"
+                      :disable="text.length === 0"
+                      style="
+                        max-width: 150px;
+                        max-height: 39px;
+                        margin-top: 9px;
+                      "
+                      @click="actualizarCoordenadas(props.row.alm_codigo, text)"
+                    />
                   </div>
                 </div>
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
-      </q-scroll-area>
+              </div>
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
     </div>
   </div>
 </template>
@@ -347,3 +341,7 @@ const actualizarCoordenadas = async (
   }
 };
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

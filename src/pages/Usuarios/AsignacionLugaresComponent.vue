@@ -123,40 +123,40 @@
         </strong>
       </div>
     </div>
-    <q-scroll-area style="height: 550px">
-      <div class="q-pa-md">
-        <q-table
-          square
-          flat
-          bordered
-          hide-bottom
-          :rows="props.filas"
-          :columns="columnas"
-          :filter="filter"
-          row-key="codigo"
-          :selected-rows-label="getSelectedString"
-          selection="multiple"
-          v-model:selected="selected"
-          :rows-per-page-options="[0]"
-          v-model:pagination="pagination"
-          :visible-columns="columnasVisibles"
-        >
-          <template v-slot:body-cell-nombre="props">
-            <q-td :props="props">
-              <q-icon
-                name="done"
-                size="1.5em"
-                color="green"
-                v-if="
-                  empleadosAsignados.includes(props.row.codigo) ? true : false
-                "
-              />
-              {{ props.row.nombre_completo }}
-            </q-td>
-          </template>
-        </q-table>
-      </div>
-    </q-scroll-area>
+
+    <div class="q-pa-md">
+      <q-table
+        square
+        flat
+        bordered
+        hide-bottom
+        :rows="props.filas"
+        :columns="columnas"
+        :filter="filter"
+        row-key="codigo"
+        :selected-rows-label="getSelectedString"
+        selection="multiple"
+        v-model:selected="selected"
+        :rows-per-page-options="[0]"
+        v-model:pagination="pagination"
+        :visible-columns="columnasVisibles"
+        class="my-sticky-header-table text-h6 text-grey-8"
+      >
+        <template v-slot:body-cell-nombre="props">
+          <q-td :props="props">
+            <q-icon
+              name="done"
+              size="1.5em"
+              color="green"
+              v-if="
+                empleadosAsignados.includes(props.row.codigo) ? true : false
+              "
+            />
+            {{ props.row.nombre_completo }}
+          </q-td>
+        </template>
+      </q-table>
+    </div>
   </div>
 </template>
 
@@ -315,9 +315,6 @@ const designar_lugar_empleado = async (
       )
     );
 
-    if (response.error === 'N') {
-      console.log('[RESPONSE]: ', response);
-    }
     // Handle the response accordingly
     $q.notify({
       color: response.error === 'N' ? 'green-4' : 'red-5',
@@ -361,3 +358,7 @@ watch(lugar, () => {
   getCalles(lugar.value);
 });
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

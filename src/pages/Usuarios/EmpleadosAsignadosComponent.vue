@@ -54,22 +54,20 @@
       </div>
     </div>
 
-    <q-scroll-area style="height: 550px">
-      <q-table
-        square
-        flat
-        bordered
-        hide-bottom
-        :rows="props.zeile"
-        :columns="spalte"
-        :filter="filter"
-        row-key="cedula_ruc"
-        class="text-h6 text-grey-8"
-        :rows-per-page-options="[0]"
-        v-model:pagination="pagination"
-      >
-      </q-table>
-    </q-scroll-area>
+    <q-table
+      square
+      flat
+      bordered
+      hide-bottom
+      :rows="props.zeile"
+      :columns="spalte"
+      :filter="filter"
+      row-key="cedula_ruc"
+      class="my-sticky-header-table text-h6 text-grey-8"
+      :rows-per-page-options="[0]"
+      v-model:pagination="pagination"
+    >
+    </q-table>
   </div>
 </template>
 
@@ -144,3 +142,7 @@ watch(modelo, (newValue) => {
   enviarLugar(newValue);
 });
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

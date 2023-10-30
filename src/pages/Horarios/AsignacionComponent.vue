@@ -111,40 +111,40 @@
         </div>
       </div>
     </div>
-    <q-scroll-area style="height: 550px">
-      <div class="q-pa-md">
-        <q-table
-          square
-          flat
-          bordered
-          hide-bottom
-          :rows="filas"
-          :columns="columnas"
-          :filter="filter"
-          row-key="cedula_ruc"
-          :selected-rows-label="getSelectedString"
-          selection="multiple"
-          v-model:selected="selected"
-          :rows-per-page-options="[0]"
-          v-model:pagination="pagination"
-          :visible-columns="['nombre', 'lugar', 'direccion']"
-        >
-          <template v-slot:body-cell-nombre="props">
-            <q-td :props="props">
-              <q-icon
-                name="done"
-                size="1.5em"
-                color="green"
-                v-if="
-                  empleadosAsignados.includes(props.row.codigo) ? true : false
-                "
-              />
-              {{ props.row.nombre_completo }}
-            </q-td>
-          </template>
-        </q-table>
-      </div>
-    </q-scroll-area>
+
+    <div class="q-pa-md">
+      <q-table
+        square
+        flat
+        bordered
+        hide-bottom
+        :rows="filas"
+        :columns="columnas"
+        :filter="filter"
+        row-key="cedula_ruc"
+        :selected-rows-label="getSelectedString"
+        class="my-sticky-header-table text-h6 text-grey-8"
+        selection="multiple"
+        v-model:selected="selected"
+        :rows-per-page-options="[0]"
+        v-model:pagination="pagination"
+        :visible-columns="['nombre', 'lugar', 'direccion']"
+      >
+        <template v-slot:body-cell-nombre="props">
+          <q-td :props="props">
+            <q-icon
+              name="done"
+              size="1.5em"
+              color="green"
+              v-if="
+                empleadosAsignados.includes(props.row.codigo) ? true : false
+              "
+            />
+            {{ props.row.nombre_completo }}
+          </q-td>
+        </template>
+      </q-table>
+    </div>
   </div>
 </template>
 
@@ -182,7 +182,6 @@ const opcionesHorarios = ref({
   inicio2: '',
   fin2: '',
 });
-const codigoHorario = ref(0);
 
 const columnas: QTableProps['columns'] = [
   { name: 'id', align: 'left', label: 'Cedula/Ruc', field: 'cedula_ruc' },
@@ -288,19 +287,6 @@ const obtenerEmpleadosAsignados = async (modelo: string) => {
   }
 };
 
-const copiarAHorarios = async () => {
-  const respuesta = await post(
-    '/copiar_a_horarios',
-    {},
-    JSON.parse(JSON.stringify(opcionesHorarios.value))
-  );
-  if (respuesta.error === 'S') {
-    console.error(respuesta.mensaje);
-    return;
-  }
-  codigoHorario.value = respuesta.objetos[0].codigo;
-};
-
 const obtenerHorariosAsignados = async () => {
   const respuesta: RespuestaEmpleados = await get(
     '/obtener_empleados_horarios',
@@ -330,9 +316,6 @@ const asignar_horario_empleado = async (
       )
     );
 
-    if (response.error === 'N') {
-      console.log('[RESPONSE]: ', response);
-    }
     // Handle the response accordingly
     $q.notify({
       color: response.error === 'N' ? 'green-4' : 'red-5',
@@ -346,7 +329,6 @@ const asignar_horario_empleado = async (
 };
 
 const handleButtonClicked = async (id: number, selected: FilasAsignadas[]) => {
-  copiarAHorarios();
   for (const item of selected) {
     await asignar_horario_empleado(id, item.codigo);
   }
@@ -363,3 +345,7 @@ watch(lugar, () => {
   obtenerEmpleadosAsignados(lugar.value);
 });
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

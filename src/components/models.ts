@@ -299,3 +299,21 @@ export interface RespuestaCalculo {
   mensaje: string;
   objetos: AsistenciasAtrasos[];
 }
+
+export interface RegistrosDeHoras {
+  codigo: number;
+  nombre_completo: string;
+  alm_nomcom: string;
+  horas_trabajadas: number;
+  atrasos: number;
+  horas_suplementarias: number;
+}
+
+export interface RegistrosConsolidados {
+  codigo_detalle: number;
+  nombre_completo: string;
+  departamento: string;
+  normal: number;
+  suplementaria: number;
+  atrasos: number;
+}

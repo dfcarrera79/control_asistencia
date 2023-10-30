@@ -90,25 +90,25 @@
         </div>
       </div>
     </div>
-    <q-scroll-area style="height: 550px">
-      <div class="q-pa-md">
-        <q-table
-          square
-          flat
-          bordered
-          hide-bottom
-          :rows="filas"
-          :columns="columnas"
-          :filter="filter"
-          row-key="codigo"
-          selection="multiple"
-          v-model:selected="selected"
-          :rows-per-page-options="[0]"
-          v-model:pagination="pagination"
-          :visible-columns="['nombre', 'departamento']"
-        />
-      </div>
-    </q-scroll-area>
+
+    <div class="q-pa-md">
+      <q-table
+        square
+        flat
+        bordered
+        hide-bottom
+        :rows="filas"
+        :columns="columnas"
+        :filter="filter"
+        row-key="codigo"
+        selection="multiple"
+        v-model:selected="selected"
+        :rows-per-page-options="[0]"
+        v-model:pagination="pagination"
+        :visible-columns="['nombre', 'departamento']"
+        class="my-sticky-header-table text-h6 text-grey-8"
+      />
+    </div>
   </div>
 </template>
 
@@ -238,3 +238,7 @@ watch(grupo, () => {
   obtenerEmpleados(grupo.value);
 });
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

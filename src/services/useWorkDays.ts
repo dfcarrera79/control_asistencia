@@ -92,3 +92,29 @@ function formatoFechas(
     return `${fechaInicial.format('DD')} - ${fechaFinal.format('DD/MM/YY')}`;
   }
 }
+
+export const obtenerHorasYMinutos = (horas: number) => {
+  // Extraer las partes enteras y decimales de las horas
+  const horasEnteras = Math.floor(horas);
+  const minutosDecimales = (horas - horasEnteras) * 60;
+
+  // Formatear el resultado en "horas: minutos"
+  const formatoHorasMinutos = `${horasEnteras}H ${Math.round(
+    minutosDecimales
+  )}min`;
+
+  return formatoHorasMinutos;
+};
+
+export const obtenerMinutosYSegundos = (minutos: number) => {
+  // Extraer las partes enteras y decimales de las horas
+  const minutosEnteros = Math.floor(minutos);
+  const segundosDecimales = (minutos - minutosEnteros) * 60;
+
+  // Formatear el resultado en "horas: minutos"
+  const formatoHorasMinutos = `${minutosEnteros}min ${Math.round(
+    segundosDecimales
+  )}seg`;
+
+  return formatoHorasMinutos;
+};

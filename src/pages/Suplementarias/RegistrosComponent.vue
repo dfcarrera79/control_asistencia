@@ -116,65 +116,64 @@
       </div>
     </div>
 
-    <q-scroll-area style="height: 550px">
-      <div class="q-pa-md">
-        <q-table
-          square
-          flat
-          bordered
-          hide-bottom
-          :rows="filas"
-          :columns="columnas"
-          :filter="filter"
-          row-key="codigo"
-          :rows-per-page-options="[0]"
-          v-model:pagination="pagination"
-          :visible-columns="[
-            'nombre',
-            'departamento',
-            'fecha',
-            'horas',
-            'asignado',
-          ]"
-        >
-          <template v-slot:header="props">
-            <q-tr :props="props">
-              <q-th auto-width />
-              <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                {{ col.label }}
-              </q-th>
-            </q-tr>
-          </template>
+    <div class="q-pa-md">
+      <q-table
+        square
+        flat
+        bordered
+        hide-bottom
+        :rows="filas"
+        :columns="columnas"
+        :filter="filter"
+        row-key="codigo"
+        :rows-per-page-options="[0]"
+        v-model:pagination="pagination"
+        class="my-sticky-header-table text-h6 text-grey-8"
+        :visible-columns="[
+          'nombre',
+          'departamento',
+          'fecha',
+          'horas',
+          'asignado',
+        ]"
+      >
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th auto-width />
+            <q-th v-for="col in props.cols" :key="col.name" :props="props">
+              {{ col.label }}
+            </q-th>
+          </q-tr>
+        </template>
 
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td auto-width>
-                <q-btn
-                  size="sm"
-                  color="red"
-                  round
-                  dense
-                  icon="remove"
-                  @click="handleDeleteButton(props.row.codigo)"
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td auto-width>
+              <q-btn
+                size="sm"
+                color="red"
+                round
+                dense
+                icon="remove"
+                @click="handleDeleteButton(props.row.codigo)"
+              >
+                <q-tooltip
+                  transition-show="scale"
+                  transition-hide="scale"
+                  class="bg-amber text-body2 text-black shadow-4"
+                  :offset="[10, 10]"
                 >
-                  <q-tooltip
-                    transition-show="scale"
-                    transition-hide="scale"
-                    class="bg-amber text-body2 text-black shadow-4"
-                    :offset="[10, 10]"
-                  >
-                    Eliminar horas suplementarias
-                  </q-tooltip>
-                </q-btn>
-              </q-td>
-              <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                {{ col.value }}
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
-      </div>
-    </q-scroll-area>
+                  Eliminar horas suplementarias
+                </q-tooltip>
+              </q-btn>
+            </q-td>
+            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+              {{ col.value }}
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
+    </div>
   </div>
 
   <q-dialog v-model="confirm" persistent>
@@ -321,3 +320,7 @@ watch(grupo, () => {
   obtenerRegistros(grupo.value, '', '');
 });
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

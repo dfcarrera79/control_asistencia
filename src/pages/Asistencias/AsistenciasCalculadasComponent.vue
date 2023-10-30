@@ -12,8 +12,19 @@
 
       <div class="col-12 text-grey-8 gt-xs q-pl-md">
         <p>
-          <strong>Nota:</strong> Seleccione un rango de fechas (desde - hasta).
+          <strong>Nota:</strong>
         </p>
+        <ol>
+          <li>
+            Seleccione un rango de fechas (desde - hasta) y de click en
+            "Consultar".
+          </li>
+          <li>
+            Deben registrarse las asistencias consultadas mediante el botón
+            "Consolidar mes". Asegúrese de seleccionar un rango de fechas
+            correspondiente a un único mes para la consolidación.
+          </li>
+        </ol>
       </div>
 
       <div class="row justify-left items-center q-py-sm q-pr-md">
@@ -141,6 +152,16 @@
             :disable="desde == '' || hasta == ''"
           />
         </div>
+
+        <div class="q-pl-md q-py-sm">
+          <q-btn
+            color="primary"
+            icon="publish"
+            label="Consolidar mes"
+            :disable="!isValidDateRange || selected.length === 0"
+            @click="registrarCierreMes(authStore.getCodigo, selected)"
+          />
+        </div>
       </div>
     </div>
 
@@ -166,47 +187,35 @@
           'atrasos',
         ]"
       />
-      <div class="q-mt-md">Selected: {{ JSON.stringify(selected) }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { QTableProps } from 'quasar';
+import { useAuthStore } from 'src/stores/auth';
+import { computed, onMounted, ref } from 'vue';
+import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
-import { Lugar, AsistenciasAtrasos } from '../../components/models';
+import {
+  AsistenciasAtrasos,
+  Lugar,
+  RegistrosDeHoras,
+} from '../../components/models';
+import {
+  obtenerHorasYMinutos,
+  obtenerMinutosYSegundos,
+} from '../../services/useWorkDays';
 
 // Data
-const { get } = useAxios();
+const $q = useQuasar();
+const { get, post } = useAxios();
+const authStore = useAuthStore();
 const selected = ref([]);
 const filter = ref('');
 const desde = ref('');
 const hasta = ref('');
-const yearOptions = ref<number[]>([]);
-// const selectedYear = ref(null);
-// const selectedMonth = ref(null);
-// const horasSuplementarias = ref(0);
-
-// interface Meses {
-//   nombre: string;
-//   codigo: number;
-// }
-
-// const monthOptions = ref<Meses[]>([
-//   { nombre: 'Enero', codigo: 1 },
-//   { nombre: 'Febrero', codigo: 2 },
-//   { nombre: 'Marzo', codigo: 3 },
-//   { nombre: 'Abril', codigo: 4 },
-//   { nombre: 'Mayo', codigo: 5 },
-//   { nombre: 'Junio', codigo: 6 },
-//   { nombre: 'Julio', codigo: 7 },
-//   { nombre: 'Agosto', codigo: 8 },
-//   { nombre: 'Septiembre', codigo: 9 },
-//   { nombre: 'Octubre', codigo: 10 },
-//   { nombre: 'Noviembre', codigo: 11 },
-//   { nombre: 'Diciembre', codigo: 12 },
-// ]);
+const anio = ref(0);
+const mes = ref(0);
 const lugar = ref('');
 const lugares = ref<string[]>([]);
 const opcionesLugares = ref(lugares.value);
@@ -262,6 +271,62 @@ const columnas: QTableProps['columns'] = [
 ];
 
 // Methods
+const registrarCierreMes = async (
+  user_create: number,
+  data: RegistrosDeHoras[]
+) => {
+  mes.value = new Date(desde.value).getMonth() + 1;
+  anio.value = new Date(desde.value).getFullYear();
+
+  try {
+    const response = await post(
+      '/registrar_consolidacion',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          mes: mes.value,
+          anio: anio.value,
+          usuarioCreo: user_create,
+          datos: data,
+        })
+      )
+    );
+
+    if (response.error === 'N') {
+      selected.value = [];
+      desde.value = '';
+      hasta.value = '';
+      filas.value = [];
+    }
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error registrando el cierre de mes:', error);
+  }
+};
+
+const isValidDateRange = computed(() => {
+  if (!desde.value || !hasta.value) {
+    return true; // Si alguna fecha está en blanco, deshabilita el botón
+  }
+
+  const fromDate = new Date(desde.value);
+  const toDate = new Date(hasta.value);
+
+  // Calcula la diferencia en meses
+  const diffInMonths =
+    (toDate.getFullYear() - fromDate.getFullYear()) * 12 +
+    (toDate.getMonth() - fromDate.getMonth());
+
+  return diffInMonths <= 0; // Habilita el botón si la diferencia es menor o igual a 0
+});
+
 const filtroLugaresFn = (
   val: string,
   update: (callback: () => void) => void
@@ -310,48 +375,11 @@ const obtenerCalculos = async (modelo: string) => {
   }
 };
 
-const obtenerHorasYMinutos = (horas: number) => {
-  // Extraer las partes enteras y decimales de las horas
-  const horasEnteras = Math.floor(horas);
-  const minutosDecimales = (horas - horasEnteras) * 60;
-
-  // Formatear el resultado en "horas: minutos"
-  const formatoHorasMinutos = `${horasEnteras}H ${Math.round(
-    minutosDecimales
-  )}min`;
-
-  return formatoHorasMinutos;
-};
-
-const obtenerMinutosYSegundos = (minutos: number) => {
-  // Extraer las partes enteras y decimales de las horas
-  const minutosEnteros = Math.floor(minutos);
-  const segundosDecimales = (minutos - minutosEnteros) * 60;
-
-  // Formatear el resultado en "horas: minutos"
-  const formatoHorasMinutos = `${minutosEnteros}min ${Math.round(
-    segundosDecimales
-  )}seg`;
-
-  return formatoHorasMinutos;
-};
-
-// Función para obtener el año actual
-const getCurrentYear = (): number => {
-  const currentDate = new Date();
-  return currentDate.getFullYear();
-};
-
-// Rellenar opciones de año desde el año actual hasta 5 años en el futuro
-onMounted(() => {
-  const currentYear = getCurrentYear();
-  const maxYear = currentYear + 3;
-  for (let year = currentYear - 3; year <= maxYear; year++) {
-    yearOptions.value.push(year);
-  }
-});
-
 onMounted(() => {
   obtenerLugaresTrabajo();
 });
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

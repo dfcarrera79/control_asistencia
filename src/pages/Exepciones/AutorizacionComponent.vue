@@ -63,25 +63,23 @@
       </div>
     </div>
 
-    <q-scroll-area style="height: 550px">
-      <q-table
-        square
-        flat
-        bordered
-        hide-bottom
-        :rows="props.rows"
-        :columns="columns"
-        :filter="filter"
-        row-key="usuario_codigo"
-        class="text-h6 text-grey-8"
-        :rows-per-page-options="[0]"
-        v-model:pagination="pagination"
-        :visible-columns="visibleColumns"
-        selection="multiple"
-        v-model:selected="selected"
-      >
-      </q-table>
-    </q-scroll-area>
+    <q-table
+      square
+      flat
+      bordered
+      hide-bottom
+      :rows="props.rows"
+      :columns="columns"
+      :filter="filter"
+      row-key="usuario_codigo"
+      class="my-sticky-header-table text-h6 text-grey-8"
+      :rows-per-page-options="[0]"
+      v-model:pagination="pagination"
+      :visible-columns="visibleColumns"
+      selection="multiple"
+      v-model:selected="selected"
+    >
+    </q-table>
   </div>
 </template>
 
@@ -164,9 +162,6 @@ const autorizarExcepcion = async (
       )
     );
 
-    if (response.error === 'N') {
-      console.log('[RESPONSE]: ', response);
-    }
     // Handle the response accordingly
     $q.notify({
       color: response.error === 'N' ? 'green-4' : 'red-5',
@@ -199,3 +194,7 @@ const handleButtonClicked = async (
   updateRows();
 };
 </script>
+
+<style lang="scss">
+@import '../../css/sticky.header.table.scss';
+</style>

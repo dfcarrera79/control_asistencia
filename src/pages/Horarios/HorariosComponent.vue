@@ -263,8 +263,6 @@
                 </div>
 
                 <div class="q-pa-none" v-if="rotativo === true">
-                  <div class="q-pb-sm">Model: {{ days }}</div>
-
                   <q-date v-model="days" range multiple minimal />
                 </div>
 
@@ -614,8 +612,6 @@
               </div>
 
               <div class="q-pa-none" v-if="rotativo === true">
-                <div class="q-pb-sm">Model: {{ days }}</div>
-
                 <q-date v-model="days" range multiple minimal />
               </div>
 
@@ -1094,22 +1090,24 @@ const registrarHorario = async (
 };
 
 const eliminarHorario = async (codigo: number) => {
-  try {
-    const response = await deletes(
-      '/eliminar_turno',
-      {},
-
-      {
-        codigo: codigo,
-      }
-    );
-
-    if (response.error === 'N') {
-      actualizarFilas();
+  const response = await deletes(
+    '/eliminar_turno',
+    {},
+    {
+      codigo: codigo,
     }
-  } catch (error) {
-    console.error('Error eliminando el horario:', error);
+  );
+
+  if (response.error === 'N') {
+    actualizarFilas();
   }
+  // Handle the response accordingly
+  $q.notify({
+    color: response.error === 'N' ? 'green-4' : 'red-5',
+    textColor: 'white',
+    icon: response.error === 'N' ? 'cloud_done' : 'warning',
+    message: response.mensaje,
+  });
 };
 
 const executeFunctionInsideDialog = (param: number) => {
