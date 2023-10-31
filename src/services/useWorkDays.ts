@@ -53,17 +53,46 @@ export const getTimeFormated = (row: HorariosAsignados) => {
   return `${formatTimeRange(horario_1)} ${formatTimeRange(horario_2)}`;
 };
 
+// export function formatearFechas(fechas: string[]) {
+//   if (fechas.length === 0) {
+//     return '';
+//   }
+
+//   const fechasFormateadas = [];
+//   let fechaInicial = moment(fechas[0]);
+//   let fechaFinal = fechaInicial;
+
+//   for (let i = 1; i < fechas.length; i++) {
+//     const fecha = moment(fechas[i]);
+
+//     if (
+//       fecha.diff(fechaFinal, 'days') === 1 &&
+//       fecha.month() === fechaFinal.month()
+//     ) {
+//       fechaFinal = fecha;
+//     } else {
+//       fechasFormateadas.push(formatoFechas(fechaInicial, fechaFinal));
+//       fechaInicial = fecha;
+//       fechaFinal = fecha;
+//     }
+//   }
+
+//   fechasFormateadas.push(formatoFechas(fechaInicial, fechaFinal));
+
+//   return fechasFormateadas.join(', ');
+// }
+
 export function formatearFechas(fechas: string[]) {
   if (fechas.length === 0) {
     return '';
   }
 
   const fechasFormateadas = [];
-  let fechaInicial = moment(fechas[0]);
+  let fechaInicial = moment(fechas[0], 'YYYY/MM/DD'); // Especifica el formato
   let fechaFinal = fechaInicial;
 
   for (let i = 1; i < fechas.length; i++) {
-    const fecha = moment(fechas[i]);
+    const fecha = moment(fechas[i], 'YYYY/MM/DD'); // Especifica el formato
 
     if (
       fecha.diff(fechaFinal, 'days') === 1 &&

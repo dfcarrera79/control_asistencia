@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="q-pt-sm">
     <h4
-      class="row text-uppercase text-grey-8 justify-center content-center"
+      class="row text-uppercase text-grey-8 justify-center content-center q-my-sm q-pb-md"
       style="font-family: 'Bebas Neue'"
     >
       <div class="q-pt-sm">CONFIGURACIÓN DE HORARIOS</div>
@@ -123,7 +123,6 @@ const actualizarFilas = (event: string): void => {
 const obtenerLugaresTrabajo = async () => {
   const respuesta = await get('/obtener_lugar_horario', {});
   if (respuesta.error === 'S') {
-    console.error(respuesta.mensaje);
     return;
   }
   const data: LugarTrabajo[] = respuesta.objetos;

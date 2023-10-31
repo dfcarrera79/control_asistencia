@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="row justify-left">
+      <div class="row justify-left items-center">
         <div class="row q-py-sm q-pr-md">
           <div class="q-pr-md">
             <q-input
@@ -85,7 +85,7 @@
 
         <q-separator vertical />
 
-        <div class="q-pl-md q-py-sm row">
+        <div class="q-pl-md q-py-sm row items-center">
           <div style="width: 250px">
             <q-select
               dense
@@ -101,6 +101,7 @@
           </div>
           <div class="q-pl-md">
             <q-btn
+              unelevated
               color="primary"
               label="Asignar Horario"
               icon="access_time"

@@ -51,6 +51,7 @@
         </div>
         <div class="q-pl-md">
           <q-btn
+            unelevated
             color="primary"
             label="Buscar registro"
             icon="search"
@@ -60,6 +61,7 @@
         </div>
         <div class="q-pl-md">
           <q-btn
+            unelevated
             color="red"
             label="Anular consolidación"
             icon="cancel"
@@ -84,7 +86,11 @@
         v-model:pagination="pagination"
         :visible-columns="columnasVisibles"
       >
-        <template v-slot:top-right="props">
+        <template v-slot:top="props">
+          <div style="font-family: 'Bebas Neue'">
+            {{ tituloTabla }}
+          </div>
+          <q-space />
           <div class="q-pr-md">
             <q-select
               v-model="columnasVisibles"

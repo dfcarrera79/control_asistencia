@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="q-pa-md">
-      <div class="column q-pb-md">
+      <div class="column q-pb-none">
         <div class="row">
           <div>
             <p

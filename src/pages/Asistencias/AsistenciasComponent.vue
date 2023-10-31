@@ -18,7 +18,7 @@
         </p>
       </div>
 
-      <div class="row justify-left">
+      <div class="row justify-left items-center">
         <div class="row items-center q-py-sm q-pr-md">
           <div class="q-ma-sm" style="width: 250px">
             <q-select
@@ -114,7 +114,7 @@
             </q-input>
           </div>
 
-          <div class="q-mx-sm" style="max-width: 200px">
+          <div class="q-ml-sm" style="max-width: 200px">
             <q-input
               debounce="350"
               v-model="hasta"
@@ -148,8 +148,9 @@
           </div>
         </div>
 
-        <div class="q-pl-sm q-py-sm row items-center">
+        <div class="q-pl-none q-py-sm row items-center">
           <q-btn
+            unelevated
             color="primary"
             label="Buscar asistencias"
             @click="handleAsistenciasClicked"
@@ -157,8 +158,9 @@
           />
         </div>
 
-        <div class="q-pl-sm q-py-sm row items-center">
+        <div class="q-pl-md q-py-sm row items-center">
           <q-btn
+            unelevated
             color="primary"
             label="Buscar atrasos"
             @click="handleAtrasosClicked"

@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <div class="row justify-left">
+    <div class="row justify-left items-center">
       <div class="row q-py-sm">
         <div>
           <q-input
@@ -74,6 +74,7 @@
 
         <div class="q-pl-md">
           <q-btn
+            unelevated
             color="primary"
             label="Asignar horas suplementarias"
             icon="business"

@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="row justify-left">
+      <div class="row justify-left items-center">
         <div class="q-pt-xs q-pr-md">
           <q-input
             outlined
@@ -49,6 +49,7 @@
 
         <div class="q-pt-xs q-pl-md">
           <q-btn
+            unelevated
             color="positive"
             :label="
               selected.length == 1

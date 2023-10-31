@@ -106,8 +106,9 @@
               </template>
             </q-select>
           </div>
-          <div class="q-pl-md">
+          <div class="q-pl-md q-pt-xs">
             <q-btn
+              unelevated
               color="primary"
               label="Asignar lugar de trabajo"
               @click="handleButtonClicked(id_direccion, selected)"

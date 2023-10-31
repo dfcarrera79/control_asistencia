@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="q-pt-sm">
     <h4
-      class="row text-uppercase text-grey-8 justify-center content-center"
+      class="row text-uppercase text-grey-8 justify-center content-center q-my-sm q-pb-md"
       style="font-family: 'Bebas Neue'"
     >
       <div class="q-pt-sm">Horas suplementarias</div>

@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="row justify-left">
+      <div class="row justify-left items-center">
         <q-input
           outlined
           input-class="text-right"
@@ -77,6 +77,7 @@
 
         <div class="q-pl-md">
           <q-btn
+            unelevated
             color="red"
             :label="
               selected.length == 1 ? 'Eliminar Horario' : 'Eliminar Horarios'

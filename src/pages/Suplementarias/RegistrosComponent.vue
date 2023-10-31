@@ -5,51 +5,49 @@
         Registro de horas suplementarias
       </p>
     </div>
-    <div class="row justify-left">
-      <div class="row q-py-sm">
-        <div>
-          <q-input
-            outlined
-            class="q-pl-md"
-            input-class="text-right"
-            clearable
-            clear-icon="close"
-            dense
-            debounce="350"
-            borderless
-            color="primary"
-            v-model="filter"
-            placeholder="Buscar..."
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </div>
-        <div>
-          <q-select
-            class="q-px-md"
-            outlined
-            dense
-            v-model="grupo"
-            :options="grupos"
-            label="Departamentos"
-            style="width: 200px"
-          >
-            <template v-if="grupo" v-slot:append>
-              <q-icon
-                name="cancel"
-                @click.stop.prevent="grupo = ''"
-                class="cursor-pointer"
-              />
-            </template>
-          </q-select>
-        </div>
+    <div class="row justify-left items-center">
+      <div>
+        <q-input
+          outlined
+          class="q-pl-md"
+          input-class="text-right"
+          clearable
+          clear-icon="close"
+          dense
+          debounce="350"
+          borderless
+          color="primary"
+          v-model="filter"
+          placeholder="Buscar..."
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
+      <div>
+        <q-select
+          class="q-px-md"
+          outlined
+          dense
+          v-model="grupo"
+          :options="grupos"
+          label="Departamentos"
+          style="width: 200px"
+        >
+          <template v-if="grupo" v-slot:append>
+            <q-icon
+              name="cancel"
+              @click.stop.prevent="grupo = ''"
+              class="cursor-pointer"
+            />
+          </template>
+        </q-select>
       </div>
 
       <q-separator vertical />
 
-      <div class="q-ma-sm" style="max-width: 200px">
+      <div class="q-pl-sm q-ma-sm" style="max-width: 200px">
         <q-input
           debounce="350"
           v-model="desde"
@@ -77,7 +75,7 @@
         </q-input>
       </div>
 
-      <div class="q-mx-sm q-mt-sm" style="max-width: 200px">
+      <div class="q-mx-sm" style="max-width: 200px">
         <q-input
           debounce="350"
           v-model="hasta"
@@ -105,8 +103,9 @@
         </q-input>
       </div>
 
-      <div class="q-pl-md q-pt-sm">
+      <div class="q-pl-sm">
         <q-btn
+          unelevated
           color="primary"
           label="Buscar registros"
           icon="search"

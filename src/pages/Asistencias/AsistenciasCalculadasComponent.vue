@@ -28,7 +28,7 @@
       </div>
 
       <div class="row justify-left items-center q-py-sm q-pr-md">
-        <div class="q-pr-md">
+        <div class="q-pr-sm">
           <q-input
             outlined
             class="q-pl-md"
@@ -143,8 +143,9 @@
           </q-input>
         </div>
 
-        <div class="q-pl-md q-py-sm">
+        <div class="q-pl-sm q-py-sm">
           <q-btn
+            unelevated
             color="primary"
             icon="search"
             label="Consultar"
@@ -155,6 +156,7 @@
 
         <div class="q-pl-md q-py-sm">
           <q-btn
+            unelevated
             color="primary"
             icon="publish"
             label="Consolidar mes"

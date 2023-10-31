@@ -5,7 +5,7 @@
         Exepciones
       </p>
 
-      <div class="row justify-left">
+      <div class="row justify-left items-center">
         <div class="q-pt-xs q-pr-md">
           <q-input
             outlined
@@ -31,7 +31,7 @@
           <q-select
             filled
             dense
-            label="Exepciones"
+            label="Excepciones"
             v-model="modelo"
             use-input
             use-chips
@@ -44,26 +44,25 @@
           />
         </div>
 
-        <div style="max-width: 350px">
-          <q-list bordered class="rounded-borders">
-            <q-expansion-item
-              expand-separator
-              icon="date_range"
-              label="Seleccionar dias"
-              header-class="text-grey-8"
-            >
-              <div class="q-pa-md">
-                <q-date v-model="dias" multiple minimal />
-              </div>
-            </q-expansion-item>
-          </q-list>
+        <div class="q-pt-sm" style="max-width: 350px">
+          <q-btn-dropdown
+            no-caps
+            outline
+            unelevated
+            color="primary"
+            icon="date_range"
+            label="Seleccionar días"
+          >
+            <q-date v-model="dias" multiple minimal />
+          </q-btn-dropdown>
         </div>
 
-        <div class="q-pt-xs q-pl-md">
+        <div class="q-pt-sm q-pl-md">
           <q-btn
+            unelevated
             color="positive"
             :label="
-              selected.length == 1 ? 'Asignar exepcion' : 'Asignar exepciones'
+              selected.length == 1 ? 'Asignar excepción' : 'Asignar excepciones'
             "
             icon="do_not_disturb_on"
             @click="handleButtonClicked(selected, modelo, dias)"
