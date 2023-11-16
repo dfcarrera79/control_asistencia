@@ -113,6 +113,26 @@
           <q-item
             clickable
             v-ripple
+            to="/registros_biometricos"
+            active-class="my-menu-link"
+          >
+            <q-item-section avatar>
+              <q-icon name="person_pin" color="grey-9" />
+            </q-item-section>
+
+            <q-item-section>
+              <span
+                class="text-grey-9 text-h6"
+                style="font-family: 'Bebas Neue'"
+              >
+                REGISTROS BIOMÉTRICOS
+              </span>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/configuracion_horarios"
             active-class="my-menu-link"
           >

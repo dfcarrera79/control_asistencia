@@ -35,6 +35,18 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/registros_biometricos',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Registros/BiometricosPage.vue'),
+        beforeEnter: multiguard([estaLogeado]),
+      },
+    ],
+  },
+
+  {
     path: '/configuracion_horarios',
     component: () => import('layouts/MainLayout.vue'),
     children: [

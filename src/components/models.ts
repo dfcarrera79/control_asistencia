@@ -79,6 +79,30 @@ export interface FilasEmpleados {
   civil: string;
 }
 
+export interface FilasDispositivos {
+  codigo: number;
+  cedula_ruc: string;
+  nombre_completo: string;
+  departamento: string;
+  id_dispositivo: string;
+}
+
+export interface FilasFotos {
+  id_foto: number;
+  cedula_ruc: string;
+  nombre_completo: string;
+  departamento: string;
+  path: string;
+}
+
+export interface FilasAnulados {
+  codigo: number;
+  nombre_completo: string;
+  departamento: string;
+  registro: string;
+  anulado_por: string;
+}
+
 export interface FilasSuplementarias {
   codigo: number;
   nombre_completo_usuario: string;
