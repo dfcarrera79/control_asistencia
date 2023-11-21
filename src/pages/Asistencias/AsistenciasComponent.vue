@@ -211,9 +211,9 @@
 
 <script setup lang="ts">
 import moment from 'moment';
-import { QTableProps } from 'quasar';
-import { computed, onMounted, ref, watch } from 'vue';
+import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
+import { computed, onMounted, ref, watch } from 'vue';
 import {
   Lugar,
   RespuestaAsignados,
@@ -221,6 +221,7 @@ import {
 } from '../../components/models';
 
 // Data
+const $q = useQuasar();
 const { get } = useAxios();
 
 interface Empleados {
@@ -361,34 +362,45 @@ const obtenerNumeroPaginasAtrasos = async () => {
 
 const obtenerAsistencias = async () => {
   const codigo = obtenerCodigo(empleado.value);
-  const respuesta = await get('/obtener_asistencias', {
+  const response = await get('/obtener_asistencias', {
     usuario_codigo: codigo,
     fecha_desde: desde.value,
     fecha_hasta: hasta.value,
     numero_de_pagina: page.value,
     registros_por_pagina: pagination.value.rowsPerPage,
   });
-  if (respuesta.error === 'S') {
-    console.error(respuesta.mensaje);
+
+  if (response.error === 'S') {
+    $q.notify({
+      color: 'red-5',
+      textColor: 'white',
+      icon: 'warning',
+      message: response.mensaje,
+    });
     return;
   }
-  filas.value = respuesta.objetos;
+  filas.value = response.objetos;
 };
 
 const obtenerAtrasos = async () => {
   const codigo = obtenerCodigo(empleado.value);
 
-  const respuesta = await get('/obtener_atrasos', {
+  const response = await get('/obtener_atrasos', {
     usuario_codigo: codigo,
     fecha_desde: desde.value,
     fecha_hasta: hasta.value,
   });
 
-  if (respuesta.error === 'S') {
-    console.error(respuesta.mensaje);
+  if (response.error === 'S') {
+    $q.notify({
+      color: 'red-5',
+      textColor: 'white',
+      icon: 'warning',
+      message: response.mensaje,
+    });
     return;
   }
-  filas.value = respuesta.objetos;
+  filas.value = response.objetos;
 };
 
 const handleAsistenciasClicked = () => {

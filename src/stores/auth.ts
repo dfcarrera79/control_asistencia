@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('counter', {
     token: '',
     usuario: '',
     codigo: 0,
+    acceso: false,
   }),
 
   getters: {
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore('counter', {
       return {
         'Content-Type': 'application/json',
         token: state.token,
+        usucodigo: state.codigo,
       };
     },
     getUsuario(state) {

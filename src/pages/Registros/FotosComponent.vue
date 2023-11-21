@@ -186,6 +186,13 @@ const eliminarFoto = async (id: number) => {
         })
       )
     );
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
     return response;
   } catch (error) {
     console.error('Error eliminando el registro:', error);
