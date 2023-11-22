@@ -218,6 +218,7 @@ import {
   Lugar,
   RespuestaAsignados,
   RespuestaNumero,
+  RespuestaAtrasos,
 } from '../../components/models';
 
 // Data
@@ -336,16 +337,19 @@ const obtenerNumeroPaginas = async () => {
     fecha_desde: desde.value,
     fecha_hasta: hasta.value,
   });
+
   if (respuesta.error === 'S') {
     console.error(respuesta.mensaje);
     return;
   }
-  numFilas.value = respuesta.objetos;
+  if (respuesta.error === 'N') {
+    numFilas.value = respuesta.objetos[0].count;
+  }
 };
 
 const obtenerNumeroPaginasAtrasos = async () => {
   const codigo = obtenerCodigo(empleado.value);
-  const respuesta: RespuestaNumero = await get(
+  const respuesta: RespuestaAtrasos = await get(
     '/obtener_numero_paginas_atrasos',
     {
       usuario_codigo: codigo,

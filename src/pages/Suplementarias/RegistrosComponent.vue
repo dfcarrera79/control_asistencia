@@ -1,9 +1,32 @@
 <template>
   <div>
-    <div>
-      <p class="text-h6 text-grey-8 q-pl-md" style="font-family: 'Bebas Neue'">
-        Registro de horas suplementarias
-      </p>
+    <div class="row">
+      <div>
+        <p
+          class="text-h6 text-grey-8 q-pl-md"
+          style="font-family: 'Bebas Neue'"
+        >
+          Registro de horas suplementarias
+        </p>
+      </div>
+      <div class="q-pl-md">
+        <q-btn
+          flat
+          rounded
+          color="primary"
+          icon="update"
+          dense
+          @click="handleButtonClicked(grupo, desde, hasta)"
+        >
+          <q-tooltip
+            anchor="center right"
+            self="center left"
+            :offset="[10, 10]"
+          >
+            <strong class="text-caption">Actualizar tabla</strong>
+          </q-tooltip>
+        </q-btn>
+      </div>
     </div>
     <div class="row justify-left items-center">
       <div>

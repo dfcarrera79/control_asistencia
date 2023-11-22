@@ -102,11 +102,7 @@
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
               <div class="text-left">
-                <q-toggle
-                  v-if="toogle"
-                  v-model="checked"
-                  label="Editar coordenadas"
-                />
+                <q-toggle v-model="checked" label="Editar coordenadas" />
                 <div class="column justify-start" v-if="checked">
                   <q-btn
                     dense

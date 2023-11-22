@@ -303,7 +303,16 @@ export interface RespuestaAsistencias {
   objetos: Asistencias[];
 }
 
+interface Count {
+  count: number;
+}
 export interface RespuestaNumero {
+  error: string;
+  mensaje: string;
+  objetos: Count[];
+}
+
+export interface RespuestaAtrasos {
   error: string;
   mensaje: string;
   objetos: number;
