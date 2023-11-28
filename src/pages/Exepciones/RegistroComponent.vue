@@ -114,7 +114,7 @@ const props = defineProps<{
 // Data
 const $q = useQuasar();
 const filter = ref('');
-const modelo = ref(null);
+const modelo = ref<string[]>([]);
 const selected = ref([]);
 const stringOptions = ['Vacaciones', 'Días festivos', 'Consulta médica'];
 const filterOptions = ref(stringOptions);
@@ -196,7 +196,7 @@ const registrarExepcion = async (
 
 const resetVariables = () => {
   filter.value = '';
-  modelo.value = null;
+  modelo.value = [];
   selected.value = [];
   dias.value = [];
 };

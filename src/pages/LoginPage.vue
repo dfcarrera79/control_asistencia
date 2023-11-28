@@ -183,6 +183,7 @@ const logearse = async () => {
   const respuesta = await get('/validar_usuario', {
     id: id.value,
     clave: clave.value,
+    sys: 1,
   });
   Loading.hide();
   if (respuesta.error === 'S') {

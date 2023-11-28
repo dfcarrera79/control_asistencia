@@ -3,7 +3,7 @@
     <div class="column q-pb-md">
       <div class="row">
         <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-          IDs Celulares
+          Fotos registradas
         </p>
         <div class="q-pl-md">
           <q-btn
