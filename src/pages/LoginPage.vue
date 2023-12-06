@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="column col-xs-12 q-pa-sm">
           <a
             class="full-width q-link"
@@ -110,7 +110,7 @@
             >
           </a>
         </div>
-      </div>
+      </div> -->
     </q-card>
   </q-page>
 </template>

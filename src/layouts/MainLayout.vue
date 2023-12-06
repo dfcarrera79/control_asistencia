@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header unelevated>
       <q-toolbar>
         <q-btn
           flat
@@ -19,6 +19,13 @@
         </q-toolbar-title>
 
         <div class="row items-center content-center q-mr-md">
+          <q-toggle
+            :model-value="dark.isActive"
+            checked-icon="dark_mode"
+            unchecked-icon="light_mode"
+            size="3rem"
+            @update:model-value="(val) => dark.set(val)"
+          />
           <q-btn flat dense @click="cerrarSesion">
             <div class="q-mr-sm" v-if="!($q.screen.lt.md || $q.screen.lt.sm)">
               Salir
@@ -220,19 +227,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import jwtDecode from 'jwt-decode';
-import { LocalStorage } from 'quasar';
+import { LocalStorage, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
-import { TokenDecoded } from '../components/models';
+import { DarkMode, TokenDecoded } from '../components/models';
 
 // Data
-// const win: Window = window;
+const { dark } = useQuasar();
 const expires = ref('');
 const router = useRouter();
 const miniState = ref(true);
 const authStore = useAuthStore();
+const darkMode = ref(false);
 
 const sessionData = LocalStorage.getItem('session');
 
@@ -274,6 +282,25 @@ const leftDrawerOpen = ref(false);
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
+
+watch(
+  () => dark.isActive,
+  (val) => {
+    authStore.setDarkModeFromLocalStorage(val);
+
+    // Guardar el estado de dark.isActive en el LocalStorage
+    LocalStorage.set('darkMode', { darkMode: val });
+  }
+);
+
+// Recuperar el estado de dark.isActive del LocalStorage al iniciar la aplicación
+onMounted(() => {
+  const session: DarkMode | null = LocalStorage.getItem('darkMode');
+  darkMode.value = session?.darkMode || false;
+  if (session?.darkMode !== null) {
+    dark.set(darkMode.value);
+  }
+});
 </script>
 
 <style lang="sccs" scoped></style>

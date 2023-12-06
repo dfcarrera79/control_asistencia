@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('counter', {
     usuario: '',
     codigo: 0,
     acceso: false,
+    darkMode: false,
   }),
 
   getters: {
@@ -32,6 +33,9 @@ export const useAuthStore = defineStore('counter', {
   },
 
   actions: {
+    setDarkMode(dark: boolean) {
+      this.darkMode = dark;
+    },
     iniciarSesion(token: string, usuario: string, codigo: number) {
       this.estaLogeado = true;
       this.token = token;
@@ -43,11 +47,18 @@ export const useAuthStore = defineStore('counter', {
         token: this.token,
         usuario: this.usuario,
         codigo: this.codigo,
+        darkMode: this.darkMode,
       });
     },
     actualizarUsuario(newUsuario: string, newCodigo: number) {
       this.usuario = newUsuario;
       this.codigo = newCodigo;
+    },
+    setDarkModeFromLocalStorage(dark: boolean) {
+      const session = LocalStorage.getItem('session');
+      if (session) {
+        this.darkMode = dark;
+      }
     },
   },
 });

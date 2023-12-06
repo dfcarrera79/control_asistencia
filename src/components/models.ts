@@ -15,6 +15,10 @@ export interface Session {
   codigo: number;
 }
 
+export interface DarkMode {
+  darkMode: boolean;
+}
+
 export interface TokenDecoded {
   sub: string;
   password: string;
