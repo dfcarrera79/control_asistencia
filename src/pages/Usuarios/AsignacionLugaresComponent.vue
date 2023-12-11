@@ -3,10 +3,7 @@
     <div class="column">
       <div class="row">
         <div>
-          <p
-            class="text-h6 text-grey-8 q-pl-md"
-            style="font-family: 'Bebas Neue'"
-          >
+          <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
             EMPLEADOS
           </p>
         </div>
@@ -99,9 +96,7 @@
               </template>
               <template v-slot:no-option>
                 <q-item>
-                  <q-item-section class="text-grey">
-                    No hay resultados
-                  </q-item-section>
+                  <q-item-section> No hay resultados </q-item-section>
                 </q-item>
               </template>
             </q-select>
@@ -119,9 +114,7 @@
         </div>
       </div>
       <div class="column justify-left q-pl-md q-pt-md">
-        <strong class="text-weight-medium text-grey-8"
-          >Dirección: {{ direccion }}
-        </strong>
+        <strong class="text-weight-medium">Dirección: {{ direccion }} </strong>
       </div>
     </div>
 
@@ -141,8 +134,16 @@
         :rows-per-page-options="[0]"
         v-model:pagination="pagination"
         :visible-columns="columnasVisibles"
-        class="my-sticky-header-table text-h6 text-grey-8"
+        class="my-sticky-header-table text-h6"
       >
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th auto-width />
+            <q-th v-for="col in props.cols" :key="col.name" :props="props">
+              {{ col.label }}
+            </q-th>
+          </q-tr>
+        </template>
         <template v-slot:body-cell-nombre="props">
           <q-td :props="props">
             <q-icon

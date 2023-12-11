@@ -1,7 +1,7 @@
 <template>
   <div class="column">
     <div class="q-pl-md">
-      <p class="text-h6 text-grey-8 q-pl-md" style="font-family: 'Bebas Neue'">
+      <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
         CREAR HORARIOS
       </p>
     </div>
@@ -36,7 +36,7 @@
       <div class="column">
         <div class="row">
           <div>
-            <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
+            <p class="text-h6" style="font-family: 'Bebas Neue'">
               HORARIOS REGISTRADOS
             </p>
           </div>
@@ -79,7 +79,7 @@
           <template v-slot:item="props">
             <div class="q-pa-xs" style="width: 350px">
               <q-card flat bordered>
-                <q-card-section class="text-left text-grey-9">
+                <q-card-section class="text-left">
                   <strong>{{ props.row.nombre.toUpperCase() }}</strong>
                 </q-card-section>
                 <q-separator />
@@ -91,9 +91,7 @@
                     :key="col.name"
                   >
                     <q-item-section>
-                      <q-item-label class="text-grey-9"
-                        >{{ col.label }}:
-                      </q-item-label>
+                      <q-item-label>{{ col.label }}: </q-item-label>
                     </q-item-section>
                     <q-item-section>
                       <q-item-label caption>{{ col.value }}</q-item-label>
@@ -146,7 +144,7 @@
       <q-card>
         <q-card-section>
           <div class="row items-center">
-            <div class="text-h6 text-grey-9" style="font-family: 'Bebas Neue'">
+            <div class="text-h6" style="font-family: 'Bebas Neue'">
               UNA SOLA JORNADA
             </div>
             <div>
@@ -177,10 +175,7 @@
             <div class="q-gutter-sm row">
               <div>
                 <div>
-                  <p
-                    class="text-subtitle2 text-grey-9"
-                    style="font-family: 'Oswald'"
-                  >
+                  <p class="text-subtitle2" style="font-family: 'Oswald'">
                     Hora de entrada:
                   </p>
                 </div>
@@ -216,10 +211,7 @@
 
               <div class="q-pl-md">
                 <div>
-                  <p
-                    class="text-subtitle2 text-grey-9"
-                    style="font-family: 'Oswald'"
-                  >
+                  <p class="text-subtitle2" style="font-family: 'Oswald'">
                     Hora de salida:
                   </p>
                 </div>
@@ -254,10 +246,7 @@
               </div>
               <div>
                 <div>
-                  <p
-                    class="text-subtitle2 text-grey-9"
-                    style="font-family: 'Oswald'"
-                  >
+                  <p class="text-subtitle2" style="font-family: 'Oswald'">
                     Días:
                   </p>
                 </div>
@@ -395,7 +384,7 @@
       <q-card>
         <q-card-section>
           <div class="row items-center">
-            <div class="text-h6 text-grey-9" style="font-family: 'Bebas Neue'">
+            <div class="text-h6" style="font-family: 'Bebas Neue'">
               DOBLE JORNADA
             </div>
             <div>
@@ -425,19 +414,13 @@
             </div>
             <div class="column">
               <div>
-                <p
-                  class="text-subtitle1 text-grey-9"
-                  style="font-family: 'Oswald'"
-                >
+                <p class="text-subtitle1" style="font-family: 'Oswald'">
                   JORNADA 1
                 </p>
                 <div class="q-gutter-sm row">
                   <div>
                     <div>
-                      <p
-                        class="text-subtitle2 text-grey-9"
-                        style="font-family: 'Oswald'"
-                      >
+                      <p class="text-subtitle2" style="font-family: 'Oswald'">
                         Hora de entrada:
                       </p>
                     </div>
@@ -473,10 +456,7 @@
 
                   <div class="q-pl-md">
                     <div>
-                      <p
-                        class="text-subtitle2 text-grey-9"
-                        style="font-family: 'Oswald'"
-                      >
+                      <p class="text-subtitle2" style="font-family: 'Oswald'">
                         Hora de salida:
                       </p>
                     </div>
@@ -515,10 +495,7 @@
 
             <div class="column">
               <div>
-                <p
-                  class="text-subtitle1 text-grey-9"
-                  style="font-family: 'Oswald'"
-                >
+                <p class="text-subtitle1" style="font-family: 'Oswald'">
                   JORNADA 2
                 </p>
               </div>
@@ -526,10 +503,7 @@
               <div class="q-gutter-sm row">
                 <div>
                   <div>
-                    <p
-                      class="text-subtitle2 text-grey-9"
-                      style="font-family: 'Oswald'"
-                    >
+                    <p class="text-subtitle2" style="font-family: 'Oswald'">
                       Hora de entrada:
                     </p>
                   </div>
@@ -565,10 +539,7 @@
 
                 <div class="q-pl-md">
                   <div>
-                    <p
-                      class="text-subtitle2 text-grey-9"
-                      style="font-family: 'Oswald'"
-                    >
+                    <p class="text-subtitle2" style="font-family: 'Oswald'">
                       Hora de salida:
                     </p>
                   </div>
@@ -603,10 +574,7 @@
                 </div>
               </div>
               <div>
-                <p
-                  class="text-subtitle2 text-grey-9"
-                  style="font-family: 'Oswald'"
-                >
+                <p class="text-subtitle2" style="font-family: 'Oswald'">
                   Días:
                 </p>
               </div>

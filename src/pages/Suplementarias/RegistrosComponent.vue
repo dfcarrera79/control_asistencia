@@ -2,10 +2,7 @@
   <div>
     <div class="row">
       <div>
-        <p
-          class="text-h6 text-grey-8 q-pl-md"
-          style="font-family: 'Bebas Neue'"
-        >
+        <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
           Registro de horas suplementarias
         </p>
       </div>
@@ -150,7 +147,7 @@
         row-key="codigo"
         :rows-per-page-options="[0]"
         v-model:pagination="pagination"
-        class="my-sticky-header-table text-h6 text-grey-8"
+        class="my-sticky-header-table text-h6"
         :visible-columns="[
           'nombre',
           'departamento',

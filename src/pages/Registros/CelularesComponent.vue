@@ -2,9 +2,7 @@
   <div class="q-pa-md">
     <div class="column q-pb-md">
       <div class="row">
-        <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-          IDs Celulares
-        </p>
+        <p class="text-h6" style="font-family: 'Bebas Neue'">IDs Celulares</p>
         <div class="q-pl-md">
           <q-btn
             flat
@@ -88,7 +86,7 @@
       :columns="columns"
       :filter="filter"
       row-key="codigo"
-      class="my-sticky-header-table text-h6 text-grey-8"
+      class="my-sticky-header-table text-h6"
       :rows-per-page-options="[0]"
       v-model:pagination="pagination"
       :visible-columns="visibleColumns"

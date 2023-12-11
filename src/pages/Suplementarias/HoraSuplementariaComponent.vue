@@ -2,10 +2,7 @@
   <div>
     <div class="column">
       <div>
-        <p
-          class="text-h6 text-grey-8 q-pl-md"
-          style="font-family: 'Bebas Neue'"
-        >
+        <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
           Horas suplementarias
         </p>
       </div>
@@ -107,7 +104,7 @@
         :rows-per-page-options="[0]"
         v-model:pagination="pagination"
         :visible-columns="['nombre', 'departamento']"
-        class="my-sticky-header-table text-h6 text-grey-8"
+        class="my-sticky-header-table text-h6"
       />
     </div>
   </div>

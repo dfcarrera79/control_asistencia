@@ -3,9 +3,7 @@
     <q-dialog v-model="mostrarVentana" persistent>
       <q-card>
         <div class="row bg-blue-8 justify-center q-pa-xs">
-          <span
-            class="text-h6 text-center text-white"
-            style="font-family: 'Bebas Neue'"
+          <span class="text-h6 text-center" style="font-family: 'Bebas Neue'"
             >Cambiar clave de acceso</span
           >
         </div>
@@ -84,7 +82,7 @@
       <div class="row">
         <div class="column col-xs-12 q-pa-sm">
           <q-btn
-            class="full-width text-white"
+            class="full-width"
             style="height: 40px"
             color="blue"
             label="Ingresar"

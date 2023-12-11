@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
-      <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
+      <p class="text-h6" style="font-family: 'Bebas Neue'">
         REGISTROS ANULADOS
       </p>
       <div class="row justify-left">
@@ -53,11 +53,10 @@
       :columns="columnas"
       :visible-columns="visibleColumns"
       row-key="codigo"
-      class="my-sticky-header-table text-h6 text-grey-8"
+      class="my-sticky-header-table text-h6"
       :rows-per-page-options="[0]"
       v-model:pagination="pagination"
-    >
-    </q-table>
+    />
   </div>
 </template>
 <script setup lang="ts">

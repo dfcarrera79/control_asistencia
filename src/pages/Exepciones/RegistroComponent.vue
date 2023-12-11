@@ -1,9 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
-      <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
-        Exepciones
-      </p>
+      <p class="text-h6" style="font-family: 'Bebas Neue'">Exepciones</p>
 
       <div class="row justify-left items-center">
         <div class="q-pt-xs q-pr-md">
@@ -75,7 +73,7 @@
     </div>
 
     <div class="column justify-left q-pl-md q-pt-md">
-      <strong class="text-weight-medium text-grey-8"
+      <strong class="text-weight-medium"
         >Días seleccionados: {{ dias }}
       </strong>
     </div>
@@ -89,7 +87,7 @@
       :columns="columns"
       :filter="filter"
       row-key="usuario_codigo"
-      class="my-sticky-header-table text-h6 text-grey-8"
+      class="my-sticky-header-table text-h6"
       :rows-per-page-options="[0]"
       v-model:pagination="pagination"
       :visible-columns="visibleColumns"

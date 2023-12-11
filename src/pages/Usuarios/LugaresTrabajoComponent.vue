@@ -4,10 +4,7 @@
       <div class="column q-pb-none">
         <div class="row">
           <div>
-            <p
-              class="text-h6 text-grey-8 q-pl-md"
-              style="font-family: 'Bebas Neue'"
-            >
+            <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
               LUGARES DE TRABAJO
             </p>
           </div>
@@ -60,7 +57,7 @@
         :columns="columns"
         :filter="filter"
         row-key="alm_codigo"
-        class="my-sticky-header-table text-h6 text-grey-8"
+        class="my-sticky-header-table text-h6"
         :rows-per-page-options="[0]"
         v-model:pagination="pagination"
         :visible-columns="visibleColumns"
@@ -81,6 +78,7 @@
                 size="sm"
                 color="primary"
                 round
+                unelevated
                 dense
                 @click="
                   props.expand = !props.expand;
@@ -107,6 +105,7 @@
                   <q-btn
                     dense
                     outline
+                    unelevated
                     color="primary"
                     @click="
                       openGoogleMaps(
@@ -145,6 +144,7 @@
                     <q-btn
                       v-if="!toogle"
                       dense
+                      unelevated
                       label="Guardar"
                       color="primary"
                       icon="save"
@@ -161,6 +161,7 @@
                     <q-btn
                       v-if="toogle"
                       dense
+                      unelevated
                       label="Actualizar"
                       color="primary"
                       icon="update"

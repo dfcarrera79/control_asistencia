@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <div class="column q-pb-md">
       <div class="row">
-        <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
+        <p class="text-h6" style="font-family: 'Bebas Neue'">
           EMPLEADOS ASIGNADOS A HORARIOS
         </p>
         <div class="q-pl-md">
@@ -65,9 +65,7 @@
             </template>
             <template v-slot:no-option>
               <q-item>
-                <q-item-section class="text-grey">
-                  No hay resultados
-                </q-item-section>
+                <q-item-section> No hay resultados </q-item-section>
               </q-item>
             </template>
           </q-select>
@@ -102,7 +100,7 @@
       :columns="columns"
       :filter="filter"
       row-key="codigo"
-      class="my-sticky-header-table text-h6 text-grey-8"
+      class="my-sticky-header-table text-h6"
       :rows-per-page-options="[0]"
       v-model:pagination="pagination"
       :visible-columns="visibleColumns"

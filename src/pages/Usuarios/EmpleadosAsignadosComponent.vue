@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
-      <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
+      <p class="text-h6" style="font-family: 'Bebas Neue'">
         EMPLEADOS ASIGNADOS A LUGARES DE TRABAJO
       </p>
       <div class="row justify-left">
@@ -44,9 +44,7 @@
             </template>
             <template v-slot:no-option>
               <q-item>
-                <q-item-section class="text-grey">
-                  No hay resultados
-                </q-item-section>
+                <q-item-section> No hay resultados </q-item-section>
               </q-item>
             </template>
           </q-select>
@@ -63,10 +61,18 @@
       :columns="spalte"
       :filter="filter"
       row-key="cedula_ruc"
-      class="my-sticky-header-table text-h6 text-grey-8"
+      class="my-sticky-header-table text-h6"
       :rows-per-page-options="[0]"
       v-model:pagination="pagination"
     >
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th auto-width />
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+      </template>
     </q-table>
   </div>
 </template>

@@ -3,10 +3,7 @@
     <div class="column">
       <div class="row">
         <div>
-          <p
-            class="text-h6 text-grey-8 q-pl-md"
-            style="font-family: 'Bebas Neue'"
-          >
+          <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
             Asignación de Horarios
           </p>
         </div>
@@ -74,9 +71,7 @@
               </template>
               <template v-slot:no-option>
                 <q-item>
-                  <q-item-section class="text-grey">
-                    No hay resultados
-                  </q-item-section>
+                  <q-item-section> No hay resultados </q-item-section>
                 </q-item>
               </template>
             </q-select>
@@ -124,7 +119,7 @@
         :filter="filter"
         row-key="cedula_ruc"
         :selected-rows-label="getSelectedString"
-        class="my-sticky-header-table text-h6 text-grey-8"
+        class="my-sticky-header-table text-h6"
         selection="multiple"
         v-model:selected="selected"
         :rows-per-page-options="[0]"

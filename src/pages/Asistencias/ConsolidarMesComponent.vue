@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="column q-pb-md">
-      <p class="text-h6 text-grey-8" style="font-family: 'Bebas Neue'">
+      <p class="text-h6" style="font-family: 'Bebas Neue'">
         Registro de consolidaciones
       </p>
     </div>
@@ -75,7 +75,7 @@
       <q-table
         flat
         bordered
-        class="text-h6 text-grey-8"
+        class="text-h6"
         :rows="filas"
         :columns="columnas"
         :title="tituloTabla"

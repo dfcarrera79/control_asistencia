@@ -1,7 +1,6 @@
 <template>
   <q-page class="column justify-center content-center">
     <div
-      id="mensaje"
       class="text-body1 text-weight-medium q-pa-md"
       style="text-align: center"
     >
@@ -27,8 +26,4 @@
 
 <script setup lang="ts"></script>
 
-<style lang="scss">
-#mensaje {
-  color: $blue-grey-10;
-}
-</style>
+<style lang="scss"></style>

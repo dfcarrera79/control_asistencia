@@ -2,7 +2,7 @@
   <div class="q-pt-sm">
     <div>
       <h4
-        class="row text-uppercase text-grey-8 justify-center content-center q-my-sm q-pb-md"
+        class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
         style="font-family: 'Bebas Neue'"
       >
         <div class="q-pt-sm">GESTIÓN DE EMPLEADOS</div>
@@ -14,7 +14,6 @@
         <q-tabs
           v-model="tab"
           dense
-          class="bg-grey-2 text-grey-9"
           active-color="primary"
           indicator-color="primary"
           style="font-family: 'Oswald'"

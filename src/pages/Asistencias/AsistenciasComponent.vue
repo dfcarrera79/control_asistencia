@@ -2,15 +2,12 @@
   <div>
     <div class="column">
       <div>
-        <p
-          class="text-h6 text-grey-8 q-pl-md"
-          style="font-family: 'Bebas Neue'"
-        >
+        <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
           Registros por Usuario
         </p>
       </div>
 
-      <div class="col-12 text-grey-8 gt-xs q-pl-md">
+      <div class="col-12 gt-xs q-pl-md">
         <p>
           <strong>Nota:</strong> Seleccione el empleado y el rango de fechas
           (desde - hasta). También puede filtrar la lista de empleados por lugar
@@ -43,9 +40,7 @@
               </template>
               <template v-slot:no-option>
                 <q-item>
-                  <q-item-section class="text-grey">
-                    No hay resultados
-                  </q-item-section>
+                  <q-item-section> No hay resultados </q-item-section>
                 </q-item>
               </template>
             </q-select>
@@ -73,9 +68,7 @@
               </template>
               <template v-slot:no-option>
                 <q-item>
-                  <q-item-section class="text-grey">
-                    No hay resultados
-                  </q-item-section>
+                  <q-item-section> No hay resultados </q-item-section>
                 </q-item>
               </template>
             </q-select>
@@ -174,7 +167,7 @@
       <q-table
         flat
         bordered
-        class="my-sticky-header-table text-h6 text-grey-8"
+        class="my-sticky-header-table text-h6"
         :rows="filas"
         :columns="columnas"
         row-key="codigo"
@@ -196,7 +189,6 @@
           icon-last="skip_next"
           icon-prev="fast_rewind"
           icon-next="fast_forward"
-          text-color="grey"
           color="primary"
           unelevated
           flat

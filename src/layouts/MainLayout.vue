@@ -62,18 +62,9 @@
         <q-list padding>
           <q-item class="column" v-show="!miniState">
             <q-separator inset />
-            <div
-              style="
-                color: #636466;
-                width: 300px;
-                white-space: wrap;
-                overflow: hidden;
-              "
-            >
-              <div style="color: #636466" class="text-center">
-                Bienvenido(a)
-              </div>
-              <div class="text-weight-bold text-center" style="color: #636466">
+            <div style="width: 300px; white-space: wrap; overflow: hidden">
+              <div class="text-center">Bienvenido(a)</div>
+              <div class="text-weight-bold text-center">
                 {{ sessionData.usuario }}
               </div>
             </div>
@@ -82,14 +73,11 @@
 
           <q-item clickable v-ripple to="/" active-class="my-menu-link">
             <q-item-section avatar>
-              <q-icon name="home" color="grey-9" />
+              <q-icon name="home" />
             </q-item-section>
 
             <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
+              <span class="text-h6" style="font-family: 'Bebas Neue'">
                 PÁGINA DE INICIO
               </span>
             </q-item-section>
@@ -104,14 +92,11 @@
             active-class="my-menu-link"
           >
             <q-item-section avatar>
-              <q-icon name="people_alt" color="grey-9" />
+              <q-icon name="people_alt" />
             </q-item-section>
 
             <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
+              <span class="text-h6" style="font-family: 'Bebas Neue'">
                 GESTIÓN DE EMPLEADOS
               </span>
             </q-item-section>
@@ -124,14 +109,11 @@
             active-class="my-menu-link"
           >
             <q-item-section avatar>
-              <q-icon name="person_pin" color="grey-9" />
+              <q-icon name="person_pin" />
             </q-item-section>
 
             <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
+              <span class="text-h6" style="font-family: 'Bebas Neue'">
                 REGISTROS BIOMÉTRICOS
               </span>
             </q-item-section>
@@ -144,14 +126,11 @@
             active-class="my-menu-link"
           >
             <q-item-section avatar>
-              <q-icon name="schedule" color="grey-9" />
+              <q-icon name="schedule" />
             </q-item-section>
 
             <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
+              <span class="text-h6" style="font-family: 'Bebas Neue'">
                 CONFIGURACIÓN DE HORARIOS
               </span>
             </q-item-section>
@@ -164,14 +143,11 @@
             active-class="my-menu-link"
           >
             <q-item-section avatar>
-              <q-icon name="ballot" color="grey-9" />
+              <q-icon name="ballot" />
             </q-item-section>
 
             <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
+              <span class="text-h6" style="font-family: 'Bebas Neue'">
                 GESTIÓN DE EXEPCIONES
               </span>
             </q-item-section>
@@ -184,14 +160,11 @@
             active-class="my-menu-link"
           >
             <q-item-section avatar>
-              <q-icon name="more_time" color="grey-9" />
+              <q-icon name="more_time" />
             </q-item-section>
 
             <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
+              <span class="text-h6" style="font-family: 'Bebas Neue'">
                 Registro de horas suplementarias
               </span>
             </q-item-section>
@@ -204,14 +177,11 @@
             active-class="my-menu-link"
           >
             <q-item-section avatar>
-              <q-icon name="how_to_reg" color="grey-9" />
+              <q-icon name="how_to_reg" />
             </q-item-section>
 
             <q-item-section>
-              <span
-                class="text-grey-9 text-h6"
-                style="font-family: 'Bebas Neue'"
-              >
+              <span class="text-h6" style="font-family: 'Bebas Neue'">
                 REGISTRO DE ASISTENCIAS
               </span>
             </q-item-section>
