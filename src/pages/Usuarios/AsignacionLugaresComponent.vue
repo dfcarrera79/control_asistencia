@@ -136,14 +136,6 @@
         :visible-columns="columnasVisibles"
         class="my-sticky-header-table text-h6"
       >
-        <template v-slot:header="props">
-          <q-tr :props="props">
-            <q-th auto-width />
-            <q-th v-for="col in props.cols" :key="col.name" :props="props">
-              {{ col.label }}
-            </q-th>
-          </q-tr>
-        </template>
         <template v-slot:body-cell-nombre="props">
           <q-td :props="props">
             <q-icon
@@ -205,7 +197,7 @@ const columnasVisibles = ref([
 ]);
 const columnas: QTableProps['columns'] = [
   { name: 'codigo', align: 'left', label: 'Codigo', field: 'codigo' },
-  { name: 'id', align: 'left', label: 'Cedula', field: 'cedula_ruc' },
+  { name: 'id', align: 'left', label: 'Cédula', field: 'cedula_ruc' },
   {
     name: 'nombre',
     align: 'left',

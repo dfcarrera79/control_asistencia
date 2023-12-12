@@ -45,6 +45,13 @@
             </template>
           </q-input>
         </div>
+        <div class="q-pt-md">
+          <strong>Nota: </strong> Es necesario crear un código QR único para
+          cada lugar de trabajo. Simplemente copia el nombre del lugar en el
+          <a href="https://www.qr-code-generator.com/" target="_blank"
+            >generador de códigos QR</a
+          >.
+        </div>
       </div>
     </div>
     <div class="q-pa-md">

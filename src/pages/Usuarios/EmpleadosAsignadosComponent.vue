@@ -64,16 +64,7 @@
       class="my-sticky-header-table text-h6"
       :rows-per-page-options="[0]"
       v-model:pagination="pagination"
-    >
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-      </template>
-    </q-table>
+    />
   </div>
 </template>
 
@@ -101,7 +92,7 @@ const pagination = {
   rowsPerPage: 0, // 0 means all rows
 };
 const spalte: QTableProps['columns'] = [
-  { name: 'id', align: 'left', label: 'Cedula/Ruc', field: 'cedula_ruc' },
+  { name: 'id', align: 'left', label: 'Cédula/Ruc', field: 'cedula_ruc' },
   {
     name: 'nombre',
     align: 'left',
