@@ -41,7 +41,7 @@
       </q-card>
     </q-dialog>
 
-    <q-card class="shadow-8 bg-white" style="width: 300px; height: 260px">
+    <q-card class="shadow-8" style="width: 300px; height: 260px">
       <div class="row bg-blue-8 justify-center q-pa-xs">
         <span
           class="text-h6 text-center text-white"
@@ -200,9 +200,9 @@ const logearse = async () => {
   router.push('/');
 };
 
-const recuperarContraseña = () => {
-  mostrarVentana.value = true;
-};
+// const recuperarContraseña = () => {
+//   mostrarVentana.value = true;
+// };
 
 const fetchEmail = async () => {
   try {
