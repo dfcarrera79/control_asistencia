@@ -220,7 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import jwtDecode from 'jwt-decode';
 import { LocalStorage, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
@@ -287,7 +287,15 @@ watch(
 );
 
 // Recuperar el estado de dark.isActive del LocalStorage al iniciar la aplicación
-onMounted(() => {
+// onMounted(() => {
+//   const session: DarkMode | null = LocalStorage.getItem('darkMode');
+//   darkMode.value = session?.darkMode || false;
+//   if (session?.darkMode !== null) {
+//     dark.set(darkMode.value);
+//   }
+// });
+
+onBeforeMount(async () => {
   const session: DarkMode | null = LocalStorage.getItem('darkMode');
   darkMode.value = session?.darkMode || false;
   if (session?.darkMode !== null) {

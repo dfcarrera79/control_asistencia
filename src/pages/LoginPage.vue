@@ -3,7 +3,9 @@
     <q-dialog v-model="mostrarVentana" persistent>
       <q-card>
         <div class="row bg-blue-8 justify-center q-pa-xs">
-          <span class="text-h6 text-center" style="font-family: 'Bebas Neue'"
+          <span
+            class="text-h6 text-center text-white"
+            style="font-family: 'Bebas Neue'"
             >Cambiar clave de acceso</span
           >
         </div>
@@ -91,7 +93,7 @@
         </div>
       </div>
 
-      <!-- <div class="row">
+      <div class="row">
         <div class="column col-xs-12 q-pa-sm">
           <a
             class="full-width q-link"
@@ -108,7 +110,7 @@
             >
           </a>
         </div>
-      </div> -->
+      </div>
     </q-card>
   </q-page>
 </template>
@@ -200,9 +202,9 @@ const logearse = async () => {
   router.push('/');
 };
 
-// const recuperarContraseña = () => {
-//   mostrarVentana.value = true;
-// };
+const recuperarContraseña = () => {
+  mostrarVentana.value = true;
+};
 
 const fetchEmail = async () => {
   try {

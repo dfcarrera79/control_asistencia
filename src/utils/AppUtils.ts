@@ -1,4 +1,4 @@
-import { ObjectError } from '../components/models';
+import type { ObjectError } from '../components/models';
 
 export function deducirMensajeError(o_error: ObjectError) {
   let mensaje = '';
