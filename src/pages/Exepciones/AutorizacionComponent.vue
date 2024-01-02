@@ -89,7 +89,7 @@ import { useAuthStore } from 'src/stores/auth';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from 'src/services/useAxios';
 import { Excepciones } from '../../components/models';
-import { formatearFechas } from 'src/services/useWorkDays';
+import { formatearFechas } from '../../services/useWorkDays';
 
 /* Defined Props */
 const props = defineProps<{
