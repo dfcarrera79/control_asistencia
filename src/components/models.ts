@@ -354,3 +354,27 @@ export interface RegistrosConsolidados {
   suplementaria: number;
   atrasos: number;
 }
+
+export interface Calendario {
+  title: string;
+  details: string;
+  start: string;
+  end: string;
+  time: string;
+  bgcolor: string;
+}
+
+interface NuevoHorario {
+  end: string;
+  time: string;
+  start: string;
+  title: string;
+  bgcolor: string;
+  details: string;
+}
+
+export interface RespuestaHorario {
+  codigo: number;
+  nombre: string;
+  horario: NuevoHorario[];
+}

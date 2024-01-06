@@ -39,7 +39,11 @@
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="horarios">
-          <HorariosComponent :rows="rows" @updateRows="updateRows()" />
+          <!-- <HorariosComponent :rows="rows" @updateRows="updateRows()" /> -->
+          <NuevoHorarioComponent
+            :horarios="horarios"
+            @actualizarHorarios="actualizarHorarios()"
+          />
         </q-tab-panel>
 
         <q-tab-panel name="asignacion">
@@ -61,42 +65,67 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
-import HorariosComponent from './HorariosComponent.vue';
+// import HorariosComponent from './HorariosComponent.vue';
+import NuevoHorarioComponent from './NuevoHorarioComponent.vue';
 import AsignadosComponent from './AsignadosComponent.vue';
 import AsignacionComponent from './AsignacionComponent.vue';
+// import CalendarioComponent from './CalendarioComponent.vue';
+// import NuevoHorario from './NuevoHorario.vue';
 import {
-  FilasHorarios,
   HorariosAsignados,
   LugarTrabajo,
+  RespuestaHorario,
 } from '../../components/models';
 
 // Data
 const tab = ref('');
 const modelo = ref('');
 const groups = ref<string[]>([]);
-const rows = ref<FilasHorarios[]>([]);
+// const rows = ref<FilasHorarios[]>([]);
 const filas = ref<HorariosAsignados[]>([]);
+const horarios = ref<RespuestaHorario[]>([]);
 const { get } = useAxios();
 
 // Methods
 const obtenerHorarios = async () => {
-  const respuesta = await get('/obtener_turnos', {});
+  const respuesta = await get('/obtener_horarios', {});
   if (respuesta.error === 'S') {
-    rows.value = [];
+    horarios.value = [];
     return;
   }
 
   // Check if the response contains data
   if (respuesta.objetos.length === 0) {
-    rows.value = [];
+    horarios.value = [];
   } else {
-    rows.value = respuesta.objetos;
+    horarios.value = respuesta.objetos;
   }
+  console.log('[horarios]: ', JSON.stringify(horarios.value));
 };
 
-const updateRows = (): void => {
+const actualizarHorarios = (): void => {
   obtenerHorarios();
 };
+
+// const obtenerHorarios = async () => {
+//   const respuesta = await get('/obtener_turnos', {});
+//   if (respuesta.error === 'S') {
+//     rows.value = [];
+//     return;
+//   }
+
+//   // Check if the response contains data
+//   if (respuesta.objetos.length === 0) {
+//     rows.value = [];
+//   } else {
+//     rows.value = respuesta.objetos;
+//   }
+//   console.log('[ROWS]: ', JSON.stringify(rows.value));
+// };
+
+// const updateRows = (): void => {
+//   obtenerHorarios();
+// };
 
 const obtenerHorariosAsignados = async (modelo: string) => {
   const respuesta = await get('/obtener_horarios_asignados', {

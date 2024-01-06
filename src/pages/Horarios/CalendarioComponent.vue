@@ -2,12 +2,25 @@
   <div class="subcontent">
     <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
 
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        font-family: 'Bebas Neue';
+      "
+    >
+      <div style="font-size: 2em">{{ formattedMonth }}</div>
+    </div>
+
     <div class="row justify-center">
       <div style="display: flex; max-width: 800px; width: 100%">
         <q-calendar-month
-          locale="es"
           ref="calendar"
           v-model="selectedDate"
+          locale="es"
+          :weekdays="[1, 2, 3, 4, 5, 6, 0]"
           animated
           bordered
           focusable
@@ -23,19 +36,26 @@
           @click-head-workweek="onClickHeadWorkweek"
           @click-head-day="onClickHeadDay"
         >
-          <template #day="{ scope: { timestamp } }">
+          <template #week="{ scope: { week, weekdays } }">
             <template
-              v-for="event in eventsMap[timestamp.date]"
-              :key="event.id"
+              v-for="(computedEvent, index) in getWeekEvents(week, weekdays)"
+              :key="index"
             >
               <div
-                :class="badgeClasses(event, 'day')"
-                :style="badgeStyles(event, 'day')"
-                class="my-event"
+                :class="badgeClasses(computedEvent)"
+                :style="badgeStyles(computedEvent, week.length)"
               >
-                <div class="title q-calendar__ellipsis">
-                  {{ event.title + (event.time ? ' - ' + event.time : '') }}
-                  <q-tooltip>{{ event.details }}</q-tooltip>
+                <div
+                  v-if="computedEvent.event && computedEvent.event.details"
+                  class="title q-calendar__ellipsis"
+                >
+                  {{
+                    computedEvent.event.title +
+                    (computedEvent.event.time
+                      ? ' - ' + computedEvent.event.time
+                      : '')
+                  }}
+                  <q-tooltip>{{ computedEvent.event.details }}</q-tooltip>
                 </div>
               </div>
             </template>
@@ -46,126 +66,203 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import {
   QCalendarMonth,
-  addToDate,
-  parseDate,
-  parseTimestamp,
+  daysBetween,
+  isOverlappingDates,
+  parsed,
   today,
+  indexOf,
 } from '@quasar/quasar-ui-qcalendar/src/index.js';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.sass';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.sass';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass';
 
-import { ref } from 'vue';
+import { defineComponent } from 'vue';
 import NavigationBar from '../../components/NavigationBar.vue';
 
-// The function below is used to set up our demo data
-const CURRENT_DAY = new Date();
-function getCurrentDay(day) {
-  const newDay = new Date(CURRENT_DAY);
-  newDay.setDate(day);
-  const tm = parseDate(newDay);
-  return tm.date;
-}
-
-const selectedDate = ref(today());
-const events = ref([
-  {
-    id: 1,
-    title: '1st of the Month',
-    details: 'Horario Bodega Grupo 1',
-    date: getCurrentDay(1),
-    bgcolor: 'primary',
+export default defineComponent({
+  name: 'MonthSlotWeek',
+  components: {
+    NavigationBar,
+    QCalendarMonth,
   },
-  {
-    id: 2,
-    title: '2nd of the Month',
-    details: 'Horario Bodega Grupo 1',
-    date: getCurrentDay(2),
-    bgcolor: 'green',
+  props: {
+    events: Array, // Define events as a prop
   },
-]);
+  data() {
+    return {
+      selectedDate: today(),
+    };
+  },
 
-const eventsMap = ref({});
-if (events.value.length > 0) {
-  events.value.forEach((event) => {
-    (eventsMap.value[event.date] = eventsMap.value[event.date] || []).push(
-      event
-    );
-    if (event.days !== undefined) {
-      let timestamp = parseTimestamp(event.date);
-      let days = event.days;
-      do {
-        timestamp = addToDate(timestamp, { day: 1 });
-        if (!eventsMap.value[timestamp.date]) {
-          eventsMap.value[timestamp.date] = [];
+  methods: {
+    getWeekEvents(week) {
+      const firstDay = parsed(week[0].date + ' 00:00');
+      const lastDay = parsed(week[week.length - 1].date + ' 23:59');
+
+      const eventsWeek = [];
+      this.events.forEach((event, id) => {
+        const startDate = parsed(event.start + ' 00:00');
+        const endDate = parsed(event.end + ' 23:59');
+
+        if (isOverlappingDates(startDate, endDate, firstDay, lastDay)) {
+          const left = daysBetween(firstDay, startDate, true);
+          const right = daysBetween(endDate, lastDay, true);
+
+          eventsWeek.push({
+            id, // index event
+            left, // Position initial day [0-6]
+            right, // Number days available
+            size: week.length - (left + right), // Size current event (in days)
+            event, // Info
+          });
         }
-        eventsMap.value[timestamp.date].push(event);
-      } while (--days > 1);
-    }
-  });
-}
+      });
 
-const badgeClasses = (event, type) => {
-  return {
-    [`text-white bg-${event.bgcolor}`]: true,
-    'rounded-border': true,
-  };
-};
+      const events = [];
+      if (eventsWeek.length > 0) {
+        const infoWeek = eventsWeek.sort((a, b) => a.left - b.left);
+        infoWeek.forEach((_, i) => {
+          this.insertEvent(events, week.length, infoWeek, i, 0, 0);
+        });
+      }
 
-const badgeStyles = (day, event) => {
-  const s = {};
-  return s;
-};
+      return events;
+    },
 
-const onToday = () => {
-  this.$refs.calendar.moveToToday();
-};
+    monthFormatter() {
+      try {
+        return new Intl.DateTimeFormat(this.locale || undefined, {
+          month: 'long',
+          timeZone: 'UTC',
+        });
+      } catch (e) {
+        // Handle any potential error (optional)
+        console.error('Error creating Intl.DateTimeFormat:', e);
+        return null; // or provide a default formatter
+      }
+    },
 
-const onPrev = () => {
-  this.$refs.calendar.prev();
-};
+    insertEvent(events, weekLength, infoWeek, index, availableDays, level) {
+      const iEvent = infoWeek[index];
+      if (iEvent !== undefined && iEvent.left >= availableDays) {
+        // If you have space available, more events are placed
+        if (iEvent.left - availableDays) {
+          // It is filled with empty events
+          events.push({ size: iEvent.left - availableDays });
+        }
+        // The event is built
+        events.push({ size: iEvent.size, event: iEvent.event });
 
-const onNext = () => {
-  this.$refs.calendar.next();
-};
+        if (level !== 0) {
+          // If it goes into recursion, then the item is deleted
+          infoWeek.splice(index, 1);
+        }
 
-const onMoved = (data) => {
-  console.log('onMoved', data);
-};
+        const currentAvailableDays = iEvent.left + iEvent.size;
 
-const onChange = (data) => {
-  console.log('onChange', data);
-};
+        if (currentAvailableDays < weekLength) {
+          const indexNextEvent = indexOf(
+            infoWeek,
+            (e) => e.id !== iEvent.id && e.left >= currentAvailableDays
+          );
 
-const onClickDate = (data) => {
-  console.log('onClickDate', data);
-};
+          this.insertEvent(
+            events,
+            weekLength,
+            infoWeek,
+            indexNextEvent !== -1 ? indexNextEvent : index,
+            currentAvailableDays,
+            level + 1
+          );
+        } // else: There are no more days available, end of iteration
+      } else {
+        events.push({ size: weekLength - availableDays });
+        // end of iteration
+      }
+    },
 
-const onClickDay = (data) => {
-  console.log('onClickDay', data);
-};
+    badgeClasses(computedEvent) {
+      if (computedEvent.event !== undefined) {
+        return {
+          'my-event': true,
+          'text-white': true,
+          [`bg-${computedEvent.event.bgcolor}`]: true,
+          'rounded-border': true,
+          'q-calendar__ellipsis': true,
+        };
+      }
+      return {
+        'my-void-event': true,
+      };
+    },
 
-const onClickWorkweek = (data) => {
-  console.log('onClickWorkweek', data);
-};
+    badgeStyles(computedEvent, weekLength) {
+      const s = {};
+      if (computedEvent.size !== undefined) {
+        s.width = (100 / weekLength) * computedEvent.size + '%';
+      }
+      return s;
+    },
 
-const onClickHeadDay = (data) => {
-  console.log('onClickHeadDay', data);
-};
+    isBetweenDatesWeek(dateStart, dateEnd, weekStart, weekEnd) {
+      return (
+        (dateEnd < weekEnd && dateEnd >= weekStart) ||
+        dateEnd === weekEnd ||
+        (dateEnd > weekEnd && dateStart <= weekEnd)
+      );
+    },
 
-const onClickHeadWorkweek = (data) => {
-  console.log('onClickHeadWorkweek', data);
-};
+    onToday() {
+      this.$refs.calendar.moveToToday();
+    },
+    onPrev() {
+      this.$refs.calendar.prev();
+    },
+    onNext() {
+      this.$refs.calendar.next();
+    },
+    onMoved(data) {
+      console.log('onMoved', data);
+    },
+    onChange(data) {
+      console.log('onChange', data);
+    },
+    onClickDate(data) {
+      console.log('onClickDate', data);
+    },
+    onClickDay(data) {
+      console.log('onClickDay', data);
+    },
+    onClickWorkweek(data) {
+      console.log('onClickWorkweek', data);
+    },
+    onClickHeadDay(data) {
+      console.log('onClickHeadDay', data);
+    },
+    onClickHeadWorkweek(data) {
+      console.log('onClickHeadWorkweek', data);
+    },
+  },
+  computed: {
+    formattedMonth() {
+      const date = new Date(this.selectedDate);
+      return this.monthFormatter().format(date) + ' ' + date.getFullYear();
+    },
+  },
+});
 </script>
 
 <style lang="sass" scoped>
 .my-event
   position: relative
+  display: inline-flex
+  white-space: nowrap
   font-size: 12px
-  width: 100%
+  height: 16px
+  max-height: 16px
   margin: 1px 0 0 0
   justify-content: center
   text-overflow: ellipsis
@@ -178,6 +275,11 @@ const onClickHeadWorkweek = (data) => {
   justify-content: center
   align-items: center
   height: 100%
+
+.my-void-event
+  display: inline-flex
+  white-space: nowrap
+  height: 1px
 
 .text-white
   color: white
