@@ -1,71 +1,3 @@
-<template>
-  <div class="subcontent">
-    <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
-
-    <div
-      style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: nowrap;
-        font-family: 'Bebas Neue';
-      "
-    >
-      <div style="font-size: 2em">{{ formattedMonth }}</div>
-    </div>
-
-    <div class="row justify-center">
-      <div style="display: flex; max-width: 800px; width: 100%">
-        <q-calendar-month
-          ref="calendar"
-          v-model="selectedDate"
-          locale="es"
-          :weekdays="[1, 2, 3, 4, 5, 6, 0]"
-          animated
-          bordered
-          focusable
-          hoverable
-          no-active-date
-          :day-min-height="60"
-          :day-height="0"
-          @change="onChange"
-          @moved="onMoved"
-          @click-date="onClickDate"
-          @click-day="onClickDay"
-          @click-workweek="onClickWorkweek"
-          @click-head-workweek="onClickHeadWorkweek"
-          @click-head-day="onClickHeadDay"
-        >
-          <template #week="{ scope: { week, weekdays } }">
-            <template
-              v-for="(computedEvent, index) in getWeekEvents(week, weekdays)"
-              :key="index"
-            >
-              <div
-                :class="badgeClasses(computedEvent)"
-                :style="badgeStyles(computedEvent, week.length)"
-              >
-                <div
-                  v-if="computedEvent.event && computedEvent.event.details"
-                  class="title q-calendar__ellipsis"
-                >
-                  {{
-                    computedEvent.event.title +
-                    (computedEvent.event.time
-                      ? ' - ' + computedEvent.event.time
-                      : '')
-                  }}
-                  <q-tooltip>{{ computedEvent.event.details }}</q-tooltip>
-                </div>
-              </div>
-            </template>
-          </template>
-        </q-calendar-month>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
 import {
   QCalendarMonth,
@@ -88,16 +20,21 @@ export default defineComponent({
     NavigationBar,
     QCalendarMonth,
   },
+  emits: ['fecha'],
   props: {
     events: Array, // Define events as a prop
   },
   data() {
     return {
       selectedDate: today(),
+      locale: 'es',
     };
   },
 
   methods: {
+    emitFecha(selectedDate) {
+      this.$emit('fecha', selectedDate);
+    },
     getWeekEvents(week) {
       const firstDay = parsed(week[0].date + ' 00:00');
       const lastDay = parsed(week[week.length - 1].date + ' 23:59');
@@ -226,6 +163,7 @@ export default defineComponent({
     },
     onMoved(data) {
       console.log('onMoved', data);
+      // this.emitFecha(this.selectedDate);
     },
     onChange(data) {
       console.log('onChange', data);
@@ -252,8 +190,80 @@ export default defineComponent({
       return this.monthFormatter().format(date) + ' ' + date.getFullYear();
     },
   },
+  watch: {
+    selectedDate(newSelectedDate) {
+      this.emitFecha(newSelectedDate);
+    },
+  },
 });
 </script>
+
+<template>
+  <div class="subcontent">
+    <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        font-family: 'Bebas Neue';
+      "
+    >
+      <div style="font-size: 2em">{{ formattedMonth }}</div>
+    </div>
+
+    <div class="row justify-center">
+      <div style="display: flex; max-width: 800px; width: 100%">
+        <q-calendar-month
+          ref="calendar"
+          v-model="selectedDate"
+          :locale="locale"
+          :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+          animated
+          bordered
+          focusable
+          hoverable
+          no-active-date
+          :day-min-height="60"
+          :day-height="0"
+          @change="onChange"
+          @moved="onMoved"
+          @click-date="onClickDate"
+          @click-day="onClickDay"
+          @click-workweek="onClickWorkweek"
+          @click-head-workweek="onClickHeadWorkweek"
+          @click-head-day="onClickHeadDay"
+        >
+          <template #week="{ scope: { week, weekdays } }">
+            <template
+              v-for="(computedEvent, index) in getWeekEvents(week, weekdays)"
+              :key="index"
+            >
+              <div
+                :class="badgeClasses(computedEvent)"
+                :style="badgeStyles(computedEvent, week.length)"
+              >
+                <div
+                  v-if="computedEvent.event && computedEvent.event.details"
+                  class="title q-calendar__ellipsis"
+                >
+                  {{
+                    computedEvent.event.title +
+                    (computedEvent.event.time
+                      ? ' - ' + computedEvent.event.time
+                      : '')
+                  }}
+                  <q-tooltip>{{ computedEvent.event.details }}</q-tooltip>
+                </div>
+              </div>
+            </template>
+          </template>
+        </q-calendar-month>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="sass" scoped>
 .my-event

@@ -378,3 +378,8 @@ export interface RespuestaHorario {
   nombre: string;
   horario: NuevoHorario[];
 }
+
+export interface Schedule {
+  codigo: number;
+  nombre: string;
+}

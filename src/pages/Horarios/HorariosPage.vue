@@ -24,7 +24,11 @@
           label="Creación de Horarios"
           @click="obtenerHorarios()"
         />
-        <q-tab name="asignacion" label="Asignación de Horarios a Grupos" />
+        <q-tab
+          name="asignacion"
+          label="Asignación de Horarios a Grupos"
+          @click="obtenerGrupos()"
+        />
         <q-tab
           name="visualizacion"
           label="Visualización de Horarios Asignados"
@@ -47,7 +51,8 @@
         </q-tab-panel>
 
         <q-tab-panel name="asignacion">
-          <AsignacionComponent />
+          <!-- <AsignacionComponent /> -->
+          <NuevoAsignacionComponent :grupos="grupos" :schedules="horarios" />
         </q-tab-panel>
 
         <q-tab-panel name="visualizacion">
@@ -67,26 +72,39 @@ import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
 // import HorariosComponent from './HorariosComponent.vue';
 import NuevoHorarioComponent from './NuevoHorarioComponent.vue';
+import NuevoAsignacionComponent from './NuevoAsignacionComponent.vue';
 import AsignadosComponent from './AsignadosComponent.vue';
-import AsignacionComponent from './AsignacionComponent.vue';
+// import AsignacionComponent from './AsignacionComponent.vue';
 // import CalendarioComponent from './CalendarioComponent.vue';
 // import NuevoHorario from './NuevoHorario.vue';
 import {
-  HorariosAsignados,
+  GroupObject,
   LugarTrabajo,
   RespuestaHorario,
+  HorariosAsignados,
 } from '../../components/models';
 
 // Data
 const tab = ref('');
 const modelo = ref('');
+const grupos = ref([]);
 const groups = ref<string[]>([]);
+// const schedules = ref<Schedule[]>([]);
 // const rows = ref<FilasHorarios[]>([]);
 const filas = ref<HorariosAsignados[]>([]);
 const horarios = ref<RespuestaHorario[]>([]);
 const { get } = useAxios();
 
 // Methods
+const obtenerGrupos = async () => {
+  const respuesta = await get('/obtener_grupos', {});
+  if (respuesta.error === 'S') {
+    console.error(respuesta.mensaje);
+    return;
+  }
+  grupos.value = respuesta.objetos.map((obj: GroupObject) => obj.descripcion);
+};
+
 const obtenerHorarios = async () => {
   const respuesta = await get('/obtener_horarios', {});
   if (respuesta.error === 'S') {
@@ -100,32 +118,11 @@ const obtenerHorarios = async () => {
   } else {
     horarios.value = respuesta.objetos;
   }
-  console.log('[horarios]: ', JSON.stringify(horarios.value));
 };
 
 const actualizarHorarios = (): void => {
   obtenerHorarios();
 };
-
-// const obtenerHorarios = async () => {
-//   const respuesta = await get('/obtener_turnos', {});
-//   if (respuesta.error === 'S') {
-//     rows.value = [];
-//     return;
-//   }
-
-//   // Check if the response contains data
-//   if (respuesta.objetos.length === 0) {
-//     rows.value = [];
-//   } else {
-//     rows.value = respuesta.objetos;
-//   }
-//   console.log('[ROWS]: ', JSON.stringify(rows.value));
-// };
-
-// const updateRows = (): void => {
-//   obtenerHorarios();
-// };
 
 const obtenerHorariosAsignados = async (modelo: string) => {
   const respuesta = await get('/obtener_horarios_asignados', {
