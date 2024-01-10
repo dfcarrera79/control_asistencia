@@ -1,3 +1,126 @@
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useQuasar } from 'quasar';
+import { useAxios } from '../../services/useAxios';
+import { Empleados, FilasEmpleados, Lugares } from '../../components/models';
+import { columnasAsignacionLugares } from '../../components/columns';
+
+/* Defined Props */
+const props = defineProps<{
+  filas: FilasEmpleados[];
+  grupos: string[];
+  lugares: string[];
+  direcciones: Lugares[];
+  empleadosAsignados: number[];
+}>();
+
+/* defined emits*/
+const emit = defineEmits(['actualizarFilas']);
+
+// Data
+const lugar = ref('');
+const model = ref('');
+const filter = ref('');
+const $q = useQuasar();
+const selected = ref([]);
+const direccion = ref('');
+const id_direccion = ref(0);
+const { put } = useAxios();
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+const options = ref(props.lugares);
+const columnas = columnasAsignacionLugares;
+
+// Methods
+const filterFn = (val: string, update: (callback: () => void) => void) => {
+  if (val === '') {
+    update(() => {
+      options.value = props.lugares;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    options.value = props.lugares.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+const getSelectedString = () => {
+  return selected.value.length === 0
+    ? ''
+    : `${selected.value.length} record${
+        selected.value.length > 1 ? 's' : ''
+      } selected of ${props.filas.length}`;
+};
+
+const designar_lugar_empleado = async (
+  targetId: number,
+  targetCodigo: number
+) => {
+  try {
+    const response = await put(
+      '/designar_lugar_empleado',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          alm_codigo: targetId,
+          usuario_codigo: targetCodigo,
+        })
+      )
+    );
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error asignando empleado a lugar de trabajo:', error);
+  }
+};
+
+const handleButtonClicked = async (id: number, selected: Empleados[]) => {
+  for (const item of selected) {
+    await designar_lugar_empleado(id, item.codigo);
+  }
+};
+
+const getCalles = (lugar: string) => {
+  if (lugar === '' || lugar === null) {
+    direccion.value = '';
+    id_direccion.value = 0;
+  } else {
+    const calles: Lugares | undefined = props.direcciones.find(
+      (l) => l.alm_nomcom === lugar
+    );
+
+    if (calles) {
+      direccion.value = calles.alm_calles;
+      id_direccion.value = calles.codigo;
+    } else {
+      direccion.value = 'No se encontraron calles';
+      id_direccion.value = 0;
+    }
+  }
+};
+
+const enviarDepartamento = (event: string) => {
+  emit('actualizarFilas', event);
+};
+
+watch([model, lugar], ([newModelValue, newLugarValue]) => {
+  enviarDepartamento(newModelValue);
+  getCalles(newLugarValue);
+});
+</script>
+
 <template>
   <div class="q-pa-md">
     <div class="column">
@@ -133,7 +256,15 @@
         v-model:selected="selected"
         :rows-per-page-options="[0]"
         v-model:pagination="pagination"
-        :visible-columns="columnasVisibles"
+        :visible-columns="[
+          'id',
+          'nombre',
+          'cargo',
+          'telefono',
+          'celular',
+          'email',
+          'departamento',
+        ]"
         class="my-sticky-header-table text-h6"
       >
         <template v-slot:body-cell-nombre="props">
@@ -153,205 +284,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, watch } from 'vue';
-import { QTableProps, useQuasar } from 'quasar';
-import { useAxios } from '../../services/useAxios';
-import { Empleados, FilasEmpleados, Lugares } from '../../components/models';
-
-/* Defined Props */
-const props = defineProps<{
-  filas: FilasEmpleados[];
-  grupos: string[];
-  lugares: string[];
-  direcciones: Lugares[];
-  empleadosAsignados: number[];
-}>();
-
-/* defined emits*/
-const emit = defineEmits(['actualizarFilas']);
-
-// Data
-const lugar = ref('');
-const model = ref('');
-const filter = ref('');
-const $q = useQuasar();
-const selected = ref([]);
-const direccion = ref('');
-const id_direccion = ref(0);
-const { put } = useAxios();
-const pagination = {
-  page: 1,
-  rowsPerPage: 0, // 0 means all rows
-};
-const options = ref(props.lugares);
-const columnasVisibles = ref([
-  'id',
-  'nombre',
-  'cargo',
-  'telefono',
-  'celular',
-  'email',
-  'departamento',
-]);
-const columnas: QTableProps['columns'] = [
-  { name: 'codigo', align: 'left', label: 'Codigo', field: 'codigo' },
-  { name: 'id', align: 'left', label: 'Cédula', field: 'cedula_ruc' },
-  {
-    name: 'nombre',
-    align: 'left',
-    label: 'Nombre',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'direccion',
-    align: 'left',
-    label: 'Dirección',
-    field: 'direccion',
-  },
-  {
-    name: 'cargo',
-    align: 'left',
-    label: 'Cargo',
-    field: 'cargo',
-  },
-  {
-    name: 'departamento',
-    align: 'left',
-    label: 'Departamento',
-    field: 'departamento',
-    sortable: true,
-  },
-  {
-    name: 'sueldo',
-    align: 'left',
-    label: 'Sueldo',
-    field: 'sueldo_basico',
-  },
-  {
-    name: 'fecha',
-    align: 'left',
-    label: 'Fecha de Ingreso',
-    field: 'fecha_ingreso',
-  },
-  {
-    name: 'telefono',
-    align: 'left',
-    label: 'Teléfono',
-    field: 'no_telefono',
-  },
-  {
-    name: 'celular',
-    align: 'left',
-    label: 'Celular',
-    field: 'no_celular',
-  },
-  {
-    name: 'email',
-    align: 'left',
-    label: 'Email',
-    field: 'email',
-  },
-  {
-    name: 'genero',
-    align: 'left',
-    label: 'Género',
-    field: 'genero',
-  },
-  {
-    name: 'civil',
-    align: 'left',
-    label: 'Estado Civil',
-    field: 'civil',
-  },
-];
-
-// Methods
-const filterFn = (val: string, update: (callback: () => void) => void) => {
-  if (val === '') {
-    update(() => {
-      options.value = props.lugares;
-    });
-    return;
-  }
-
-  update(() => {
-    const needle = val.toLowerCase();
-    options.value = props.lugares.filter(
-      (v) => v.toLowerCase().indexOf(needle) > -1
-    );
-  });
-};
-
-const getSelectedString = () => {
-  return selected.value.length === 0
-    ? ''
-    : `${selected.value.length} record${
-        selected.value.length > 1 ? 's' : ''
-      } selected of ${props.filas.length}`;
-};
-
-const designar_lugar_empleado = async (
-  targetId: number,
-  targetCodigo: number
-) => {
-  try {
-    const response = await put(
-      '/designar_lugar_empleado',
-      {},
-      JSON.parse(
-        JSON.stringify({
-          alm_codigo: targetId,
-          usuario_codigo: targetCodigo,
-        })
-      )
-    );
-
-    // Handle the response accordingly
-    $q.notify({
-      color: response.error === 'N' ? 'green-4' : 'red-5',
-      textColor: 'white',
-      icon: response.error === 'N' ? 'cloud_done' : 'warning',
-      message: response.mensaje,
-    });
-  } catch (error) {
-    console.error('Error asignando empleado a lugar de trabajo:', error);
-  }
-};
-
-const handleButtonClicked = async (id: number, selected: Empleados[]) => {
-  for (const item of selected) {
-    await designar_lugar_empleado(id, item.codigo);
-  }
-};
-
-const getCalles = (lugar: string) => {
-  if (lugar === '' || lugar === null) {
-    direccion.value = '';
-    id_direccion.value = 0;
-  } else {
-    const calles: Lugares | undefined = props.direcciones.find(
-      (l) => l.alm_nomcom === lugar
-    );
-    direccion.value = calles.alm_calles;
-    id_direccion.value = calles.codigo;
-  }
-};
-
-const enviarDepartamento = (event: string) => {
-  emit('actualizarFilas', event);
-};
-
-watch(model, (newValue) => {
-  enviarDepartamento(newValue);
-});
-
-watch(lugar, () => {
-  getCalles(lugar.value);
-});
-</script>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { QTableProps, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
 import {
   Lugar,
@@ -8,6 +8,7 @@ import {
   FilasAsignadas,
   RespuestaEmpleados,
 } from '../../components/models';
+import { columnasAsignacion } from '../../components/columns';
 
 /* Defined Props */
 const props = defineProps<{
@@ -36,29 +37,7 @@ const opcion = ref<RespuestaHorario>({
   nombre: '',
   horario: [],
 });
-
-const columnas: QTableProps['columns'] = [
-  { name: 'id', align: 'left', label: 'Cedula/Ruc', field: 'cedula_ruc' },
-  {
-    name: 'nombre',
-    align: 'left',
-    label: 'Nombre',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'lugar',
-    align: 'left',
-    label: 'Lugar de trabajo asignado',
-    field: 'alm_nomcom',
-  },
-  {
-    name: 'direccion',
-    align: 'left',
-    label: 'Dirección del lugar de trabajo',
-    field: 'direccion',
-  },
-];
+const columnas = columnasAsignacion;
 
 // Methods
 const getSelectedString = () => {
@@ -95,9 +74,10 @@ const obtenerLugaresTrabajo = async () => {
   lugares.value = [...new Set(data.map((item) => item.lugares))];
 };
 
-const obtenerEmpleadosAsignados = async (modelo: string) => {
+const obtenerEmpleadosAsignados = async (modelo: string, depar: string) => {
   const respuesta = await get('/obtener_empleados_asignados', {
     lugar: modelo,
+    departamento: depar,
   });
   if (respuesta.error === 'S') {
     filas.value = [];
@@ -162,11 +142,11 @@ const handleButtonClicked = async (id: number, selected: FilasAsignadas[]) => {
 onMounted(() => {
   obtenerLugaresTrabajo();
   obtenerHorariosAsignados();
-  obtenerEmpleadosAsignados(lugar.value);
+  obtenerEmpleadosAsignados(lugar.value, model.value);
 });
 
-watch(lugar, () => {
-  obtenerEmpleadosAsignados(lugar.value);
+watch([lugar, model], ([nuevoLugar, nuevoModel]) => {
+  obtenerEmpleadosAsignados(nuevoLugar, nuevoModel);
 });
 </script>
 
@@ -313,7 +293,7 @@ watch(lugar, () => {
         v-model:selected="selected"
         :rows-per-page-options="[0]"
         v-model:pagination="pagination"
-        :visible-columns="['nombre', 'lugar', 'direccion']"
+        :visible-columns="['nombre', 'departamento', 'lugar', 'direccion']"
       >
         <template v-slot:body-cell-nombre="props">
           <q-td :props="props">

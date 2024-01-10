@@ -1,3 +1,101 @@
+<script setup lang="ts">
+import { useQuasar } from 'quasar';
+import { onMounted, ref, watch } from 'vue';
+import { useAxios } from '../../services/useAxios';
+import { GroupObject } from '../../components/models';
+import { FilasSuplementarias } from '../../components/models';
+import { columnasSupleRegistros } from '../../components/columns';
+
+// Data
+const $q = useQuasar();
+const confirm = ref(false);
+const valor = ref(0);
+const desde = ref('');
+const hasta = ref('');
+const filter = ref('');
+const grupo = ref('');
+const grupos = ref([]);
+const { get, deletes } = useAxios();
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+const filas = ref<FilasSuplementarias[]>([]);
+const columnas = columnasSupleRegistros;
+
+// Methods
+const eliminarRegistro = async (codigo: number) => {
+  try {
+    const response = await deletes(
+      '/eliminar_suplementarias',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          codigo: codigo,
+        })
+      )
+    );
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error eliminando el registro:', error);
+  }
+};
+
+const handleDeleteButton = (val: number) => {
+  confirm.value = true;
+  valor.value = val;
+};
+
+const obtenerGrupos = async () => {
+  const respuesta = await get('/obtener_grupos', {});
+  if (respuesta.error === 'S') {
+    console.error(respuesta.mensaje);
+    return;
+  }
+  grupos.value = respuesta.objetos.map((obj: GroupObject) => obj.descripcion);
+};
+
+const obtenerRegistros = async (model: string, from: string, to: string) => {
+  const respuesta = await get('/obtener_horas_suplementarias', {
+    departamento: model,
+    desde: from,
+    hasta: to,
+  });
+  if (respuesta.error === 'S') {
+    filas.value = [];
+    return;
+  }
+
+  // Check if the response contains data
+  if (respuesta.objetos.length === 0) {
+    filas.value = [];
+  } else {
+    filas.value = respuesta.objetos;
+  }
+};
+
+const handleButtonClicked = async (model: string, from: string, to: string) => {
+  filas.value = [];
+  await obtenerRegistros(model, from, to);
+};
+
+onMounted(() => {
+  obtenerGrupos();
+  obtenerRegistros(grupo.value, '', '');
+});
+
+watch(grupo, () => {
+  obtenerRegistros(grupo.value, '', '');
+});
+</script>
+
 <template>
   <div>
     <div class="row">
@@ -218,127 +316,6 @@
     </q-card>
   </q-dialog>
 </template>
-
-<script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
-import { QTableProps, useQuasar } from 'quasar';
-import { useAxios } from '../../services/useAxios';
-import { GroupObject } from '../../components/models';
-import { FilasSuplementarias } from '../../components/models';
-
-// Data
-const $q = useQuasar();
-const confirm = ref(false);
-const valor = ref(0);
-const desde = ref('');
-const hasta = ref('');
-const filter = ref('');
-const grupo = ref('');
-const grupos = ref([]);
-const { get, deletes } = useAxios();
-const pagination = {
-  page: 1,
-  rowsPerPage: 0, // 0 means all rows
-};
-const filas = ref<FilasSuplementarias[]>([]);
-const columnas: QTableProps['columns'] = [
-  { name: 'codigo', align: 'left', label: 'Codigo', field: 'codigo' },
-  {
-    name: 'nombre',
-    align: 'left',
-    label: 'Nombre',
-    field: 'nombre_completo_usuario',
-    sortable: true,
-  },
-  {
-    name: 'departamento',
-    align: 'left',
-    label: 'Departamento',
-    field: 'departamento',
-    sortable: true,
-  },
-  { name: 'fecha', align: 'left', label: 'Fecha', field: 'fecha' },
-  { name: 'horas', align: 'left', label: 'Horas', field: 'horas' },
-  {
-    name: 'asignado',
-    align: 'left',
-    label: 'Asignado por',
-    field: 'asignado_por',
-  },
-];
-
-// Methods
-const eliminarRegistro = async (codigo: number) => {
-  try {
-    const response = await deletes(
-      '/eliminar_suplementarias',
-      {},
-      JSON.parse(
-        JSON.stringify({
-          codigo: codigo,
-        })
-      )
-    );
-
-    // Handle the response accordingly
-    $q.notify({
-      color: response.error === 'N' ? 'green-4' : 'red-5',
-      textColor: 'white',
-      icon: response.error === 'N' ? 'cloud_done' : 'warning',
-      message: response.mensaje,
-    });
-  } catch (error) {
-    console.error('Error eliminando el registro:', error);
-  }
-};
-
-const handleDeleteButton = (val: number) => {
-  confirm.value = true;
-  valor.value = val;
-};
-
-const obtenerGrupos = async () => {
-  const respuesta = await get('/obtener_grupos', {});
-  if (respuesta.error === 'S') {
-    console.error(respuesta.mensaje);
-    return;
-  }
-  grupos.value = respuesta.objetos.map((obj: GroupObject) => obj.descripcion);
-};
-
-const obtenerRegistros = async (model: string, from: string, to: string) => {
-  const respuesta = await get('/obtener_horas_suplementarias', {
-    departamento: model,
-    desde: from,
-    hasta: to,
-  });
-  if (respuesta.error === 'S') {
-    filas.value = [];
-    return;
-  }
-
-  // Check if the response contains data
-  if (respuesta.objetos.length === 0) {
-    filas.value = [];
-  } else {
-    filas.value = respuesta.objetos;
-  }
-};
-
-const handleButtonClicked = async (model: string, from: string, to: string) => {
-  filas.value = [];
-  await obtenerRegistros(model, from, to);
-};
-
-onMounted(() => {
-  obtenerGrupos();
-  obtenerRegistros(grupo.value, '', '');
-});
-
-watch(grupo, () => {
-  obtenerRegistros(grupo.value, '', '');
-});
-</script>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

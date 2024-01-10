@@ -196,8 +196,8 @@ export interface FilasAsignados {
 
 export interface FilasAsignadas {
   codigo: number;
-  cedula_ruc: string;
   nombre_completo: string;
+  departamento: string;
   alm_nomcom: string;
   direccion: string;
 }

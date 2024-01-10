@@ -1,83 +1,3 @@
-<template>
-  <div class="q-pt-sm">
-    <div>
-      <h4
-        class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
-        style="font-family: 'Bebas Neue'"
-      >
-        <div class="q-pt-sm">GESTIÓN DE EMPLEADOS</div>
-      </h4>
-    </div>
-
-    <div class="q-gutter-y-sm">
-      <q-card flat>
-        <q-tabs
-          v-model="tab"
-          dense
-          active-color="primary"
-          indicator-color="primary"
-          style="font-family: 'Oswald'"
-          align="justify"
-          narrow-indicator
-        >
-          <q-tab
-            name="grupos"
-            label="Lugares de Trabajo"
-            @click="
-              obtenerAlmacenes();
-              obtenerLugaresAsignados();
-            "
-          />
-          <q-tab
-            name="perfiles"
-            label="Asignación de Lugares de Trabajo"
-            @click="actualizarFilas(model)"
-          />
-          <q-tab
-            name="lugares"
-            label="Lista de empleados asignados"
-            @click="
-              obtenerEmpleadosAsignados(modelo);
-              obtenerLugaresTrabajo();
-            "
-          />
-        </q-tabs>
-
-        <q-separator />
-
-        <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="grupos">
-            <LugaresTrabajoComponent
-              :rows="rows"
-              :lugaresAsignados="lugaresAsignados"
-              @actualizarLugares="actualizarLugares()"
-            />
-          </q-tab-panel>
-
-          <q-tab-panel name="perfiles">
-            <AsignacionLugaresComponent
-              :filas="filas"
-              :grupos="grupos"
-              :lugares="lugares"
-              :direcciones="direcciones"
-              :empleadosAsignados="empleadosAsignados"
-              @actualizarFilas="actualizarFilas($event)"
-            />
-          </q-tab-panel>
-
-          <q-tab-panel name="lugares">
-            <EmpleadosAsignadosComponent
-              :zeile="zeile"
-              :groups="groups"
-              @updateRows="updateRows($event)"
-            />
-          </q-tab-panel>
-        </q-tab-panels>
-      </q-card>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
@@ -232,3 +152,83 @@ const updateRows = (event: string): void => {
   obtenerEmpleadosAsignados(event);
 };
 </script>
+
+<template>
+  <div class="q-pt-sm">
+    <div>
+      <h4
+        class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
+        style="font-family: 'Bebas Neue'"
+      >
+        <div class="q-pt-sm">GESTIÓN DE EMPLEADOS</div>
+      </h4>
+    </div>
+
+    <div class="q-gutter-y-sm">
+      <q-card flat>
+        <q-tabs
+          v-model="tab"
+          dense
+          active-color="primary"
+          indicator-color="primary"
+          style="font-family: 'Oswald'"
+          align="justify"
+          narrow-indicator
+        >
+          <q-tab
+            name="grupos"
+            label="Lugares de Trabajo"
+            @click="
+              obtenerAlmacenes();
+              obtenerLugaresAsignados();
+            "
+          />
+          <q-tab
+            name="perfiles"
+            label="Asignación de Lugares de Trabajo"
+            @click="actualizarFilas(model)"
+          />
+          <q-tab
+            name="lugares"
+            label="Lista de empleados asignados"
+            @click="
+              obtenerEmpleadosAsignados(modelo);
+              obtenerLugaresTrabajo();
+            "
+          />
+        </q-tabs>
+
+        <q-separator />
+
+        <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="grupos">
+            <LugaresTrabajoComponent
+              :rows="rows"
+              :lugaresAsignados="lugaresAsignados"
+              @actualizarLugares="actualizarLugares()"
+            />
+          </q-tab-panel>
+
+          <q-tab-panel name="perfiles">
+            <AsignacionLugaresComponent
+              :filas="filas"
+              :grupos="grupos"
+              :lugares="lugares"
+              :direcciones="direcciones"
+              :empleadosAsignados="empleadosAsignados"
+              @actualizarFilas="actualizarFilas($event)"
+            />
+          </q-tab-panel>
+
+          <q-tab-panel name="lugares">
+            <EmpleadosAsignadosComponent
+              :zeile="zeile"
+              :groups="groups"
+              @updateRows="updateRows($event)"
+            />
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card>
+    </div>
+  </div>
+</template>

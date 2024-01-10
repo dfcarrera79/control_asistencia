@@ -1,3 +1,37 @@
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { FilasAnulados } from '../../components/models';
+import { columnasRegistrosBio } from '../../components/columns';
+
+/* Defined Props */
+const props = defineProps<{
+  filas: FilasAnulados[];
+  grupos: string[];
+}>();
+
+/* defined emits*/
+const emit = defineEmits(['updateZeile']);
+
+// Data
+const filter = ref('');
+const modelo = ref('');
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+const columnas = columnasRegistrosBio;
+const visibleColumns = ref(['nombre', 'departamento', 'registro', 'anulado']);
+
+// Methods
+const enviarDepartamento = (event: string) => {
+  emit('updateZeile', event);
+};
+
+watch(modelo, (newValue) => {
+  enviarDepartamento(newValue);
+});
+</script>
+
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
@@ -59,64 +93,3 @@
     />
   </div>
 </template>
-<script setup lang="ts">
-import { ref, watch } from 'vue';
-import { QTableProps } from 'quasar';
-import { FilasAnulados } from '../../components/models';
-
-/* Defined Props */
-const props = defineProps<{
-  filas: FilasAnulados[];
-  grupos: string[];
-}>();
-
-/* defined emits*/
-const emit = defineEmits(['updateZeile']);
-
-// Data
-const filter = ref('');
-const modelo = ref('');
-const pagination = {
-  page: 1,
-  rowsPerPage: 0, // 0 means all rows
-};
-const columnas: QTableProps['columns'] = [
-  { name: 'codigo', align: 'left', label: 'ID', field: 'codigo' },
-  {
-    name: 'nombre',
-    align: 'left',
-    label: 'Nombre',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'departamento',
-    align: 'left',
-    label: 'Departamento',
-    field: 'departamento',
-  },
-  {
-    name: 'registro',
-    align: 'left',
-    label: 'Registro',
-    field: 'registro',
-  },
-  {
-    name: 'anulado',
-    align: 'left',
-    label: 'Anulado por',
-    field: 'anulado_por',
-  },
-];
-
-const visibleColumns = ref(['nombre', 'departamento', 'registro', 'anulado']);
-
-// Methods
-const enviarDepartamento = (event: string) => {
-  emit('updateZeile', event);
-};
-
-watch(modelo, (newValue) => {
-  enviarDepartamento(newValue);
-});
-</script>

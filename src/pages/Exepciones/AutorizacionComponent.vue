@@ -1,3 +1,87 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useQuasar } from 'quasar';
+import { useAuthStore } from 'src/stores/auth';
+import { useAxios } from 'src/services/useAxios';
+import { Excepciones } from '../../components/models';
+import { columnasAutorizacion } from '../../components/columns';
+
+/* Defined Props */
+const props = defineProps<{
+  rows: Excepciones[];
+}>();
+
+/* defined emits*/
+const emit = defineEmits(['updateRows']);
+
+// Data
+const $q = useQuasar();
+const filter = ref('');
+const selected = ref([]);
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+const { put } = useAxios();
+const authStore = useAuthStore();
+const columns = columnasAutorizacion;
+const visibleColumns = ref([
+  'nombre_completo',
+  'alm_nomcom',
+  'excepcion',
+  'dias',
+]);
+
+// Methods
+const autorizarExcepcion = async (
+  usuario_codigo: number,
+  autorizado_por: number
+) => {
+  try {
+    const response = await put(
+      '/autorizar_exepcion',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          usuario_codigo: usuario_codigo,
+          autorizado_por: autorizado_por,
+        })
+      )
+    );
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error autorizando la exepción:', error);
+  }
+};
+
+const resetVariables = () => {
+  filter.value = '';
+  selected.value = [];
+};
+
+const updateRows = () => {
+  emit('updateRows');
+};
+
+const handleButtonClicked = async (
+  selected: Excepciones[],
+  autorizado_por: number
+) => {
+  for (const item of selected) {
+    await autorizarExcepcion(item.usuario_codigo, autorizado_por);
+  }
+  resetVariables();
+  updateRows();
+};
+</script>
+
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
@@ -81,118 +165,6 @@
     </q-table>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-
-import { useAuthStore } from 'src/stores/auth';
-import { QTableProps, useQuasar } from 'quasar';
-import { useAxios } from 'src/services/useAxios';
-import { Excepciones } from '../../components/models';
-import { formatearFechas } from '../../services/useWorkDays';
-
-/* Defined Props */
-const props = defineProps<{
-  rows: Excepciones[];
-}>();
-
-/* defined emits*/
-const emit = defineEmits(['updateRows']);
-
-// Data
-const $q = useQuasar();
-const filter = ref('');
-const selected = ref([]);
-const pagination = {
-  page: 1,
-  rowsPerPage: 0, // 0 means all rows
-};
-const { put } = useAxios();
-const authStore = useAuthStore();
-const columns: QTableProps['columns'] = [
-  { name: 'codigo', align: 'left', label: 'ID', field: 'usuario_codigo' },
-  {
-    name: 'nombre_completo',
-    align: 'left',
-    label: 'Nombre',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'alm_nomcom',
-    align: 'left',
-    label: 'Lugar de trabajo asignado',
-    field: 'alm_nomcom',
-  },
-  {
-    name: 'excepcion',
-    align: 'left',
-    label: 'Tipo de exepcion',
-    field: 'excepcion',
-  },
-  {
-    name: 'dias',
-    align: 'left',
-    label: 'Dias de exepcion',
-    field: (row) => formatearFechas(row.dias),
-  },
-];
-const visibleColumns = ref([
-  'nombre_completo',
-  'alm_nomcom',
-  'excepcion',
-  'dias',
-]);
-
-// Methods
-const autorizarExcepcion = async (
-  usuario_codigo: number,
-  autorizado_por: number
-) => {
-  try {
-    const response = await put(
-      '/autorizar_exepcion',
-      {},
-      JSON.parse(
-        JSON.stringify({
-          usuario_codigo: usuario_codigo,
-          autorizado_por: autorizado_por,
-        })
-      )
-    );
-
-    // Handle the response accordingly
-    $q.notify({
-      color: response.error === 'N' ? 'green-4' : 'red-5',
-      textColor: 'white',
-      icon: response.error === 'N' ? 'cloud_done' : 'warning',
-      message: response.mensaje,
-    });
-  } catch (error) {
-    console.error('Error autorizando la exepción:', error);
-  }
-};
-
-const resetVariables = () => {
-  filter.value = '';
-  selected.value = [];
-};
-
-const updateRows = () => {
-  emit('updateRows');
-};
-
-const handleButtonClicked = async (
-  selected: Excepciones[],
-  autorizado_por: number
-) => {
-  for (const item of selected) {
-    await autorizarExcepcion(item.usuario_codigo, autorizado_por);
-  }
-  resetVariables();
-  updateRows();
-};
-</script>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

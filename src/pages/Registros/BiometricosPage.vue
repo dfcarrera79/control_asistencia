@@ -1,69 +1,3 @@
-<template>
-  <div class="q-pt-sm">
-    <h4
-      class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
-      style="font-family: 'Bebas Neue'"
-    >
-      <div class="q-pt-sm">Registros biométricos</div>
-    </h4>
-  </div>
-  <div class="q-gutter-y-sm">
-    <q-card flat>
-      <q-tabs
-        v-model="tab"
-        dense
-        active-color="primary"
-        indicator-color="primary"
-        style="font-family: 'Oswald'"
-        align="justify"
-        narrow-indicator
-      >
-        <q-tab
-          name="celulares"
-          label="Registros de ids celulares"
-          @click="actualizarFilas(model)"
-        />
-        <q-tab
-          name="fotos"
-          label="Registros de fotos"
-          @click="updateRows(model)"
-        />
-        <q-tab
-          name="registros"
-          label="Registros anulados"
-          @click="updateZeile(model)"
-        />
-      </q-tabs>
-
-      <q-separator />
-
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="celulares">
-          <CelularesComponent
-            :filas="filas"
-            :grupos="grupos"
-            @actualizarFilas="actualizarFilas($event)"
-          />
-        </q-tab-panel>
-
-        <q-tab-panel name="fotos">
-          <FotosComponent
-            :filas="rows"
-            :grupos="grupos"
-            @updateRows="updateRows($event)"
-          />
-        </q-tab-panel>
-        <q-tab-panel name="registros">
-          <RegistrosComponent
-            :filas="zeile"
-            :grupos="grupos"
-            @updateZeile="updateZeile($event)"
-          />
-        </q-tab-panel>
-      </q-tab-panels>
-    </q-card>
-  </div>
-</template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
@@ -156,3 +90,70 @@ const updateZeile = (event: string) => {
   obtenerRegistrosAnulados(event);
 };
 </script>
+
+<template>
+  <div class="q-pt-sm">
+    <h4
+      class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
+      style="font-family: 'Bebas Neue'"
+    >
+      <div class="q-pt-sm">Registros biométricos</div>
+    </h4>
+  </div>
+  <div class="q-gutter-y-sm">
+    <q-card flat>
+      <q-tabs
+        v-model="tab"
+        dense
+        active-color="primary"
+        indicator-color="primary"
+        style="font-family: 'Oswald'"
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab
+          name="celulares"
+          label="Registros de ids celulares"
+          @click="actualizarFilas(model)"
+        />
+        <q-tab
+          name="fotos"
+          label="Registros de fotos"
+          @click="updateRows(model)"
+        />
+        <q-tab
+          name="registros"
+          label="Registros anulados"
+          @click="updateZeile(model)"
+        />
+      </q-tabs>
+
+      <q-separator />
+
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="celulares">
+          <CelularesComponent
+            :filas="filas"
+            :grupos="grupos"
+            @actualizarFilas="actualizarFilas($event)"
+          />
+        </q-tab-panel>
+
+        <q-tab-panel name="fotos">
+          <FotosComponent
+            :filas="rows"
+            :grupos="grupos"
+            @updateRows="updateRows($event)"
+          />
+        </q-tab-panel>
+        <q-tab-panel name="registros">
+          <RegistrosComponent
+            :filas="zeile"
+            :grupos="grupos"
+            @updateZeile="updateZeile($event)"
+          />
+        </q-tab-panel>
+      </q-tab-panels>
+    </q-card>
+  </div>
+</template>

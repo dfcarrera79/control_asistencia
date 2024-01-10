@@ -1,3 +1,147 @@
+<script setup lang="ts">
+import { useAuthStore } from 'src/stores/auth';
+import { computed, onMounted, ref } from 'vue';
+import { useQuasar } from 'quasar';
+import { useAxios } from '../../services/useAxios';
+import {
+  AsistenciasAtrasos,
+  Lugar,
+  RegistrosDeHoras,
+} from '../../components/models';
+import { columnasAsistenciasCalculadas } from '../../components/columns';
+
+// Data
+const $q = useQuasar();
+const { get, post } = useAxios();
+const authStore = useAuthStore();
+const selected = ref([]);
+const filter = ref('');
+const desde = ref('');
+const hasta = ref('');
+const anio = ref(0);
+const mes = ref(0);
+const lugar = ref('');
+const lugares = ref<string[]>([]);
+const opcionesLugares = ref(lugares.value);
+
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+
+const filas = ref<AsistenciasAtrasos[]>([]);
+const columnas = columnasAsistenciasCalculadas;
+
+// Methods
+const registrarCierreMes = async (
+  user_create: number,
+  data: RegistrosDeHoras[]
+) => {
+  mes.value = new Date(desde.value).getMonth() + 1;
+  anio.value = new Date(desde.value).getFullYear();
+
+  try {
+    const response = await post(
+      '/registrar_consolidacion',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          mes: mes.value,
+          anio: anio.value,
+          usuarioCreo: user_create,
+          datos: data,
+        })
+      )
+    );
+
+    if (response.error === 'N') {
+      selected.value = [];
+      desde.value = '';
+      hasta.value = '';
+      filas.value = [];
+    }
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error registrando el cierre de mes:', error);
+  }
+};
+
+const isValidDateRange = computed(() => {
+  if (!desde.value || !hasta.value) {
+    return true; // Si alguna fecha está en blanco, deshabilita el botón
+  }
+
+  const fromDate = new Date(desde.value);
+  const toDate = new Date(hasta.value);
+
+  // Calcula la diferencia en meses
+  const diffInMonths =
+    (toDate.getFullYear() - fromDate.getFullYear()) * 12 +
+    (toDate.getMonth() - fromDate.getMonth());
+
+  return diffInMonths <= 0; // Habilita el botón si la diferencia es menor o igual a 0
+});
+
+const filtroLugaresFn = (
+  val: string,
+  update: (callback: () => void) => void
+) => {
+  if (val === '') {
+    update(() => {
+      opcionesLugares.value = lugares.value;
+    });
+    return;
+  }
+
+  update(() => {
+    const needle = val.toLowerCase();
+    opcionesLugares.value = lugares.value.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+const obtenerLugaresTrabajo = async () => {
+  const respuesta = await get('/obtener_lugar_empleado', {});
+  if (respuesta.error === 'S') {
+    console.error(respuesta.mensaje);
+    return;
+  }
+  const data: Lugar[] = respuesta.objetos;
+  lugares.value = [...new Set(data.map((item) => item.lugares))];
+};
+
+const obtenerCalculos = async (modelo: string) => {
+  const respuesta = await get('/calcular_horas_atrasos', {
+    lugar: modelo,
+    fecha_desde: desde.value,
+    fecha_hasta: hasta.value,
+  });
+  if (respuesta.error === 'S') {
+    filas.value = [];
+    return;
+  }
+
+  // Check if the response contains data
+  if (respuesta.objetos.length === 0) {
+    filas.value = [];
+  } else {
+    filas.value = respuesta.objetos;
+  }
+};
+
+onMounted(() => {
+  obtenerLugaresTrabajo();
+});
+</script>
+
 <template>
   <div>
     <div class="column">
@@ -187,195 +331,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useAuthStore } from 'src/stores/auth';
-import { computed, onMounted, ref } from 'vue';
-import { QTableProps, useQuasar } from 'quasar';
-import { useAxios } from '../../services/useAxios';
-import {
-  AsistenciasAtrasos,
-  Lugar,
-  RegistrosDeHoras,
-} from '../../components/models';
-import {
-  obtenerHorasYMinutos,
-  obtenerMinutosYSegundos,
-} from '../../services/useWorkDays';
-
-// Data
-const $q = useQuasar();
-const { get, post } = useAxios();
-const authStore = useAuthStore();
-const selected = ref([]);
-const filter = ref('');
-const desde = ref('');
-const hasta = ref('');
-const anio = ref(0);
-const mes = ref(0);
-const lugar = ref('');
-const lugares = ref<string[]>([]);
-const opcionesLugares = ref(lugares.value);
-
-const pagination = {
-  page: 1,
-  rowsPerPage: 0, // 0 means all rows
-};
-
-const filas = ref<AsistenciasAtrasos[]>([]);
-const columnas: QTableProps['columns'] = [
-  {
-    name: 'codigo',
-    align: 'left',
-    label: 'ID',
-    field: 'codigo',
-  },
-  {
-    name: 'nombre',
-    label: 'Nombre',
-    align: 'left',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'lugar',
-    align: 'left',
-    label: 'Lugar asignado',
-    field: 'alm_nomcom',
-    sortable: true,
-  },
-  {
-    name: 'horas',
-    align: 'left',
-    label: 'Hora trabajadas',
-    field: (row) => obtenerHorasYMinutos(row.horas_trabajadas),
-  },
-  {
-    name: 'suplementarias',
-    align: 'left',
-    label: 'Horas suplementarias',
-    field: (row) =>
-      row.horas_suplementarias !== null
-        ? `${row.horas_suplementarias} H`
-        : '0 H',
-  },
-  {
-    name: 'atrasos',
-    align: 'left',
-    label: 'Atrasos',
-    field: (row) => obtenerMinutosYSegundos(row.atrasos),
-  },
-];
-
-// Methods
-const registrarCierreMes = async (
-  user_create: number,
-  data: RegistrosDeHoras[]
-) => {
-  mes.value = new Date(desde.value).getMonth() + 1;
-  anio.value = new Date(desde.value).getFullYear();
-
-  try {
-    const response = await post(
-      '/registrar_consolidacion',
-      {},
-      JSON.parse(
-        JSON.stringify({
-          mes: mes.value,
-          anio: anio.value,
-          usuarioCreo: user_create,
-          datos: data,
-        })
-      )
-    );
-
-    if (response.error === 'N') {
-      selected.value = [];
-      desde.value = '';
-      hasta.value = '';
-      filas.value = [];
-    }
-
-    // Handle the response accordingly
-    $q.notify({
-      color: response.error === 'N' ? 'green-4' : 'red-5',
-      textColor: 'white',
-      icon: response.error === 'N' ? 'cloud_done' : 'warning',
-      message: response.mensaje,
-    });
-  } catch (error) {
-    console.error('Error registrando el cierre de mes:', error);
-  }
-};
-
-const isValidDateRange = computed(() => {
-  if (!desde.value || !hasta.value) {
-    return true; // Si alguna fecha está en blanco, deshabilita el botón
-  }
-
-  const fromDate = new Date(desde.value);
-  const toDate = new Date(hasta.value);
-
-  // Calcula la diferencia en meses
-  const diffInMonths =
-    (toDate.getFullYear() - fromDate.getFullYear()) * 12 +
-    (toDate.getMonth() - fromDate.getMonth());
-
-  return diffInMonths <= 0; // Habilita el botón si la diferencia es menor o igual a 0
-});
-
-const filtroLugaresFn = (
-  val: string,
-  update: (callback: () => void) => void
-) => {
-  if (val === '') {
-    update(() => {
-      opcionesLugares.value = lugares.value;
-    });
-    return;
-  }
-
-  update(() => {
-    const needle = val.toLowerCase();
-    opcionesLugares.value = lugares.value.filter(
-      (v) => v.toLowerCase().indexOf(needle) > -1
-    );
-  });
-};
-
-const obtenerLugaresTrabajo = async () => {
-  const respuesta = await get('/obtener_lugar_empleado', {});
-  if (respuesta.error === 'S') {
-    console.error(respuesta.mensaje);
-    return;
-  }
-  const data: Lugar[] = respuesta.objetos;
-  lugares.value = [...new Set(data.map((item) => item.lugares))];
-};
-
-const obtenerCalculos = async (modelo: string) => {
-  const respuesta = await get('/calcular_horas_atrasos', {
-    lugar: modelo,
-    fecha_desde: desde.value,
-    fecha_hasta: hasta.value,
-  });
-  if (respuesta.error === 'S') {
-    filas.value = [];
-    return;
-  }
-
-  // Check if the response contains data
-  if (respuesta.objetos.length === 0) {
-    filas.value = [];
-  } else {
-    filas.value = respuesta.objetos;
-  }
-};
-
-onMounted(() => {
-  obtenerLugaresTrabajo();
-});
-</script>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

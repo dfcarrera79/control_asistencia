@@ -1,146 +1,10 @@
-<template>
-  <div>
-    <div class="column q-pb-md">
-      <p class="text-h6" style="font-family: 'Bebas Neue'">
-        Registro de consolidaciones
-      </p>
-    </div>
-    <div class="row justify-left">
-      <div class="q-pt-sm q-pr-md">
-        <q-input
-          outlined
-          input-class="text-right"
-          clearable
-          clear-icon="close"
-          dense
-          debounce="350"
-          borderless
-          color="primary"
-          v-model="filter"
-          placeholder="Buscar..."
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </div>
-
-      <q-separator vertical />
-      <div class="row justify-left items-top q-pl-md q-py-sm row">
-        <div style="width: 150px">
-          <q-select
-            dense
-            outlined
-            v-model="selectedMonth"
-            :options="monthOptions"
-            emit-value
-            label="Mes"
-            option-label="nombre"
-            hint="Seleccionar mes"
-          />
-        </div>
-        <div class="q-pl-md" style="width: 150px">
-          <q-select
-            dense
-            outlined
-            v-model="selectedYear"
-            :options="yearOptions"
-            label="Año"
-            hint="Seleccionar año"
-          />
-        </div>
-        <div class="q-pl-md">
-          <q-btn
-            unelevated
-            color="primary"
-            label="Buscar registro"
-            icon="search"
-            @click="obtenerConsolidaciones(selectedMonth.codigo, selectedYear)"
-            :disable="!selectedMonth || !selectedYear"
-          />
-        </div>
-        <div class="q-pl-md">
-          <q-btn
-            unelevated
-            color="red"
-            label="Anular consolidación"
-            icon="cancel"
-            :disable="filas.length === 0"
-            @click="anularConsolidacion(authStore.getCodigo, codigo)"
-          />
-        </div>
-      </div>
-    </div>
-    <div>
-      <q-table
-        flat
-        bordered
-        class="text-h6"
-        :rows="filas"
-        :columns="columnas"
-        :title="tituloTabla"
-        row-key="codigo_detalle"
-        hide-bottom
-        hide-pagination
-        :rows-per-page-options="[0]"
-        v-model:pagination="pagination"
-        :visible-columns="columnasVisibles"
-      >
-        <template v-slot:top="props">
-          <div style="font-family: 'Bebas Neue'">
-            {{ tituloTabla }}
-          </div>
-          <q-space />
-          <div class="q-pr-md">
-            <q-select
-              v-model="columnasVisibles"
-              multiple
-              outlined
-              dense
-              options-dense
-              :display-value="$q.lang.table.columns"
-              label="Columnas visibles"
-              emit-value
-              map-options
-              :options="columnas"
-              option-value="name"
-              options-cover
-              style="min-width: 150px"
-            />
-          </div>
-          <q-btn
-            color="primary"
-            icon-right="archive"
-            label="Exportar a csv"
-            no-caps
-            @click="exportTable"
-            :disable="filas.length === 0"
-          />
-          <q-btn
-            v-if="filas.length > 0"
-            flat
-            round
-            dense
-            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            @click="props.toggleFullscreen"
-            class="q-ml-md"
-          />
-        </template>
-      </q-table>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from 'src/stores/auth';
+import { exportFile, useQuasar } from 'quasar';
+import { computed, onMounted, ref } from 'vue';
 import { useAxios } from 'src/services/useAxios';
 import { RegistrosConsolidados } from '../../components/models';
-import { exportFile, QTableProps, useQuasar } from 'quasar';
-import {
-  obtenerHorasYMinutos,
-  obtenerMinutosYSegundos,
-} from '../../services/useWorkDays';
+import { columnasConsolidarMes } from '../../components/columns';
 
 // Data
 const codigo = ref(0);
@@ -156,48 +20,7 @@ const pagination = {
   rowsPerPage: 0, // 0 means all rows
 };
 const filas = ref<RegistrosConsolidados[]>([]);
-const columnas: QTableProps['columns'] = [
-  {
-    name: 'codigo',
-    align: 'left',
-    label: 'ID',
-    field: 'codigo_detalle',
-  },
-  {
-    name: 'nombre',
-    label: 'Nombre',
-    align: 'left',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'departamento',
-    align: 'left',
-    label: 'Departamento',
-    field: 'departamento',
-    sortable: true,
-  },
-  {
-    name: 'horas',
-    align: 'left',
-    label: 'Hora trabajadas',
-    field: (row) => obtenerHorasYMinutos(row.normal),
-  },
-  {
-    name: 'suplementarias',
-    align: 'left',
-    label: 'Horas suplementarias',
-    field: (row) =>
-      row.suplementarias !== null ? `${row.suplementaria} H` : '0 H',
-  },
-  {
-    name: 'atrasos',
-    align: 'left',
-    label: 'Atrasos',
-    field: (row) => obtenerMinutosYSegundos(row.atrasos),
-  },
-];
-
+const columnas = columnasConsolidarMes;
 const columnasVisibles = ref([
   'nombre',
   'departamento',
@@ -347,3 +170,136 @@ onMounted(() => {
   }
 });
 </script>
+
+<template>
+  <div>
+    <div class="column q-pb-md">
+      <p class="text-h6" style="font-family: 'Bebas Neue'">
+        Registro de consolidaciones
+      </p>
+    </div>
+    <div class="row justify-left">
+      <div class="q-pt-sm q-pr-md">
+        <q-input
+          outlined
+          input-class="text-right"
+          clearable
+          clear-icon="close"
+          dense
+          debounce="350"
+          borderless
+          color="primary"
+          v-model="filter"
+          placeholder="Buscar..."
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
+
+      <q-separator vertical />
+      <div class="row justify-left items-top q-pl-md q-py-sm row">
+        <div style="width: 150px">
+          <q-select
+            dense
+            outlined
+            v-model="selectedMonth"
+            :options="monthOptions"
+            emit-value
+            label="Mes"
+            option-label="nombre"
+            hint="Seleccionar mes"
+          />
+        </div>
+        <div class="q-pl-md" style="width: 150px">
+          <q-select
+            dense
+            outlined
+            v-model="selectedYear"
+            :options="yearOptions"
+            label="Año"
+            hint="Seleccionar año"
+          />
+        </div>
+        <div class="q-pl-md">
+          <q-btn
+            unelevated
+            color="primary"
+            label="Buscar registro"
+            icon="search"
+            @click="obtenerConsolidaciones(selectedMonth.codigo, selectedYear)"
+            :disable="!selectedMonth || !selectedYear"
+          />
+        </div>
+        <div class="q-pl-md">
+          <q-btn
+            unelevated
+            color="red"
+            label="Anular consolidación"
+            icon="cancel"
+            :disable="filas.length === 0"
+            @click="anularConsolidacion(authStore.getCodigo, codigo)"
+          />
+        </div>
+      </div>
+    </div>
+    <div>
+      <q-table
+        flat
+        bordered
+        class="text-h6"
+        :rows="filas"
+        :columns="columnas"
+        :title="tituloTabla"
+        row-key="codigo_detalle"
+        hide-bottom
+        hide-pagination
+        :rows-per-page-options="[0]"
+        v-model:pagination="pagination"
+        :visible-columns="columnasVisibles"
+      >
+        <template v-slot:top="props">
+          <div style="font-family: 'Bebas Neue'">
+            {{ tituloTabla }}
+          </div>
+          <q-space />
+          <div class="q-pr-md">
+            <q-select
+              v-model="columnasVisibles"
+              multiple
+              outlined
+              dense
+              options-dense
+              :display-value="$q.lang.table.columns"
+              label="Columnas visibles"
+              emit-value
+              map-options
+              :options="columnas"
+              option-value="name"
+              options-cover
+              style="min-width: 150px"
+            />
+          </div>
+          <q-btn
+            color="primary"
+            icon-right="archive"
+            label="Exportar a csv"
+            no-caps
+            @click="exportTable"
+            :disable="filas.length === 0"
+          />
+          <q-btn
+            v-if="filas.length > 0"
+            flat
+            round
+            dense
+            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+            @click="props.toggleFullscreen"
+            class="q-ml-md"
+          />
+        </template>
+      </q-table>
+    </div>
+  </div>
+</template>

@@ -1,3 +1,83 @@
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useQuasar } from 'quasar';
+import { useAxios } from 'src/services/useAxios';
+import { Autorizados } from '../../components/models';
+import { columnasAutorizados } from '../../components/columns';
+
+/* Defined Props */
+const props = defineProps<{
+  zeilen: Autorizados[];
+}>();
+
+/* defined emits*/
+const emit = defineEmits(['updateRows']);
+
+// Data
+const $q = useQuasar();
+const filter = ref('');
+const selected = ref([]);
+const desde = ref('');
+const hasta = ref('');
+const { put } = useAxios();
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+
+const columns = columnasAutorizados;
+const visibleColumns = ref([
+  'nombre_completo',
+  'excepcion',
+  'dias',
+  'autorizado_por',
+]);
+
+// Methods
+const actualizarFilas = (eventDesde: string, eventHasta: string) => {
+  emit('updateRows', {
+    eventDesde,
+    eventHasta,
+  });
+};
+
+const desautorizarExcepcion = async (id: number) => {
+  try {
+    const response = await put(
+      '/desautorizar_exepcion',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          id: id,
+        })
+      )
+    );
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error eliminando la autorización:', error);
+  }
+};
+
+const handleDeleteButton = (selected: Autorizados[]) => {
+  for (const item of selected) {
+    desautorizarExcepcion(item.id);
+  }
+  actualizarFilas(desde.value, hasta.value);
+};
+
+watch([desde, hasta], () => {
+  // Ejecuta la función actualizarFilas()
+  actualizarFilas(desde.value, hasta.value);
+});
+</script>
+
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
@@ -156,114 +236,6 @@
     </q-table>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, watch } from 'vue';
-// import moment from 'moment';
-import { QTableProps, useQuasar } from 'quasar';
-import { useAxios } from 'src/services/useAxios';
-import { Autorizados } from '../../components/models';
-import { formatearFechas } from '../../services/useWorkDays';
-
-/* Defined Props */
-const props = defineProps<{
-  zeilen: Autorizados[];
-}>();
-
-/* defined emits*/
-const emit = defineEmits(['updateRows']);
-
-// Data
-const $q = useQuasar();
-const filter = ref('');
-const selected = ref([]);
-const desde = ref('');
-const hasta = ref('');
-const { put } = useAxios();
-const pagination = {
-  page: 1,
-  rowsPerPage: 0, // 0 means all rows
-};
-
-const columns: QTableProps['columns'] = [
-  { name: 'codigo', align: 'left', label: 'ID', field: 'id' },
-  {
-    name: 'nombre_completo',
-    align: 'left',
-    label: 'Nombre',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'excepcion',
-    align: 'left',
-    label: 'Tipo de exepcion',
-    field: 'excepcion',
-  },
-  {
-    name: 'dias',
-    align: 'left',
-    label: 'Dias de exepcion',
-    field: (row) => formatearFechas(row.dias),
-  },
-  {
-    name: 'autorizado_por',
-    align: 'left',
-    label: 'Autorizado por',
-    field: 'autorizado_por',
-  },
-];
-const visibleColumns = ref([
-  'nombre_completo',
-  'excepcion',
-  'dias',
-  'autorizado_por',
-]);
-
-// Methods
-const actualizarFilas = (eventDesde: string, eventHasta: string) => {
-  emit('updateRows', {
-    eventDesde,
-    eventHasta,
-  });
-};
-
-const desautorizarExcepcion = async (id: number) => {
-  try {
-    const response = await put(
-      '/desautorizar_exepcion',
-      {},
-      JSON.parse(
-        JSON.stringify({
-          id: id,
-        })
-      )
-    );
-
-    // Handle the response accordingly
-    $q.notify({
-      color: response.error === 'N' ? 'green-4' : 'red-5',
-      textColor: 'white',
-      icon: response.error === 'N' ? 'cloud_done' : 'warning',
-      message: response.mensaje,
-    });
-  } catch (error) {
-    console.error('Error eliminando la autorización:', error);
-  }
-};
-
-const handleDeleteButton = (selected: Autorizados[]) => {
-  for (const item of selected) {
-    desautorizarExcepcion(item.id);
-  }
-  actualizarFilas(desde.value, hasta.value);
-};
-
-watch([desde, hasta], () => {
-  // Ejecuta la función actualizarFilas()
-  actualizarFilas(desde.value, hasta.value);
-});
-</script>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import HoraSuplementariaComponent from './HoraSuplementariaComponent.vue';
+import RegistrosComponent from './RegistrosComponent.vue';
+
+// Datos
+const tab = ref('');
+</script>
+
 <template>
   <div class="q-pt-sm">
     <h4
@@ -37,12 +46,3 @@
     </q-card>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-import HoraSuplementariaComponent from './HoraSuplementariaComponent.vue';
-import RegistrosComponent from './RegistrosComponent.vue';
-
-// Datos
-const tab = ref('');
-</script>

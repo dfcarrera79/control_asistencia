@@ -1,65 +1,3 @@
-<template>
-  <div class="q-pt-sm">
-    <h4
-      class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
-      style="font-family: 'Bebas Neue'"
-    >
-      <div class="q-pt-sm">GESTIÓN DE EXEPCIONES</div>
-    </h4>
-  </div>
-
-  <div class="q-gutter-y-sm">
-    <q-card flat>
-      <q-tabs
-        v-model="tab"
-        dense
-        active-color="primary"
-        indicator-color="primary"
-        style="font-family: 'Oswald'"
-        align="justify"
-        narrow-indicator
-      >
-        <q-tab
-          name="registro"
-          label="Registro de Excepciones"
-          @click="obtenerEmpleadosAsignados()"
-        />
-        <q-tab
-          name="autorizacion"
-          label="Autorización de Excepciones"
-          @click="obtenerExcepciones()"
-        />
-        <q-tab
-          name="historial"
-          label="Historial de Excepciones"
-          @click="
-            obtenerExcepcionesAutorizadas($event.eventDesde, $event.eventHasta)
-          "
-        />
-      </q-tabs>
-
-      <q-separator />
-
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="registro">
-          <RegistroComponent :filas="filas" />
-        </q-tab-panel>
-
-        <q-tab-panel name="autorizacion">
-          <AutorizacionComponent :rows="rows" @updateRows="updateRows()" />
-        </q-tab-panel>
-
-        <q-tab-panel name="historial">
-          <AutorizadosComponent
-            :zeilen="zeilen"
-            @updateRows="actualizarFilas($event.eventDesde, $event.eventHasta)"
-          />
-        </q-tab-panel>
-      </q-tab-panels>
-    </q-card>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
@@ -136,3 +74,65 @@ const actualizarFilas = (eventDesde: string, eventHasta: string): void => {
   obtenerExcepcionesAutorizadas(eventDesde, eventHasta);
 };
 </script>
+
+<template>
+  <div class="q-pt-sm">
+    <h4
+      class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
+      style="font-family: 'Bebas Neue'"
+    >
+      <div class="q-pt-sm">GESTIÓN DE EXEPCIONES</div>
+    </h4>
+  </div>
+
+  <div class="q-gutter-y-sm">
+    <q-card flat>
+      <q-tabs
+        v-model="tab"
+        dense
+        active-color="primary"
+        indicator-color="primary"
+        style="font-family: 'Oswald'"
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab
+          name="registro"
+          label="Registro de Excepciones"
+          @click="obtenerEmpleadosAsignados()"
+        />
+        <q-tab
+          name="autorizacion"
+          label="Autorización de Excepciones"
+          @click="obtenerExcepciones()"
+        />
+        <q-tab
+          name="historial"
+          label="Historial de Excepciones"
+          @click="
+            obtenerExcepcionesAutorizadas($event.eventDesde, $event.eventHasta)
+          "
+        />
+      </q-tabs>
+
+      <q-separator />
+
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="registro">
+          <RegistroComponent :filas="filas" />
+        </q-tab-panel>
+
+        <q-tab-panel name="autorizacion">
+          <AutorizacionComponent :rows="rows" @updateRows="updateRows()" />
+        </q-tab-panel>
+
+        <q-tab-panel name="historial">
+          <AutorizadosComponent
+            :zeilen="zeilen"
+            @updateRows="actualizarFilas($event.eventDesde, $event.eventHasta)"
+          />
+        </q-tab-panel>
+      </q-tab-panels>
+    </q-card>
+  </div>
+</template>

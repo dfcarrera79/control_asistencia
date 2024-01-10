@@ -1,3 +1,130 @@
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useAuthStore } from 'src/stores/auth';
+import { useQuasar } from 'quasar';
+import { useAxios } from '../../services/useAxios';
+import { FilasFotos } from '../../components/models';
+import { columnasFotos } from '../../components/columns';
+
+/* Defined Props */
+const props = defineProps<{
+  filas: FilasFotos[];
+  grupos: string[];
+}>();
+
+/* defined emits*/
+const emit = defineEmits(['updateRows']);
+
+// Data
+const $q = useQuasar();
+const filter = ref('');
+const modelo = ref('');
+const authStore = useAuthStore();
+const selected = ref([]);
+const { deletes, post } = useAxios();
+const pagination = {
+  page: 1,
+  rowsPerPage: 0, // 0 means all rows
+};
+const path = process.env.IMAGE_PATH;
+const replacedPath = process.env.REPLACED_PATH;
+const columns = columnasFotos;
+const visibleColumns = ref(['id', 'nombre_completo', 'departamento', 'foto']);
+
+// Methods
+const getSelectedString = () => {
+  return selected.value.length === 0
+    ? ''
+    : `${selected.value.length} record${
+        selected.value.length > 1 ? 's' : ''
+      } selected of ${props.filas.length}`;
+};
+
+const enviarDepartamento = (event: string) => {
+  emit('updateRows', event);
+};
+
+const eliminarFoto = async (id: number) => {
+  try {
+    const response = await deletes(
+      '/eliminar_foto',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          id_foto: id,
+        })
+      )
+    );
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+    return response;
+  } catch (error) {
+    console.error('Error eliminando el registro:', error);
+  }
+};
+
+const anularFoto = async (usuario: number, path: string, anulado: number) => {
+  try {
+    const response = await post(
+      '/copiar_path_id',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          usuario_codigo: usuario,
+          pathorid: path,
+          anulado_por: anulado,
+        })
+      )
+    );
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+  } catch (error) {
+    console.error('Error anulando el registro:', error);
+  }
+};
+
+interface foto {
+  path: string;
+  usuario_codigo: number;
+}
+
+interface RespuestaEliminarFoto {
+  error: string;
+  mensaje: string;
+  objetos: foto[];
+}
+
+const handleButtonClicked = async (selected: FilasFotos[]) => {
+  for (const item of selected) {
+    const respuesta: RespuestaEliminarFoto = await eliminarFoto(item.id_foto);
+    if (respuesta.error === 'N') {
+      const objetos = respuesta.objetos[0];
+      await anularFoto(
+        objetos.usuario_codigo,
+        objetos.path,
+        authStore.getCodigo
+      );
+    }
+    enviarDepartamento(modelo.value);
+  }
+};
+
+watch(modelo, (newValue) => {
+  enviarDepartamento(newValue);
+});
+</script>
+
 <template>
   <div class="q-pa-md">
     <div class="column q-pb-md">
@@ -107,151 +234,3 @@
     </q-table>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useAuthStore } from 'src/stores/auth';
-import { QTableProps, useQuasar } from 'quasar';
-import { useAxios } from '../../services/useAxios';
-import { FilasFotos } from '../../components/models';
-
-/* Defined Props */
-const props = defineProps<{
-  filas: FilasFotos[];
-  grupos: string[];
-}>();
-
-/* defined emits*/
-const emit = defineEmits(['updateRows']);
-
-// Data
-const $q = useQuasar();
-const filter = ref('');
-const modelo = ref('');
-const authStore = useAuthStore();
-const selected = ref([]);
-const { deletes, post } = useAxios();
-const pagination = {
-  page: 1,
-  rowsPerPage: 0, // 0 means all rows
-};
-const path = process.env.IMAGE_PATH;
-const replacedPath = process.env.REPLACED_PATH;
-const columns: QTableProps['columns'] = [
-  { name: 'codigo', align: 'left', label: 'ID', field: 'id_foto' },
-  { name: 'id', align: 'left', label: 'Cedula', field: 'cedula_ruc' },
-  {
-    name: 'nombre_completo',
-    align: 'left',
-    label: 'Nombre',
-    field: 'nombre_completo',
-    sortable: true,
-  },
-  {
-    name: 'departamento',
-    align: 'left',
-    label: 'Departamento',
-    field: 'departamento',
-  },
-  {
-    name: 'foto',
-    align: 'left',
-    label: 'Foto',
-    field: 'path',
-  },
-];
-const visibleColumns = ref(['id', 'nombre_completo', 'departamento', 'foto']);
-
-// Methods
-const getSelectedString = () => {
-  return selected.value.length === 0
-    ? ''
-    : `${selected.value.length} record${
-        selected.value.length > 1 ? 's' : ''
-      } selected of ${props.filas.length}`;
-};
-
-const enviarDepartamento = (event: string) => {
-  emit('updateRows', event);
-};
-
-const eliminarFoto = async (id: number) => {
-  try {
-    const response = await deletes(
-      '/eliminar_foto',
-      {},
-      JSON.parse(
-        JSON.stringify({
-          id_foto: id,
-        })
-      )
-    );
-    // Handle the response accordingly
-    $q.notify({
-      color: response.error === 'N' ? 'green-4' : 'red-5',
-      textColor: 'white',
-      icon: response.error === 'N' ? 'cloud_done' : 'warning',
-      message: response.mensaje,
-    });
-    return response;
-  } catch (error) {
-    console.error('Error eliminando el registro:', error);
-  }
-};
-
-const anularFoto = async (usuario: number, path: string, anulado: number) => {
-  try {
-    const response = await post(
-      '/copiar_path_id',
-      {},
-      JSON.parse(
-        JSON.stringify({
-          usuario_codigo: usuario,
-          pathorid: path,
-          anulado_por: anulado,
-        })
-      )
-    );
-
-    // Handle the response accordingly
-    $q.notify({
-      color: response.error === 'N' ? 'green-4' : 'red-5',
-      textColor: 'white',
-      icon: response.error === 'N' ? 'cloud_done' : 'warning',
-      message: response.mensaje,
-    });
-  } catch (error) {
-    console.error('Error anulando el registro:', error);
-  }
-};
-
-interface foto {
-  path: string;
-  usuario_codigo: number;
-}
-
-interface RespuestaEliminarFoto {
-  error: string;
-  mensaje: string;
-  objetos: foto[];
-}
-
-const handleButtonClicked = async (selected: FilasFotos[]) => {
-  for (const item of selected) {
-    const respuesta: RespuestaEliminarFoto = await eliminarFoto(item.id_foto);
-    if (respuesta.error === 'N') {
-      const objetos = respuesta.objetos[0];
-      await anularFoto(
-        objetos.usuario_codigo,
-        objetos.path,
-        authStore.getCodigo
-      );
-    }
-    enviarDepartamento(modelo.value);
-  }
-};
-
-watch(modelo, (newValue) => {
-  enviarDepartamento(newValue);
-});
-</script>

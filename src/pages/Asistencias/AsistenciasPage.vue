@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+
+import AsistenciasComponent from './AsistenciasComponent.vue';
+import ConsolidarMesComponent from './ConsolidarMesComponent.vue';
+import AsistenciasCalculadasComponent from './AsistenciasCalculadasComponent.vue';
+
+// Data
+const tab = ref('');
+</script>
+
 <template>
   <div class="q-pt-sm">
     <h4
@@ -40,14 +51,3 @@
     </q-card>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-
-import AsistenciasComponent from './AsistenciasComponent.vue';
-import ConsolidarMesComponent from './ConsolidarMesComponent.vue';
-import AsistenciasCalculadasComponent from './AsistenciasCalculadasComponent.vue';
-
-// Data
-const tab = ref('');
-</script>
