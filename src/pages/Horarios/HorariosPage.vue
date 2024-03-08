@@ -1,79 +1,10 @@
-<template>
-  <div class="q-pt-sm">
-    <h4
-      class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
-      style="font-family: 'Bebas Neue'"
-    >
-      <div class="q-pt-sm">CONFIGURACIÓN DE HORARIOS</div>
-    </h4>
-  </div>
-
-  <div class="q-gutter-y-sm">
-    <q-card flat>
-      <q-tabs
-        v-model="tab"
-        dense
-        active-color="primary"
-        indicator-color="primary"
-        style="font-family: 'Oswald'"
-        align="justify"
-        narrow-indicator
-      >
-        <q-tab
-          name="horarios"
-          label="Creación de Horarios"
-          @click="obtenerHorarios()"
-        />
-        <q-tab
-          name="asignacion"
-          label="Asignación de Horarios a Grupos"
-          @click="obtenerGrupos()"
-        />
-        <q-tab
-          name="visualizacion"
-          label="Visualización de Horarios Asignados"
-          @click="
-            obtenerHorariosAsignados(modelo);
-            obtenerLugaresTrabajo();
-          "
-        />
-      </q-tabs>
-
-      <q-separator />
-
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="horarios">
-          <!-- <HorariosComponent :rows="rows" @updateRows="updateRows()" /> -->
-          <NuevoHorarioComponent
-            :horarios="horarios"
-            @actualizarHorarios="actualizarHorarios()"
-          />
-        </q-tab-panel>
-
-        <q-tab-panel name="asignacion">
-          <!-- <AsignacionComponent /> -->
-          <NuevoAsignacionComponent :grupos="grupos" :schedules="horarios" />
-        </q-tab-panel>
-
-        <q-tab-panel name="visualizacion">
-          <AsignadosComponent
-            :filas="filas"
-            :groups="groups"
-            @updateRows="actualizarFilas($event)"
-          />
-        </q-tab-panel>
-      </q-tab-panels>
-    </q-card>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
 // import HorariosComponent from './HorariosComponent.vue';
+import AsignadosComponent from './AsignadosComponent.vue';
 import NuevoHorarioComponent from './NuevoHorarioComponent.vue';
 import NuevoAsignacionComponent from './NuevoAsignacionComponent.vue';
-import AsignadosComponent from './AsignadosComponent.vue';
 // import AsignacionComponent from './AsignacionComponent.vue';
 // import CalendarioComponent from './CalendarioComponent.vue';
 // import NuevoHorario from './NuevoHorario.vue';
@@ -154,5 +85,74 @@ const obtenerLugaresTrabajo = async () => {
   groups.value = [...new Set(data.map((item) => item.alm_nomcom))];
 };
 </script>
+
+<template>
+  <div class="q-pt-sm">
+    <h4
+      class="row text-uppercase justify-center content-center q-my-sm q-pb-md"
+      style="font-family: 'Bebas Neue'"
+    >
+      <div class="q-pt-sm">CONFIGURACIÓN DE HORARIOS</div>
+    </h4>
+  </div>
+
+  <div class="q-gutter-y-sm">
+    <q-card flat>
+      <q-tabs
+        v-model="tab"
+        dense
+        active-color="primary"
+        indicator-color="primary"
+        style="font-family: 'Oswald'"
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab
+          name="horarios"
+          label="Creación de Horarios"
+          @click="obtenerHorarios()"
+        />
+        <q-tab
+          name="asignacion"
+          label="Asignación de Horarios a Grupos"
+          @click="obtenerGrupos()"
+        />
+        <q-tab
+          name="visualizacion"
+          label="Visualización de Horarios Asignados"
+          @click="
+            obtenerHorariosAsignados(modelo);
+            obtenerLugaresTrabajo();
+          "
+        />
+      </q-tabs>
+
+      <q-separator />
+
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="horarios">
+          <!-- <HorariosComponent :rows="rows" @updateRows="updateRows()" /> -->
+          <NuevoHorarioComponent
+            :horarios="horarios"
+            @actualizarHorarios="actualizarHorarios()"
+          />
+        </q-tab-panel>
+
+        <q-tab-panel name="asignacion">
+          <!-- <AsignacionComponent /> -->
+          <NuevoAsignacionComponent :grupos="grupos" :schedules="horarios" />
+        </q-tab-panel>
+
+        <q-tab-panel name="visualizacion">
+          <AsignadosComponent
+            :filas="filas"
+            :groups="groups"
+            @updateRows="actualizarFilas($event)"
+          />
+        </q-tab-panel>
+      </q-tab-panels>
+    </q-card>
+  </div>
+</template>
 
 <style lang="scss" scoped></style>

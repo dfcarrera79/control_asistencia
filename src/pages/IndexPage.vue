@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
   <q-page class="column justify-center content-center">
     <div
@@ -23,7 +25,5 @@
     </div>
   </q-page>
 </template>
-
-<script setup lang="ts"></script>
 
 <style lang="scss"></style>

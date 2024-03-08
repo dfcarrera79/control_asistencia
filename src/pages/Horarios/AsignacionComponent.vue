@@ -1,149 +1,3 @@
-<template>
-  <div class="q-pa-md">
-    <div class="column">
-      <div class="row">
-        <div>
-          <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
-            Asignación de Horarios
-          </p>
-        </div>
-        <div class="q-pl-md">
-          <q-btn
-            flat
-            rounded
-            color="primary"
-            icon="update"
-            dense
-            @click="obtenerHorariosAsignados()"
-          >
-            <q-tooltip
-              anchor="center right"
-              self="center left"
-              :offset="[10, 10]"
-            >
-              <strong class="text-caption">Actualizar tabla</strong>
-            </q-tooltip>
-          </q-btn>
-        </div>
-      </div>
-
-      <div class="row justify-left items-center">
-        <div class="row q-py-sm q-pr-md">
-          <div class="q-pr-md">
-            <q-input
-              outlined
-              class="q-pl-md"
-              input-class="text-right"
-              clearable
-              clear-icon="close"
-              dense
-              debounce="350"
-              borderless
-              color="primary"
-              v-model="filter"
-              placeholder="Buscar..."
-            >
-              <template v-slot:append>
-                <q-icon name="search" />
-              </template>
-            </q-input>
-          </div>
-          <div style="width: 250px">
-            <q-select
-              dense
-              filled
-              v-model="lugar"
-              use-input
-              hide-selected
-              fill-input
-              input-debounce="300"
-              label="Lugares asignados"
-              :options="opcionesLugares"
-              @filter="filtroFn"
-              style="width: 250px"
-            >
-              <template v-if="lugar" v-slot:append>
-                <q-icon
-                  name="cancel"
-                  @click.stop.prevent="lugar = ''"
-                  class="cursor-pointer"
-                />
-              </template>
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section> No hay resultados </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
-        </div>
-
-        <q-separator vertical />
-
-        <div class="q-pl-md q-py-sm row items-center">
-          <div style="width: 250px">
-            <q-select
-              dense
-              outlined
-              v-model="opcionesHorarios"
-              :options="options"
-              emit-value
-              option-label="nombre"
-              :display-value="
-                opcionesHorarios ? displaySelectedValue : '*none*'
-              "
-            />
-          </div>
-          <div class="q-pl-md">
-            <q-btn
-              unelevated
-              color="primary"
-              label="Asignar Horario"
-              icon="access_time"
-              @click="handleButtonClicked(opcionesHorarios.codigo, selected)"
-              :disable="opcionesHorarios.codigo == 0 || selected.length == 0"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="q-pa-md">
-      <q-table
-        square
-        flat
-        bordered
-        hide-bottom
-        :rows="filas"
-        :columns="columnas"
-        :filter="filter"
-        row-key="cedula_ruc"
-        :selected-rows-label="getSelectedString"
-        class="my-sticky-header-table text-h6"
-        selection="multiple"
-        v-model:selected="selected"
-        :rows-per-page-options="[0]"
-        v-model:pagination="pagination"
-        :visible-columns="['nombre', 'lugar', 'direccion']"
-      >
-        <template v-slot:body-cell-nombre="props">
-          <q-td :props="props">
-            <q-icon
-              name="done"
-              size="1.5em"
-              color="green"
-              v-if="
-                empleadosAsignados.includes(props.row.codigo) ? true : false
-              "
-            />
-            {{ props.row.nombre_completo }}
-          </q-td>
-        </template>
-      </q-table>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
@@ -341,6 +195,152 @@ watch(lugar, () => {
   obtenerEmpleadosAsignados(lugar.value);
 });
 </script>
+
+<template>
+  <div class="q-pa-md">
+    <div class="column">
+      <div class="row">
+        <div>
+          <p class="text-h6 q-pl-md" style="font-family: 'Bebas Neue'">
+            Asignación de Horarios
+          </p>
+        </div>
+        <div class="q-pl-md">
+          <q-btn
+            flat
+            rounded
+            color="primary"
+            icon="update"
+            dense
+            @click="obtenerHorariosAsignados()"
+          >
+            <q-tooltip
+              anchor="center right"
+              self="center left"
+              :offset="[10, 10]"
+            >
+              <strong class="text-caption">Actualizar tabla</strong>
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </div>
+
+      <div class="row justify-left items-center">
+        <div class="row q-py-sm q-pr-md">
+          <div class="q-pr-md">
+            <q-input
+              outlined
+              class="q-pl-md"
+              input-class="text-right"
+              clearable
+              clear-icon="close"
+              dense
+              debounce="350"
+              borderless
+              color="primary"
+              v-model="filter"
+              placeholder="Buscar..."
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
+          <div style="width: 250px">
+            <q-select
+              dense
+              filled
+              v-model="lugar"
+              use-input
+              hide-selected
+              fill-input
+              input-debounce="300"
+              label="Lugares asignados"
+              :options="opcionesLugares"
+              @filter="filtroFn"
+              style="width: 250px"
+            >
+              <template v-if="lugar" v-slot:append>
+                <q-icon
+                  name="cancel"
+                  @click.stop.prevent="lugar = ''"
+                  class="cursor-pointer"
+                />
+              </template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section> No hay resultados </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+        </div>
+
+        <q-separator vertical />
+
+        <div class="q-pl-md q-py-sm row items-center">
+          <div style="width: 250px">
+            <q-select
+              dense
+              outlined
+              v-model="opcionesHorarios"
+              :options="options"
+              emit-value
+              option-label="nombre"
+              :display-value="
+                opcionesHorarios ? displaySelectedValue : '*none*'
+              "
+            />
+          </div>
+          <div class="q-pl-md">
+            <q-btn
+              unelevated
+              color="primary"
+              label="Asignar Horario"
+              icon="access_time"
+              @click="handleButtonClicked(opcionesHorarios.codigo, selected)"
+              :disable="opcionesHorarios.codigo == 0 || selected.length == 0"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-pa-md">
+      <q-table
+        square
+        flat
+        bordered
+        hide-bottom
+        :rows="filas"
+        :columns="columnas"
+        :filter="filter"
+        row-key="cedula_ruc"
+        :selected-rows-label="getSelectedString"
+        class="my-sticky-header-table text-h6"
+        selection="multiple"
+        v-model:selected="selected"
+        :rows-per-page-options="[0]"
+        v-model:pagination="pagination"
+        :visible-columns="['nombre', 'lugar', 'direccion']"
+      >
+        <template v-slot:body-cell-nombre="props">
+          <q-td :props="props">
+            <q-icon
+              name="done"
+              size="1.5em"
+              color="green"
+              v-if="
+                empleadosAsignados.includes(props.row.codigo) ? true : false
+              "
+            />
+            {{ props.row.nombre_completo }}
+          </q-td>
+        </template>
+      </q-table>
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

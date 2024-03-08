@@ -1,117 +1,3 @@
-<template>
-  <div class="q-pa-md">
-    <div class="column q-pb-md">
-      <div class="row">
-        <p class="text-h6" style="font-family: 'Bebas Neue'">
-          EMPLEADOS ASIGNADOS A HORARIOS
-        </p>
-        <div class="q-pl-md">
-          <q-btn
-            flat
-            rounded
-            color="primary"
-            icon="update"
-            dense
-            @click="enviarLugar(modelo)"
-          >
-            <q-tooltip
-              anchor="center right"
-              self="center left"
-              :offset="[10, 10]"
-            >
-              <strong class="text-caption">Actualizar tabla</strong>
-            </q-tooltip>
-          </q-btn>
-        </div>
-      </div>
-
-      <div class="row justify-left items-center">
-        <q-input
-          outlined
-          input-class="text-right"
-          clearable
-          clear-icon="close"
-          dense
-          debounce="350"
-          borderless
-          color="primary"
-          v-model="filter"
-          placeholder="Buscar..."
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        <div class="q-px-md">
-          <q-select
-            dense
-            filled
-            v-model="modelo"
-            use-input
-            hide-selected
-            fill-input
-            input-debounce="300"
-            label="Lugares asignados"
-            :options="opcions"
-            @filter="filtroFn"
-            style="width: 250px"
-          >
-            <template v-if="modelo" v-slot:append>
-              <q-icon
-                name="cancel"
-                @click.stop.prevent="modelo = ''"
-                class="cursor-pointer"
-              />
-            </template>
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section> No hay resultados </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-        </div>
-
-        <q-separator vertical />
-
-        <div class="q-pl-md">
-          <q-btn
-            unelevated
-            color="red"
-            :label="
-              selected.length == 1 ? 'Eliminar Horario' : 'Eliminar Horarios'
-            "
-            icon="delete"
-            @click="
-              handleButtonClicked(selected);
-              enviarLugar(modelo);
-            "
-            :disable="selected.length === 0"
-          />
-        </div>
-      </div>
-    </div>
-
-    <q-table
-      square
-      flat
-      bordered
-      hide-bottom
-      :rows="props.filas"
-      :columns="columns"
-      :filter="filter"
-      row-key="codigo"
-      class="my-sticky-header-table text-h6"
-      :rows-per-page-options="[0]"
-      v-model:pagination="pagination"
-      :visible-columns="visibleColumns"
-      :selected-rows-label="getSelectedString"
-      selection="multiple"
-      v-model:selected="selected"
-    >
-    </q-table>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
@@ -250,6 +136,120 @@ watch(modelo, (newValue) => {
   enviarLugar(newValue);
 });
 </script>
+
+<template>
+  <div class="q-pa-md">
+    <div class="column q-pb-md">
+      <div class="row">
+        <p class="text-h6" style="font-family: 'Bebas Neue'">
+          EMPLEADOS ASIGNADOS A HORARIOS
+        </p>
+        <div class="q-pl-md">
+          <q-btn
+            flat
+            rounded
+            color="primary"
+            icon="update"
+            dense
+            @click="enviarLugar(modelo)"
+          >
+            <q-tooltip
+              anchor="center right"
+              self="center left"
+              :offset="[10, 10]"
+            >
+              <strong class="text-caption">Actualizar tabla</strong>
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </div>
+
+      <div class="row justify-left items-center">
+        <q-input
+          outlined
+          input-class="text-right"
+          clearable
+          clear-icon="close"
+          dense
+          debounce="350"
+          borderless
+          color="primary"
+          v-model="filter"
+          placeholder="Buscar..."
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <div class="q-px-md">
+          <q-select
+            dense
+            filled
+            v-model="modelo"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="300"
+            label="Lugares asignados"
+            :options="opcions"
+            @filter="filtroFn"
+            style="width: 250px"
+          >
+            <template v-if="modelo" v-slot:append>
+              <q-icon
+                name="cancel"
+                @click.stop.prevent="modelo = ''"
+                class="cursor-pointer"
+              />
+            </template>
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section> No hay resultados </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+
+        <q-separator vertical />
+
+        <div class="q-pl-md">
+          <q-btn
+            unelevated
+            color="red"
+            :label="
+              selected.length == 1 ? 'Eliminar Horario' : 'Eliminar Horarios'
+            "
+            icon="delete"
+            @click="
+              handleButtonClicked(selected);
+              enviarLugar(modelo);
+            "
+            :disable="selected.length === 0"
+          />
+        </div>
+      </div>
+    </div>
+
+    <q-table
+      square
+      flat
+      bordered
+      hide-bottom
+      :rows="props.filas"
+      :columns="columns"
+      :filter="filter"
+      row-key="codigo"
+      class="my-sticky-header-table text-h6"
+      :rows-per-page-options="[0]"
+      v-model:pagination="pagination"
+      :visible-columns="visibleColumns"
+      :selected-rows-label="getSelectedString"
+      selection="multiple"
+      v-model:selected="selected"
+    >
+    </q-table>
+  </div>
+</template>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

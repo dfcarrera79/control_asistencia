@@ -1,3 +1,92 @@
+<script setup lang="ts">
+import { onBeforeMount, ref, watch } from 'vue';
+import jwtDecode from 'jwt-decode';
+import { LocalStorage, useQuasar } from 'quasar';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
+import { DarkMode, TokenDecoded } from '../components/models';
+
+// Data
+const { dark } = useQuasar();
+const expires = ref('');
+const router = useRouter();
+const miniState = ref(true);
+const authStore = useAuthStore();
+const darkMode = ref(false);
+const persistent = ref(false);
+const tokenExpirationTime = ref(0);
+
+const sessionData = LocalStorage.getItem('session');
+
+// Methods
+const cerrarSesion = () => {
+  router.push('/login');
+  LocalStorage.clear();
+};
+
+const checkTokenExpiration = () => {
+  const token = authStore.token;
+  const decodedToken: TokenDecoded = jwtDecode(token);
+  const expirationTimestamp = decodedToken.exp;
+  const currentTime = Math.floor(Date.now() / 1000); // Current timestamp in seconds
+  tokenExpirationTime.value = expirationTimestamp - currentTime;
+  console.log('[EXPIRATION TIME]: ', tokenExpirationTime);
+
+  if (tokenExpirationTime.value <= 0) {
+    // Token has expired, log the user out
+    persistent.value = true;
+  } else {
+    persistent.value = false;
+    // Calculate remaining time
+    const remainingTime = tokenExpirationTime.value * 1000; // Convert to milliseconds
+
+    const remainingMinutes = Math.floor(remainingTime / 60000); // 1 minute = 60,000 milliseconds
+    const remainingSeconds = Math.floor((remainingTime % 60000) / 1000); // Remaining seconds
+
+    expires.value = `Token expires in ${remainingMinutes} minutes and ${remainingSeconds} seconds`;
+  }
+};
+
+checkTokenExpiration();
+
+// Check token expiration every 5 minutes (300,000 milliseconds)
+setTimeout(checkTokenExpiration, 300000);
+
+watch(
+  () => tokenExpirationTime.value,
+  (val) => {
+    if (val <= 0) {
+      // Token has expired, log the user out
+      persistent.value = true;
+    }
+  }
+);
+
+const leftDrawerOpen = ref(false);
+
+const toggleLeftDrawer = () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+};
+
+watch(
+  () => dark.isActive,
+  (val) => {
+    authStore.setDarkModeFromLocalStorage(val);
+
+    // Guardar el estado de dark.isActive en el LocalStorage
+    LocalStorage.set('darkMode', { darkMode: val });
+  }
+);
+
+onBeforeMount(async () => {
+  const session: DarkMode | null = LocalStorage.getItem('darkMode');
+  darkMode.value = session?.darkMode || false;
+  if (session?.darkMode !== null) {
+    dark.set(darkMode.value);
+  }
+});
+</script>
+
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header unelevated>
@@ -218,90 +307,5 @@
     </q-dialog>
   </q-layout>
 </template>
-
-<script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue';
-import jwtDecode from 'jwt-decode';
-import { LocalStorage, useQuasar } from 'quasar';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
-import { DarkMode, TokenDecoded } from '../components/models';
-
-// Data
-const { dark } = useQuasar();
-const expires = ref('');
-const router = useRouter();
-const miniState = ref(true);
-const authStore = useAuthStore();
-const darkMode = ref(false);
-const persistent = ref(false);
-
-const sessionData = LocalStorage.getItem('session');
-
-// Methods
-const cerrarSesion = () => {
-  router.push('/login');
-  LocalStorage.clear();
-};
-
-const checkTokenExpiration = () => {
-  const token = authStore.token;
-  const decodedToken: TokenDecoded = jwtDecode(token);
-  const expirationTimestamp = decodedToken.exp;
-  const currentTime = Math.floor(Date.now() / 1000); // Current timestamp in seconds
-  const tokenExpirationTime = expirationTimestamp - currentTime;
-  console.log('[EXPIRATION TIME]: ', tokenExpirationTime);
-
-  if (tokenExpirationTime <= 0) {
-    // Token has expired, log the user out
-    persistent.value = true;
-  } else {
-    persistent.value = false;
-    // Calculate remaining time
-    const remainingTime = tokenExpirationTime * 1000; // Convert to milliseconds
-
-    const remainingMinutes = Math.floor(remainingTime / 60000); // 1 minute = 60,000 milliseconds
-    const remainingSeconds = Math.floor((remainingTime % 60000) / 1000); // Remaining seconds
-
-    expires.value = `Token expires in ${remainingMinutes} minutes and ${remainingSeconds} seconds`;
-  }
-};
-
-// Check token expiration every 5 minutes (300,000 milliseconds)
-setTimeout(checkTokenExpiration, 300000);
-
-const leftDrawerOpen = ref(false);
-
-const toggleLeftDrawer = () => {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-};
-
-watch(
-  () => dark.isActive,
-  (val) => {
-    authStore.setDarkModeFromLocalStorage(val);
-
-    // Guardar el estado de dark.isActive en el LocalStorage
-    LocalStorage.set('darkMode', { darkMode: val });
-  }
-);
-
-// Recuperar el estado de dark.isActive del LocalStorage al iniciar la aplicación
-// onMounted(() => {
-//   const session: DarkMode | null = LocalStorage.getItem('darkMode');
-//   darkMode.value = session?.darkMode || false;
-//   if (session?.darkMode !== null) {
-//     dark.set(darkMode.value);
-//   }
-// });
-
-onBeforeMount(async () => {
-  const session: DarkMode | null = LocalStorage.getItem('darkMode');
-  darkMode.value = session?.darkMode || false;
-  if (session?.darkMode !== null) {
-    dark.set(darkMode.value);
-  }
-});
-</script>
 
 <style lang="sccs" scoped></style>
