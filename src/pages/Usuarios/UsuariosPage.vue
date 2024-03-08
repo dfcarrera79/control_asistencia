@@ -9,6 +9,7 @@ import {
   FilasEmpleados,
   FilasAlmacenes,
   Lugar,
+  Evento,
   Lugares,
   FilasAsignados,
   RespuestaEmpleados,
@@ -111,11 +112,6 @@ const actualizarFilas = (event: string) => {
   obtenerEmpleado(event);
   obtenerEmpleadoAsignado();
 };
-
-interface Evento {
-  lugar: string;
-  departamento: string;
-}
 
 const obtenerEmpleadosAsignados = async (evento: Evento) => {
   const respuesta = await get('/obtener_empleados_asignados', {

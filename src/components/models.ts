@@ -393,3 +393,8 @@ export interface Schedule {
   codigo: number;
   nombre: string;
 }
+
+export interface Evento {
+  lugar: string;
+  departamento: string;
+}
