@@ -136,6 +136,16 @@ export interface RespuestaLugares {
   objetos: Lugares[];
 }
 
+interface LugaresAsignados {
+  alm_codigo: number;
+}
+
+export interface RespuestaLugaresAsignados {
+  error: string;
+  mensaje: string;
+  objetos: LugaresAsignados[];
+}
+
 export interface RespuestaHorariosAsignados {
   error: string;
   mensaje: string;

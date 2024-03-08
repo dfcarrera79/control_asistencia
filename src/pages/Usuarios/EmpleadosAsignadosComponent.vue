@@ -1,73 +1,3 @@
-<template>
-  <div class="q-pa-md">
-    <div class="column q-pb-md">
-      <p class="text-h6" style="font-family: 'Bebas Neue'">
-        EMPLEADOS ASIGNADOS A LUGARES DE TRABAJO
-      </p>
-      <div class="row justify-left">
-        <q-input
-          outlined
-          input-class="text-right"
-          clearable
-          clear-icon="close"
-          dense
-          debounce="350"
-          borderless
-          color="primary"
-          v-model="filter"
-          placeholder="Buscar..."
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        <div class="q-pl-md">
-          <q-select
-            dense
-            filled
-            v-model="modelo"
-            use-input
-            hide-selected
-            fill-input
-            input-debounce="300"
-            label="Lugares asignados"
-            :options="opciones"
-            @filter="filtroFn"
-            style="width: 250px"
-          >
-            <template v-if="modelo" v-slot:append>
-              <q-icon
-                name="cancel"
-                @click.stop.prevent="modelo = ''"
-                class="cursor-pointer"
-              />
-            </template>
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section> No hay resultados </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-        </div>
-      </div>
-    </div>
-
-    <q-table
-      square
-      flat
-      bordered
-      hide-bottom
-      :rows="props.zeile"
-      :columns="spalte"
-      :filter="filter"
-      row-key="cedula_ruc"
-      class="my-sticky-header-table text-h6"
-      :rows-per-page-options="[0]"
-      v-model:pagination="pagination"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { QTableProps } from 'quasar';
@@ -139,6 +69,76 @@ watch(modelo, (newValue) => {
   enviarLugar(newValue);
 });
 </script>
+
+<template>
+  <div class="q-pa-md">
+    <div class="column q-pb-md">
+      <p class="text-h6" style="font-family: 'Bebas Neue'">
+        EMPLEADOS ASIGNADOS A LUGARES DE TRABAJO
+      </p>
+      <div class="row justify-left">
+        <q-input
+          outlined
+          input-class="text-right"
+          clearable
+          clear-icon="close"
+          dense
+          debounce="350"
+          borderless
+          color="primary"
+          v-model="filter"
+          placeholder="Buscar..."
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <div class="q-pl-md">
+          <q-select
+            dense
+            filled
+            v-model="modelo"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="300"
+            label="Lugares asignados"
+            :options="opciones"
+            @filter="filtroFn"
+            style="width: 250px"
+          >
+            <template v-if="modelo" v-slot:append>
+              <q-icon
+                name="cancel"
+                @click.stop.prevent="modelo = ''"
+                class="cursor-pointer"
+              />
+            </template>
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section> No hay resultados </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+      </div>
+    </div>
+
+    <q-table
+      square
+      flat
+      bordered
+      hide-bottom
+      :rows="props.zeile"
+      :columns="spalte"
+      :filter="filter"
+      row-key="cedula_ruc"
+      class="my-sticky-header-table text-h6"
+      :rows-per-page-options="[0]"
+      v-model:pagination="pagination"
+    />
+  </div>
+</template>
 
 <style lang="scss">
 @import '../../css/sticky.header.table.scss';

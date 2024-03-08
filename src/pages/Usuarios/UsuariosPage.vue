@@ -13,6 +13,7 @@ import {
   FilasAsignados,
   RespuestaEmpleados,
   RespuestaLugares,
+  RespuestaLugaresAsignados,
 } from '../../components/models';
 
 // Data
@@ -81,9 +82,12 @@ const obtenerEmpleadoAsignado = async () => {
 const lugaresAsignados = ref<number[]>([]);
 
 const obtenerLugaresAsignados = async () => {
-  const respuesta: RespuestaLugares = await get('/obtener_lugares_asignados', {
-    usuario_codigo: 1,
-  });
+  const respuesta: RespuestaLugaresAsignados = await get(
+    '/obtener_lugares_asignados',
+    {
+      usuario_codigo: 1,
+    }
+  );
   if (respuesta.error === 'N') {
     lugaresAsignados.value = respuesta.objetos.map((el) => el.alm_codigo);
   }
