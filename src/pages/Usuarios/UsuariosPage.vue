@@ -22,7 +22,12 @@ const { get } = useAxios();
 const grupos = ref([]);
 const groups = ref<string[]>([]);
 const model = ref('');
-const modelo = ref('');
+const lugar = ref('');
+const departamento = ref('');
+const modelo = ref({
+  lugar: lugar.value,
+  departamento: departamento.value,
+});
 const filas = ref<FilasEmpleados[]>([]);
 const rows = ref<FilasAlmacenes[]>([]);
 const zeile = ref<FilasAsignados[]>([]);
@@ -107,9 +112,15 @@ const actualizarFilas = (event: string) => {
   obtenerEmpleadoAsignado();
 };
 
-const obtenerEmpleadosAsignados = async (modelo: string) => {
+interface Evento {
+  lugar: string;
+  departamento: string;
+}
+
+const obtenerEmpleadosAsignados = async (evento: Evento) => {
   const respuesta = await get('/obtener_empleados_asignados', {
-    lugar: modelo,
+    lugar: evento.lugar,
+    departamento: evento.departamento,
   });
   if (respuesta.error === 'S') {
     zeile.value = [];
@@ -152,7 +163,8 @@ const obtenerLugares = async () => {
   }
 };
 
-const updateRows = (event: string): void => {
+const updateRows = (event: Evento): void => {
+  obtenerGrupos();
   obtenerEmpleadosAsignados(event);
 };
 </script>
@@ -227,8 +239,9 @@ const updateRows = (event: string): void => {
           <q-tab-panel name="lugares">
             <EmpleadosAsignadosComponent
               :zeile="zeile"
+              :grupos="grupos"
               :groups="groups"
-              @updateRows="updateRows($event)"
+              @updateRows="updateRows"
             />
           </q-tab-panel>
         </q-tab-panels>

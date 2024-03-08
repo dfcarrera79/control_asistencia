@@ -7,6 +7,7 @@ import { FilasAsignados } from '../../components/models';
 const props = defineProps<{
   zeile: FilasAsignados[];
   groups: string[];
+  grupos: string[];
 }>();
 
 /* defined emits*/
@@ -15,7 +16,7 @@ const emit = defineEmits(['updateRows']);
 // Data
 const filter = ref('');
 const modelo = ref('');
-// const groups = ref<string[]>([]);
+const departamento = ref('');
 const opciones = ref(props.groups);
 const pagination = {
   page: 1,
@@ -29,6 +30,12 @@ const spalte: QTableProps['columns'] = [
     label: 'Nombre',
     field: 'nombre_completo',
     sortable: true,
+  },
+  {
+    name: 'departamento',
+    align: 'left',
+    label: 'Departamento',
+    field: 'departamento',
   },
   {
     name: 'lugar',
@@ -61,12 +68,12 @@ const filtroFn = (val: string, update: (callback: () => void) => void) => {
   });
 };
 
-const enviarLugar = (event: string) => {
-  emit('updateRows', event);
+const enviarLyD = (lugar: string, departamento: string) => {
+  emit('updateRows', { lugar, departamento });
 };
 
-watch(modelo, (newValue) => {
-  enviarLugar(newValue);
+watch([modelo, departamento], ([newModelo, newDepartamento]) => {
+  enviarLyD(newModelo, newDepartamento);
 });
 </script>
 
@@ -93,6 +100,29 @@ watch(modelo, (newValue) => {
             <q-icon name="search" />
           </template>
         </q-input>
+
+        <div>
+          <q-select
+            class="q-px-md"
+            outlined
+            dense
+            v-model="departamento"
+            :options="props.grupos"
+            label="Departamentos"
+            style="width: 200px"
+          >
+            <template v-if="departamento" v-slot:append>
+              <q-icon
+                name="cancel"
+                @click.stop.prevent="departamento = ''"
+                class="cursor-pointer"
+              />
+            </template>
+          </q-select>
+        </div>
+
+        <q-separator vertical />
+
         <div class="q-pl-md">
           <q-select
             dense
