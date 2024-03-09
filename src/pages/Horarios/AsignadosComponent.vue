@@ -3,12 +3,13 @@ import { ref, watch } from 'vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
 import { HorariosAsignados } from '../../components/models';
-import { getSortedWorkDays, getTimeFormated } from '../../services/useWorkDays';
+import { obtenerNombreMes } from '../../services/useWorkDays';
 
 /* Defined Props */
 const props = defineProps<{
   filas: HorariosAsignados[];
   groups: string[];
+  grupos: string[];
 }>();
 
 /* defined emits*/
@@ -18,6 +19,7 @@ const emit = defineEmits(['updateRows']);
 const $q = useQuasar();
 const filter = ref('');
 const modelo = ref('');
+const departamento = ref('');
 const opcions = ref(props.groups);
 const pagination = {
   page: 1,
@@ -34,42 +36,42 @@ const columns: QTableProps['columns'] = [
     sortable: true,
   },
   {
+    name: 'departamento',
+    align: 'left',
+    label: 'Departamento',
+    field: 'departamento',
+  },
+  {
     name: 'alm_nomcom',
     align: 'left',
     label: 'Lugar de trabajo asignado',
     field: 'alm_nomcom',
   },
   {
-    name: 'direccion',
-    align: 'left',
-    label: 'Dirección del lugar de trabajo',
-    field: 'direccion',
-  },
-  {
-    name: 'dias',
-    align: 'left',
-    label: 'Dias de trabajo',
-    field: (row) => getSortedWorkDays(row),
-  },
-  {
-    name: 'horario_1',
+    name: 'horario',
     align: 'left',
     label: 'Horario',
-    field: (row) => getTimeFormated(row),
+    field: 'horario',
   },
   {
-    name: 'horario_2',
+    name: 'mes',
     align: 'left',
-    label: 'Horario 2',
-    field: 'horario_2',
+    label: 'Mes',
+    field: (row) => obtenerNombreMes(row.mes),
+  },
+  {
+    name: 'anio',
+    align: 'left',
+    label: 'Año',
+    field: 'anio',
   },
 ];
 const visibleColumns = ref([
   'nombre_completo',
+  'departamento',
   'alm_nomcom',
-  'direccion',
-  'dias',
-  'horario_1',
+  'mes',
+  'anio',
 ]);
 const selected = ref([]);
 
@@ -98,8 +100,8 @@ const filtroFn = (val: string, update: (callback: () => void) => void) => {
   });
 };
 
-const enviarLugar = (event: string) => {
-  emit('updateRows', event);
+const enviarLyD = (lugar: string, departamento: string) => {
+  emit('updateRows', { lugar, departamento });
 };
 
 const eliminar_horario_asignado = async (codigo: number) => {
@@ -130,10 +132,11 @@ const handleButtonClicked = async (selected: HorariosAsignados[]) => {
   for (const item of selected) {
     await eliminar_horario_asignado(item.codigo);
   }
+  enviarLyD(modelo.value, departamento.value);
 };
 
-watch(modelo, (newValue) => {
-  enviarLugar(newValue);
+watch([modelo, departamento], ([newModelo, newDepartamento]) => {
+  enviarLyD(newModelo, newDepartamento);
 });
 </script>
 
@@ -151,7 +154,7 @@ watch(modelo, (newValue) => {
             color="primary"
             icon="update"
             dense
-            @click="enviarLugar(modelo)"
+            @click="enviarLyD(modelo, departamento)"
           >
             <q-tooltip
               anchor="center right"
@@ -182,6 +185,24 @@ watch(modelo, (newValue) => {
           </template>
         </q-input>
         <div class="q-px-md">
+          <q-select
+            outlined
+            dense
+            v-model="departamento"
+            :options="props.grupos"
+            label="Departamentos"
+            style="width: 200px"
+          >
+            <template v-if="departamento" v-slot:append>
+              <q-icon
+                name="cancel"
+                @click.stop.prevent="departamento = ''"
+                class="cursor-pointer"
+              />
+            </template>
+          </q-select>
+        </div>
+        <div class="q-pr-md">
           <q-select
             dense
             filled
@@ -220,10 +241,7 @@ watch(modelo, (newValue) => {
               selected.length == 1 ? 'Eliminar Horario' : 'Eliminar Horarios'
             "
             icon="delete"
-            @click="
-              handleButtonClicked(selected);
-              enviarLugar(modelo);
-            "
+            @click="handleButtonClicked(selected)"
             :disable="selected.length === 0"
           />
         </div>

@@ -163,7 +163,6 @@ export default defineComponent({
     },
     onMoved(data) {
       console.log('onMoved', data);
-      // this.emitFecha(this.selectedDate);
     },
     onChange(data) {
       console.log('onChange', data);

@@ -35,6 +35,7 @@ const checkTokenExpiration = () => {
   if (tokenExpirationTime.value <= 0) {
     // Token has expired, log the user out
     persistent.value = true;
+    authStore.estaLogeado = false;
   } else {
     persistent.value = false;
     // Calculate remaining time
@@ -52,15 +53,15 @@ checkTokenExpiration();
 // Check token expiration every 5 minutes (300,000 milliseconds)
 setTimeout(checkTokenExpiration, 300000);
 
-watch(
-  () => tokenExpirationTime.value,
-  (val) => {
-    if (val <= 0) {
-      // Token has expired, log the user out
-      persistent.value = true;
-    }
-  }
-);
+// watch(
+//   () => tokenExpirationTime.value,
+//   (val) => {
+//     if (val <= 0) {
+//       // Token has expired, log the user out
+//       persistent.value = true;
+//     }
+//   }
+// );
 
 const leftDrawerOpen = ref(false);
 

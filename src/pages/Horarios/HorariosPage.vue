@@ -9,6 +9,7 @@ import NuevoAsignacionComponent from './NuevoAsignacionComponent.vue';
 // import CalendarioComponent from './CalendarioComponent.vue';
 // import NuevoHorario from './NuevoHorario.vue';
 import {
+  Evento,
   GroupObject,
   LugarTrabajo,
   RespuestaHorario,
@@ -17,7 +18,12 @@ import {
 
 // Data
 const tab = ref('');
-const modelo = ref('');
+const lugar = ref('');
+const departamento = ref('');
+const modelo = ref({
+  lugar: lugar.value,
+  departamento: departamento.value,
+});
 const grupos = ref([]);
 const groups = ref<string[]>([]);
 // const schedules = ref<Schedule[]>([]);
@@ -55,10 +61,12 @@ const actualizarHorarios = (): void => {
   obtenerHorarios();
 };
 
-const obtenerHorariosAsignados = async (modelo: string) => {
+const obtenerHorariosAsignados = async (evento: Evento) => {
   const respuesta = await get('/obtener_horarios_asignados', {
-    lugar: modelo,
+    lugar: evento.lugar,
+    departamento: evento.departamento,
   });
+  console.log('[RESPUESTA HORARIOS ASIGNADOS]: ', respuesta);
   if (respuesta.error === 'S') {
     filas.value = [];
     return;
@@ -72,7 +80,7 @@ const obtenerHorariosAsignados = async (modelo: string) => {
   }
 };
 
-const actualizarFilas = (event: string): void => {
+const actualizarFilas = (event: Evento): void => {
   obtenerHorariosAsignados(event);
 };
 
@@ -83,6 +91,17 @@ const obtenerLugaresTrabajo = async () => {
   }
   const data: LugarTrabajo[] = respuesta.objetos;
   groups.value = [...new Set(data.map((item) => item.alm_nomcom))];
+};
+
+const handleAsignacion = () => {
+  obtenerGrupos();
+  obtenerHorarios();
+};
+
+const handleVisualizacion = (model: Evento) => {
+  obtenerGrupos();
+  obtenerLugaresTrabajo();
+  obtenerHorariosAsignados(model);
 };
 </script>
 
@@ -115,15 +134,12 @@ const obtenerLugaresTrabajo = async () => {
         <q-tab
           name="asignacion"
           label="Asignación de Horarios a Grupos"
-          @click="obtenerGrupos()"
+          @click="handleAsignacion()"
         />
         <q-tab
           name="visualizacion"
           label="Visualización de Horarios Asignados"
-          @click="
-            obtenerHorariosAsignados(modelo);
-            obtenerLugaresTrabajo();
-          "
+          @click="handleVisualizacion(modelo)"
         />
       </q-tabs>
 
@@ -146,6 +162,7 @@ const obtenerLugaresTrabajo = async () => {
         <q-tab-panel name="visualizacion">
           <AsignadosComponent
             :filas="filas"
+            :grupos="grupos"
             :groups="groups"
             @updateRows="actualizarFilas($event)"
           />
