@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { QTableProps, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
 import { EmpleadosAsignados } from '../../components/models';
 import { columnasRegistrosExepciones } from '../../components/columns';

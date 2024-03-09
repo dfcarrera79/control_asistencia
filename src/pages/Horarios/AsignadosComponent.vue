@@ -48,9 +48,15 @@ const columns: QTableProps['columns'] = [
     field: 'alm_nomcom',
   },
   {
-    name: 'horario',
+    name: 'nombre_horario',
     align: 'left',
     label: 'Horario',
+    field: 'nombre_horario',
+  },
+  {
+    name: 'horario',
+    align: 'left',
+    label: 'Editar',
     field: 'horario',
   },
   {
@@ -70,6 +76,7 @@ const visibleColumns = ref([
   'nombre_completo',
   'departamento',
   'alm_nomcom',
+  'nombre_horario',
   'mes',
   'anio',
 ]);
@@ -104,14 +111,14 @@ const enviarLyD = (lugar: string, departamento: string) => {
   emit('updateRows', { lugar, departamento });
 };
 
-const eliminar_horario_asignado = async (codigo: number) => {
+const eliminar_horario_asignado = async (code: number) => {
   try {
     const response = await deletes(
       '/eliminar_horario_asignado',
       {},
       JSON.parse(
         JSON.stringify({
-          usuario_codigo: codigo,
+          codigo: code,
         })
       )
     );
@@ -133,6 +140,10 @@ const handleButtonClicked = async (selected: HorariosAsignados[]) => {
     await eliminar_horario_asignado(item.codigo);
   }
   enviarLyD(modelo.value, departamento.value);
+};
+
+const editarHorario = (row: HorariosAsignados) => {
+  console.log('Editar horario:', JSON.stringify(row));
 };
 
 watch([modelo, departamento], ([newModelo, newDepartamento]) => {
@@ -168,23 +179,25 @@ watch([modelo, departamento], ([newModelo, newDepartamento]) => {
       </div>
 
       <div class="row justify-left items-center">
-        <q-input
-          outlined
-          input-class="text-right"
-          clearable
-          clear-icon="close"
-          dense
-          debounce="350"
-          borderless
-          color="primary"
-          v-model="filter"
-          placeholder="Buscar..."
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        <div class="q-px-md">
+        <div class="q-py-sm">
+          <q-input
+            outlined
+            input-class="text-right"
+            clearable
+            clear-icon="close"
+            dense
+            debounce="350"
+            borderless
+            color="primary"
+            v-model="filter"
+            placeholder="Buscar..."
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+        <div class="q-px-md q-py-sm">
           <q-select
             outlined
             dense
@@ -202,7 +215,7 @@ watch([modelo, departamento], ([newModelo, newDepartamento]) => {
             </template>
           </q-select>
         </div>
-        <div class="q-pr-md">
+        <div class="q-pr-md q-py-sm">
           <q-select
             dense
             filled
@@ -257,7 +270,7 @@ watch([modelo, departamento], ([newModelo, newDepartamento]) => {
       :columns="columns"
       :filter="filter"
       row-key="codigo"
-      class="my-sticky-header-table text-h6"
+      class="my-sticky-header-last-column-table"
       :rows-per-page-options="[0]"
       v-model:pagination="pagination"
       :visible-columns="visibleColumns"
@@ -265,10 +278,43 @@ watch([modelo, departamento], ([newModelo, newDepartamento]) => {
       selection="multiple"
       v-model:selected="selected"
     >
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th>
+            <q-checkbox v-model="props.selected" />
+          </q-th>
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+            {{ col.label }}
+          </q-th>
+          <q-th>
+            <span>Editar</span>
+          </q-th>
+        </q-tr>
+      </template>
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td auto-width>
+            <q-checkbox v-model="props.selected" />
+          </q-td>
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            <span style="font-weight: normal">{{ col.value }}</span>
+          </q-td>
+          <q-td auto-width>
+            <q-btn
+              icon="edit_note"
+              color="white"
+              round
+              flat
+              dense
+              @click="editarHorario(props.row.horario)"
+            />
+          </q-td>
+        </q-tr>
+      </template>
     </q-table>
   </div>
 </template>
 
 <style lang="scss">
-@import '../../css/sticky.header.table.scss';
+@import '../../css/sticky.header.last.column.table.scss';
 </style>
