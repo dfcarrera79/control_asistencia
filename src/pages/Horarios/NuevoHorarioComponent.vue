@@ -20,6 +20,7 @@ const filter = ref('');
 const codigo = ref(0);
 const nombre = ref('');
 const actualizar = ref(false);
+const editar = ref(false);
 const arrayHorario = ref<Calendario[]>([]);
 const crearHorario = ref(false);
 const dialogVisible = ref(false);
@@ -234,6 +235,7 @@ const cardContainerClass = computed(() => {
       <NuevoHorario
         :code="codigo"
         :update="actualizar"
+        :edit="editar"
         :name="nombre"
         :arregloHorario="arrayHorario"
       />

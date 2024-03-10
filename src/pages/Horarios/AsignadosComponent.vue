@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import NuevoHorario from './NuevoHorario.vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
-import { HorariosAsignados } from '../../components/models';
+import { Calendario, HorariosAsignados } from '../../components/models';
 import { obtenerNombreMes } from '../../services/useWorkDays';
 
 /* Defined Props */
@@ -16,6 +17,12 @@ const props = defineProps<{
 const emit = defineEmits(['updateRows']);
 
 // Data
+const codigo = ref(0);
+const nombre = ref('');
+const editar = ref(false);
+const actualizar = ref(false);
+const arrayHorario = ref<Calendario[]>([]);
+
 const $q = useQuasar();
 const filter = ref('');
 const modelo = ref('');
@@ -142,8 +149,20 @@ const handleButtonClicked = async (selected: HorariosAsignados[]) => {
   enviarLyD(modelo.value, departamento.value);
 };
 
-const editarHorario = (row: HorariosAsignados) => {
-  console.log('Editar horario:', JSON.stringify(row));
+// const editarHorario = (row) => {
+//   console.log('Editar horario:', JSON.stringify(row));
+// };
+
+const editarHorario = async (
+  code: number,
+  name: string,
+  horario: Calendario[]
+) => {
+  codigo.value = code;
+  nombre.value = name;
+  editar.value = true;
+  arrayHorario.value = horario;
+  console.log('[CODIGO EDITAR HORARIO]: ', JSON.stringify(codigo.value));
 };
 
 watch([modelo, departamento], ([newModelo, newDepartamento]) => {
@@ -306,12 +325,44 @@ watch([modelo, departamento], ([newModelo, newDepartamento]) => {
               round
               flat
               dense
-              @click="editarHorario(props.row.horario)"
-            />
+              @click="
+                editarHorario(
+                  props.row.codigo,
+                  props.row.nombre_horario,
+                  props.row.horario
+                )
+              "
+            >
+              <q-tooltip
+                class="bg-amber text-black shadow-4"
+                :offset="[10, 10]"
+              >
+                Editar
+              </q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
       </template>
     </q-table>
+
+    <q-dialog v-model="editar" full-width>
+      <q-card>
+        <q-card-section class="row items-center q-pb-none">
+          <div style="font-family: 'Bebas Neue'" class="text-h6">
+            EDITAR HORARIO
+          </div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <NuevoHorario
+          :code="codigo"
+          :update="actualizar"
+          :edit="editar"
+          :name="nombre"
+          :arregloHorario="arrayHorario"
+        />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 

@@ -13,6 +13,7 @@ const fechaActual = new Date();
 const anio = ref(fechaActual.getFullYear());
 const mes = ref(fechaActual.getMonth() + 1);
 const actualizar = ref(false);
+const editar = ref(false);
 const doble = ref(false);
 const entrada_uno = ref('00:00');
 const salida_uno = ref('00:00');
@@ -27,6 +28,7 @@ const props = defineProps<{
   code: number;
   name: string;
   update: boolean;
+  edit: boolean;
   arregloHorario: Calendario[];
 }>();
 
@@ -34,6 +36,7 @@ const props = defineProps<{
 onMounted(() => {
   codigo.value = props.code;
   actualizar.value = props.update;
+  editar.value = props.edit;
   nombre.value = props.name;
   arrayHorario.value = props.arregloHorario;
 });
@@ -214,6 +217,35 @@ const actualizarHorario = async (
     console.error('Error registrando el horario:', error);
   }
 };
+
+const editarHorario = async (codigo: number, horario: string) => {
+  try {
+    const response = await put(
+      '/editar_horario_empleado',
+      {},
+      JSON.parse(
+        JSON.stringify({
+          codigo: codigo,
+          horario: horario,
+        })
+      )
+    );
+
+    // Handle the response accordingly
+    $q.notify({
+      color: response.error === 'N' ? 'green-4' : 'red-5',
+      textColor: 'white',
+      icon: response.error === 'N' ? 'cloud_done' : 'warning',
+      message: response.mensaje,
+    });
+
+    if (response.error === 'N') {
+      cerrarDialogo();
+    }
+  } catch (error) {
+    console.error('Error actualizando el horario:', error);
+  }
+};
 </script>
 
 <template>
@@ -230,6 +262,7 @@ const actualizarHorario = async (
           v-model="nombre"
           label="Nombre del horario"
           dense
+          :disable="editar"
         >
           <template v-slot:append>
             <q-icon name="close" @click="nombre = ''" class="cursor-pointer" />
@@ -423,7 +456,7 @@ const actualizarHorario = async (
   />
   <div class="row justify-center items-center q-my-md">
     <q-btn
-      v-if="!actualizar"
+      v-if="!editar && !actualizar"
       @click="registrarHorario(nombre, JSON.stringify(arrayHorario), mes, anio)"
       color="primary"
       label="Guardar horario"
@@ -442,6 +475,15 @@ const actualizarHorario = async (
       "
       color="primary"
       label="Actualizar horario"
+      :disable="nombre === '' || arrayHorario.length == 0"
+    />
+    <q-btn
+      v-if="editar"
+      @click="
+        editarHorario(codigo, nombre, JSON.stringify(arrayHorario), mes, anio)
+      "
+      color="primary"
+      label="Actualizar"
       :disable="nombre === '' || arrayHorario.length == 0"
     />
   </div>
