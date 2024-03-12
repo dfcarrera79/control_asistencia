@@ -7,12 +7,11 @@ import {
   today,
   indexOf,
 } from '@quasar/quasar-ui-qcalendar/src/index.js';
+import { defineComponent, inject } from 'vue';
+import NavigationBar from '../../components/NavigationBar.vue';
+import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.sass';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.sass';
-import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass';
-
-import { defineComponent } from 'vue';
-import NavigationBar from '../../components/NavigationBar.vue';
 
 export default defineComponent({
   name: 'MonthSlotWeek',
@@ -30,7 +29,10 @@ export default defineComponent({
       locale: 'es',
     };
   },
-
+  setup() {
+    const array = inject('array');
+    return { array };
+  },
   methods: {
     emitFecha(selectedDate) {
       this.$emit('fecha', selectedDate);
@@ -171,7 +173,17 @@ export default defineComponent({
       console.log('onClickDate', data);
     },
     onClickDay(data) {
-      console.log('onClickDay', data);
+      console.log('onClickDay', JSON.stringify(data.scope.timestamp.date));
+      const clickedDate = data.scope.timestamp.date;
+
+      const filteredEvents = this.events.filter(
+        (event) => event.end !== clickedDate
+      );
+
+      // Reasignar el valor de array a filteredEvents
+      this.array = filteredEvents;
+
+      console.log('onClickDay', JSON.stringify(filteredEvents));
     },
     onClickWorkweek(data) {
       console.log('onClickWorkweek', data);

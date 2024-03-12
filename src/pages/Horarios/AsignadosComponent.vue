@@ -149,10 +149,6 @@ const handleButtonClicked = async (selected: HorariosAsignados[]) => {
   enviarLyD(modelo.value, departamento.value);
 };
 
-// const editarHorario = (row) => {
-//   console.log('Editar horario:', JSON.stringify(row));
-// };
-
 const editarHorario = async (
   code: number,
   name: string,
@@ -162,7 +158,6 @@ const editarHorario = async (
   nombre.value = name;
   editar.value = true;
   arrayHorario.value = horario;
-  console.log('[CODIGO EDITAR HORARIO]: ', JSON.stringify(codigo.value));
 };
 
 watch([modelo, departamento], ([newModelo, newDepartamento]) => {

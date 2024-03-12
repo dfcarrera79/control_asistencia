@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
 import { useQuasar } from 'quasar';
+import { onMounted, ref, provide } from 'vue';
 import { useAxios } from '../../services/useAxios';
 import CalendarioComponent from './CalendarioComponent.vue';
 import { Calendario } from '../../components/models';
@@ -32,6 +32,9 @@ const props = defineProps<{
   arregloHorario: Calendario[];
 }>();
 
+// Provided data
+provide('array', arrayHorario);
+
 // Methods
 onMounted(() => {
   codigo.value = props.code;
@@ -39,6 +42,7 @@ onMounted(() => {
   editar.value = props.edit;
   nombre.value = props.name;
   arrayHorario.value = props.arregloHorario;
+  console.log('[ARREGLO HORARIO]: ', JSON.stringify(arrayHorario.value));
 });
 const convertToHyphenFormat = (dateString: string) => {
   const hyphenatedDate = dateString.replace(/\//g, '-');
@@ -54,7 +58,7 @@ const actualizarFecha = (date: string) => {
 const calendarioH1 = (dias: string[], entrada1: string, salida1: string) => {
   return dias.map((date) => ({
     title: `${entrada1} ${salida1}`,
-    details: 'Horario 1',
+    details: `${entrada1} ${salida1}`,
     start: convertToHyphenFormat(date),
     end: convertToHyphenFormat(date),
     time: '',
@@ -71,7 +75,7 @@ const calendarioH2 = (
 ) => {
   return dias.map((date) => ({
     title: `${entrada1} ${salida1}`,
-    details: 'Horario 1',
+    details: `${entrada1} ${salida1} - ${entrada2} ${salida2}`,
     start: convertToHyphenFormat(date),
     end: convertToHyphenFormat(date),
     time: `${entrada2} ${salida2}`,
@@ -94,7 +98,6 @@ const agregarOReemplazarElemento = (
 
 const limitarArray = (array: Calendario[], el: Calendario) => {
   if (arrayHorario.value.length < 30) {
-    console.log('[ARRAY HORARIO LENGTH]: ', arrayHorario.value.length);
     agregarOReemplazarElemento(array, el);
   } else {
     $q.notify({
@@ -219,6 +222,7 @@ const actualizarHorario = async (
 };
 
 const editarHorario = async (codigo: number, horario: string) => {
+  console.log('[CODIGO EDITAR HORARIO]: ', codigo);
   try {
     const response = await put(
       '/editar_horario_empleado',
@@ -479,9 +483,7 @@ const editarHorario = async (codigo: number, horario: string) => {
     />
     <q-btn
       v-if="editar"
-      @click="
-        editarHorario(codigo, nombre, JSON.stringify(arrayHorario), mes, anio)
-      "
+      @click="editarHorario(codigo, JSON.stringify(arrayHorario))"
       color="primary"
       label="Actualizar"
       :disable="nombre === '' || arrayHorario.length == 0"
