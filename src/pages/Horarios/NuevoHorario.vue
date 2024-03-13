@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { onMounted, ref, provide } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useAxios } from '../../services/useAxios';
 import CalendarioComponent from './CalendarioComponent.vue';
 import { Calendario } from '../../components/models';
@@ -32,8 +32,8 @@ const props = defineProps<{
   arregloHorario: Calendario[];
 }>();
 
-// Provided data
-provide('array', arrayHorario);
+/* Defined Emits */
+const emit = defineEmits(['actualizar']);
 
 // Methods
 onMounted(() => {
@@ -42,7 +42,6 @@ onMounted(() => {
   editar.value = props.edit;
   nombre.value = props.name;
   arrayHorario.value = props.arregloHorario;
-  console.log('[ARREGLO HORARIO]: ', JSON.stringify(arrayHorario.value));
 });
 const convertToHyphenFormat = (dateString: string) => {
   const hyphenatedDate = dateString.replace(/\//g, '-');
@@ -181,6 +180,7 @@ const registrarHorario = async (
   } catch (error) {
     console.error('Error registrando el horario:', error);
   }
+  emit('actualizar');
 };
 
 const actualizarHorario = async (
@@ -222,7 +222,6 @@ const actualizarHorario = async (
 };
 
 const editarHorario = async (codigo: number, horario: string) => {
-  console.log('[CODIGO EDITAR HORARIO]: ', codigo);
   try {
     const response = await put(
       '/editar_horario_empleado',
@@ -485,7 +484,7 @@ const editarHorario = async (codigo: number, horario: string) => {
       v-if="editar"
       @click="editarHorario(codigo, JSON.stringify(arrayHorario))"
       color="primary"
-      label="Actualizar"
+      label="Grabar cambios"
       :disable="nombre === '' || arrayHorario.length == 0"
     />
   </div>

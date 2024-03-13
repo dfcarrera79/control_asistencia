@@ -7,8 +7,9 @@ import {
   today,
   indexOf,
 } from '@quasar/quasar-ui-qcalendar/src/index.js';
-import { defineComponent, inject } from 'vue';
+import { defineComponent } from 'vue';
 import NavigationBar from '../../components/NavigationBar.vue';
+import JornadasComponent from './JornadasComponent.vue';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.sass';
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.sass';
@@ -17,25 +18,27 @@ export default defineComponent({
   name: 'MonthSlotWeek',
   components: {
     NavigationBar,
+    JornadasComponent,
     QCalendarMonth,
   },
-  emits: ['fecha'],
+  emits: ['fecha', 'array'],
   props: {
     events: Array, // Define events as a prop
   },
   data() {
     return {
-      selectedDate: today(),
       locale: 'es',
+      show: false,
+      selectedDate: today(),
+      horario: [],
     };
-  },
-  setup() {
-    const array = inject('array');
-    return { array };
   },
   methods: {
     emitFecha(selectedDate) {
       this.$emit('fecha', selectedDate);
+    },
+    emitArray(arrayHorario) {
+      this.$emit('array', arrayHorario);
     },
     getWeekEvents(week) {
       const firstDay = parsed(week[0].date + ' 00:00');
@@ -154,6 +157,20 @@ export default defineComponent({
       );
     },
 
+    update(data) {
+      console.log('[UPDATE]: ', JSON.stringify(data));
+      this.show = false;
+    },
+
+    remove(data) {
+      const clickedDate = data.horario[0].end;
+      const filteredEvents = this.events.filter(
+        (event) => event.end !== clickedDate
+      );
+      this.emitArray(filteredEvents);
+      this.show = false;
+    },
+
     onToday() {
       this.$refs.calendar.moveToToday();
     },
@@ -173,17 +190,17 @@ export default defineComponent({
       console.log('onClickDate', data);
     },
     onClickDay(data) {
-      console.log('onClickDay', JSON.stringify(data.scope.timestamp.date));
       const clickedDate = data.scope.timestamp.date;
 
       const filteredEvents = this.events.filter(
-        (event) => event.end !== clickedDate
+        (event) => event.end == clickedDate
       );
 
-      // Reasignar el valor de array a filteredEvents
-      this.array = filteredEvents;
+      this.horario = filteredEvents;
 
-      console.log('onClickDay', JSON.stringify(filteredEvents));
+      if (this.horario.length !== 0) {
+        this.show = true;
+      }
     },
     onClickWorkweek(data) {
       console.log('onClickWorkweek', data);
@@ -210,6 +227,13 @@ export default defineComponent({
 </script>
 
 <template>
+  <q-dialog v-model="show">
+    <jornadas-component
+      :horario="horario"
+      @actualizar="update"
+      @eliminar="remove"
+    />
+  </q-dialog>
   <div class="subcontent">
     <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
     <div
