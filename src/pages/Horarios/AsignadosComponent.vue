@@ -4,7 +4,10 @@ import NuevoHorario from './NuevoHorario.vue';
 import { QTableProps, useQuasar } from 'quasar';
 import { useAxios } from '../../services/useAxios';
 import { Calendario, HorariosAsignados } from '../../components/models';
-import { obtenerNombreMes } from '../../services/useWorkDays';
+import {
+  generarArregloAnios,
+  obtenerNombreMes,
+} from '../../services/useWorkDays';
 
 /* Defined Props */
 const props = defineProps<{
@@ -19,6 +22,25 @@ const emit = defineEmits(['updateRows']);
 // Data
 const codigo = ref(0);
 const nombre = ref('');
+const mes = ref('');
+const meses = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
+];
+
+const anio = ref('');
+const anios: string[] = generarArregloAnios();
+
 const editar = ref(false);
 const actualizar = ref(false);
 const arrayHorario = ref<Calendario[]>([]);
@@ -114,8 +136,13 @@ const filtroFn = (val: string, update: (callback: () => void) => void) => {
   });
 };
 
-const enviarLyD = (lugar: string, departamento: string) => {
-  emit('updateRows', { lugar, departamento });
+const enviarLyD = (
+  lugar: string,
+  departamento: string,
+  mes: string,
+  anio: string
+) => {
+  emit('updateRows', { lugar, departamento, mes, anio });
 };
 
 const eliminar_horario_asignado = async (code: number) => {
@@ -146,7 +173,7 @@ const handleButtonClicked = async (selected: HorariosAsignados[]) => {
   for (const item of selected) {
     await eliminar_horario_asignado(item.codigo);
   }
-  enviarLyD(modelo.value, departamento.value);
+  enviarLyD(modelo.value, departamento.value, mes.value, anio.value);
 };
 
 const editarHorario = async (
@@ -160,9 +187,12 @@ const editarHorario = async (
   arrayHorario.value = horario;
 };
 
-watch([modelo, departamento], ([newModelo, newDepartamento]) => {
-  enviarLyD(newModelo, newDepartamento);
-});
+watch(
+  [modelo, departamento, mes, anio],
+  ([newModelo, newDepartamento, newMes, newAnio]) => {
+    enviarLyD(newModelo, newDepartamento, newMes, newAnio);
+  }
+);
 </script>
 
 <template>
@@ -179,7 +209,7 @@ watch([modelo, departamento], ([newModelo, newDepartamento]) => {
             color="primary"
             icon="update"
             dense
-            @click="enviarLyD(modelo, departamento)"
+            @click="enviarLyD(modelo, departamento, mes, anio)"
           >
             <q-tooltip
               anchor="center right"
@@ -254,6 +284,44 @@ watch([modelo, departamento], ([newModelo, newDepartamento]) => {
               <q-item>
                 <q-item-section> No hay resultados </q-item-section>
               </q-item>
+            </template>
+          </q-select>
+        </div>
+
+        <div class="q-px-sm q-py-sm">
+          <q-select
+            outlined
+            dense
+            v-model="mes"
+            :options="meses"
+            label="Mes"
+            style="width: 120px"
+          >
+            <template v-if="mes" v-slot:append>
+              <q-icon
+                name="cancel"
+                @click.stop.prevent="mes = ''"
+                class="cursor-pointer"
+              />
+            </template>
+          </q-select>
+        </div>
+
+        <div class="q-px-sm q-py-sm">
+          <q-select
+            outlined
+            dense
+            v-model="anio"
+            :options="anios"
+            label="Año"
+            style="width: 120px"
+          >
+            <template v-if="anio" v-slot:append>
+              <q-icon
+                name="cancel"
+                @click.stop.prevent="anio = ''"
+                class="cursor-pointer"
+              />
             </template>
           </q-select>
         </div>

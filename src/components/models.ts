@@ -397,4 +397,6 @@ export interface Schedule {
 export interface Evento {
   lugar: string;
   departamento: string;
+  mes: string;
+  anio: string;
 }

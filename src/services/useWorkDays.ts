@@ -217,3 +217,23 @@ export const formatearFecha = (date: string) => {
 
   return fechaFormateada;
 };
+
+export const generarArregloAnios = (): string[] => {
+  const anioActual: number = new Date().getFullYear();
+  const anios: string[] = [];
+
+  // Agregar los cinco años anteriores al año actual
+  for (let i = anioActual - 4; i < anioActual; i++) {
+    anios.push(i.toString());
+  }
+
+  // Agregar el año actual
+  anios.push(anioActual.toString());
+
+  // Agregar los cinco años posteriores al año actual
+  for (let i = anioActual + 1; i <= anioActual + 4; i++) {
+    anios.push(i.toString());
+  }
+
+  return anios;
+};

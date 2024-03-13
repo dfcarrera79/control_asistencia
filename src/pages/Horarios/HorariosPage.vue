@@ -20,9 +20,13 @@ import {
 const tab = ref('');
 const lugar = ref('');
 const departamento = ref('');
+const mes = ref('');
+const anio = ref('');
 const modelo = ref({
   lugar: lugar.value,
   departamento: departamento.value,
+  mes: mes.value,
+  anio: anio.value,
 });
 const grupos = ref([]);
 const groups = ref<string[]>([]);
@@ -65,8 +69,9 @@ const obtenerHorariosAsignados = async (evento: Evento) => {
   const respuesta = await get('/obtener_horarios_asignados', {
     lugar: evento.lugar,
     departamento: evento.departamento,
+    mes: evento.mes,
+    anio: evento.anio,
   });
-  console.log('[RESPUESTA HORARIOS ASIGNADOS]: ', respuesta);
   if (respuesta.error === 'S') {
     filas.value = [];
     return;
