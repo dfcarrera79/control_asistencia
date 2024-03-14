@@ -142,7 +142,6 @@ const enviarLyD = (
   mes: string,
   anio: string
 ) => {
-  console.log('[SE EJECUTA enviarLyD]');
   emit('updateRows', { lugar, departamento, mes, anio });
   editar.value = false;
 };

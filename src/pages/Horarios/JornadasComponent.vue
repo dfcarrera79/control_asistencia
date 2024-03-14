@@ -55,7 +55,6 @@ const actualizar = (
 };
 
 const eliminar = (horario: Horario[]) => {
-  console.log('[ELIMINAR]: ', JSON.stringify(horario));
   emit('eliminar', {
     horario,
   });
