@@ -1,3 +1,81 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { formatearFecha } from '../../services/useWorkDays';
+
+interface Horario {
+  end: string;
+  time: string;
+  start: string;
+  title: string;
+  bgcolor: string;
+  details: string;
+}
+
+// Data
+const doble = ref(false);
+const fecha = ref('');
+const entrada_uno = ref('00:00');
+const salida_uno = ref('00:00');
+const entrada_dos = ref('00:00');
+const salida_dos = ref('00:00');
+
+/* Defined Props */
+const props = defineProps<{
+  horario: Horario[];
+}>();
+
+/* Defined Emits */
+const emit = defineEmits(['actualizar', 'eliminar']);
+
+// Methods
+const actualizar = (
+  entrada_uno: string,
+  salida_uno: string,
+  entrada_dos: string,
+  salida_dos: string,
+  horario: Horario[]
+) => {
+  if (!doble.value) {
+    horario[0].title = `${entrada_uno} ${salida_uno}`;
+    horario[0].time = '';
+    horario[0].bgcolor = 'primary';
+  } else {
+    horario[0].title = `${entrada_uno} ${salida_uno}`;
+    horario[0].bgcolor = 'secondary';
+    if (entrada_dos == '00:00' && salida_dos == '00:00') {
+      horario[0].time = '';
+    } else {
+      horario[0].time = `${entrada_dos} ${salida_dos}`;
+    }
+  }
+
+  emit('actualizar', {
+    horario,
+  });
+};
+
+const eliminar = (horario: Horario[]) => {
+  console.log('[ELIMINAR]: ', JSON.stringify(horario));
+  emit('eliminar', {
+    horario,
+  });
+};
+
+onMounted(() => {
+  fecha.value = formatearFecha(props.horario[0].end);
+  if (props.horario[0]) {
+    entrada_uno.value = props.horario[0].title.slice(0, 5);
+    salida_uno.value = props.horario[0].title.slice(6);
+
+    if (props.horario[0].time !== '') {
+      doble.value = true;
+      entrada_dos.value = props.horario[0].time.slice(0, 5);
+      salida_dos.value = props.horario[0].time.slice(6);
+    }
+  }
+});
+</script>
+
 <template>
   <q-card class="my-card">
     <q-card-section>
@@ -191,83 +269,6 @@
     </q-card-section>
   </q-card>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { formatearFecha } from '../../services/useWorkDays';
-
-interface Horario {
-  end: string;
-  time: string;
-  start: string;
-  title: string;
-  bgcolor: string;
-  details: string;
-}
-
-// Data
-const doble = ref(false);
-const fecha = ref('');
-const entrada_uno = ref('00:00');
-const salida_uno = ref('00:00');
-const entrada_dos = ref('00:00');
-const salida_dos = ref('00:00');
-
-/* Defined Props */
-const props = defineProps<{
-  horario: Horario[];
-}>();
-
-/* Defined Emits */
-const emit = defineEmits(['actualizar', 'eliminar']);
-
-// Methods
-const actualizar = (
-  entrada_uno: string,
-  salida_uno: string,
-  entrada_dos: string,
-  salida_dos: string,
-  horario: Horario[]
-) => {
-  if (!doble.value) {
-    horario[0].title = `${entrada_uno} ${salida_uno}`;
-    horario[0].time = '';
-    horario[0].bgcolor = 'primary';
-  } else {
-    horario[0].title = `${entrada_uno} ${salida_uno}`;
-    horario[0].bgcolor = 'secondary';
-    if (entrada_dos == '00:00' && salida_dos == '00:00') {
-      horario[0].time = '';
-    } else {
-      horario[0].time = `${entrada_dos} ${salida_dos}`;
-    }
-  }
-
-  emit('actualizar', {
-    horario,
-  });
-};
-
-const eliminar = (horario: Horario[]) => {
-  emit('eliminar', {
-    horario,
-  });
-};
-
-onMounted(() => {
-  fecha.value = formatearFecha(props.horario[0].end);
-  if (props.horario[0]) {
-    entrada_uno.value = props.horario[0].title.slice(0, 5);
-    salida_uno.value = props.horario[0].title.slice(6);
-
-    if (props.horario[0].time !== '') {
-      doble.value = true;
-      entrada_dos.value = props.horario[0].time.slice(0, 5);
-      salida_dos.value = props.horario[0].time.slice(6);
-    }
-  }
-});
-</script>
 
 <style lang="sass" scoped>
 .my-card

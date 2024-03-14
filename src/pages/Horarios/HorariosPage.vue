@@ -86,6 +86,7 @@ const obtenerHorariosAsignados = async (evento: Evento) => {
 };
 
 const actualizarFilas = (event: Evento): void => {
+  console.log('[EVENTO]: ', JSON.stringify(event));
   obtenerHorariosAsignados(event);
 };
 
@@ -104,6 +105,7 @@ const handleAsignacion = () => {
 };
 
 const handleVisualizacion = (model: Evento) => {
+  console.log('[MODEL]: ', JSON.stringify(model));
   obtenerGrupos();
   obtenerLugaresTrabajo();
   obtenerHorariosAsignados(model);

@@ -180,6 +180,7 @@ export const obtenerMinutosYSegundos = (minutos: number) => {
 };
 
 export const formatearFecha = (date: string) => {
+  console.log('[DATE]: ', date);
   const fecha = new Date(date);
   // Array con los nombres de los días de la semana y los meses
   const diasSemana = [
@@ -207,13 +208,15 @@ export const formatearFecha = (date: string) => {
   ];
 
   // Obtener el día de la semana, el día del mes y el mes
-  const diaSemana = diasSemana[fecha.getDay()];
-  const dia = fecha.getDate();
+  const diaSemana = diasSemana[fecha.getDay() + 1];
+  const dia = fecha.getDate() + 1; // Sumar 1 al día del mes
   const mes = meses[fecha.getMonth()];
   const año = fecha.getFullYear();
 
   // Formatear la fecha como "día de la semana, día de mes de año"
   const fechaFormateada = diaSemana + ', ' + dia + ' de ' + mes + ' de ' + año;
+
+  console.log('[FECHA FORMATEADA]: ', fechaFormateada);
 
   return fechaFormateada;
 };

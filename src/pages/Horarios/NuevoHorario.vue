@@ -33,7 +33,7 @@ const props = defineProps<{
 }>();
 
 /* Defined Emits */
-const emit = defineEmits(['actualizar']);
+const emit = defineEmits(['actualizar', 'actualizarCalendario']);
 
 // Methods
 onMounted(() => {
@@ -52,6 +52,10 @@ const actualizarFecha = (date: string) => {
   const partes = date.split('-');
   anio.value = parseInt(partes[0]);
   mes.value = parseInt(partes[1]);
+};
+
+const actualizarArray = (array: Calendario[]) => {
+  arrayHorario.value = array;
 };
 
 const calendarioH1 = (dias: string[], entrada1: string, salida1: string) => {
@@ -244,6 +248,7 @@ const editarHorario = async (codigo: number, horario: string) => {
 
     if (response.error === 'N') {
       cerrarDialogo();
+      emit('actualizarCalendario');
     }
   } catch (error) {
     console.error('Error actualizando el horario:', error);
@@ -456,6 +461,7 @@ const editarHorario = async (codigo: number, horario: string) => {
   <CalendarioComponent
     :events="arrayHorario"
     @fecha="actualizarFecha($event)"
+    @array="actualizarArray($event)"
   />
   <div class="row justify-center items-center q-my-md">
     <q-btn

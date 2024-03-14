@@ -142,7 +142,9 @@ const enviarLyD = (
   mes: string,
   anio: string
 ) => {
+  console.log('[SE EJECUTA enviarLyD]');
   emit('updateRows', { lugar, departamento, mes, anio });
+  editar.value = false;
 };
 
 const eliminar_horario_asignado = async (code: number) => {
@@ -423,6 +425,7 @@ watch(
           :edit="editar"
           :name="nombre"
           :arregloHorario="arrayHorario"
+          @actualizarCalendario="enviarLyD(modelo, departamento, mes, anio)"
         />
       </q-card>
     </q-dialog>
